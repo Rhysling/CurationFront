@@ -27,3 +27,6 @@ ts-validation.txt
 *.njsproj
 *.sln
 *.sw?
+
+# Project specific files
+public/docs/*.json
