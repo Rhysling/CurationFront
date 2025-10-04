@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+db/
+public/pics
 tools/
 secrets/
 buildlog.txt

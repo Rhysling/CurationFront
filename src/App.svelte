@@ -1,48 +1,61 @@
+<svelte:options runes={true} />
+
 <script lang="ts">
-	import Counter from "./lib/Counter.svelte";
+	import { onMount } from "svelte";
+
+	///import Header from "./components/Header.svelte";
+	import Footer from "./components/Footer.svelte";
+
+	import Home from "./pages/Home.svelte";
+	import Curation from "./pages/Curation.svelte";
+	import AdminPics from "./pages/AdminPics.svelte";
+	import AdminUsers from "./pages/AdminUsers.svelte";
+	import Testing from "./pages/Testing.svelte";
+
+	import { getCurrentRoute } from "./stores/route-store.svelte";
+	//import { user } from "./stores/user-store.js";
+
+	let pages = {
+		Home,
+		Curation,
+		AdminPics,
+		AdminUsers,
+		Testing,
+	};
+
+	type PK = keyof typeof pages;
+
+	let CurrentPage = $derived.by(() => pages[getCurrentRoute().page as PK]);
+
+	$effect(() => {
+		window.scroll({
+			top: 0,
+			left: 0,
+			behavior: "smooth",
+		});
+	});
+
+	onMount(() => {
+		//navFromUrl();
+	});
 </script>
 
 <main>
 	<div>
-		<a href="https://vite.dev" target="_blank" rel="noreferrer"> Blah </a>
-		<a href="https://svelte.dev" target="_blank" rel="noreferrer"> Blah </a>
+		<CurrentPage />
 	</div>
-	<h1>Vite + Svelte</h1>
-
-	<div class="card">
-		<Counter />
-	</div>
-
-	<p>
-		Check out <a
-			href="https://github.com/sveltejs/kit#readme"
-			target="_blank"
-			rel="noreferrer">SvelteKit</a
-		>, the official Svelte app framework powered by Vite!
-	</p>
-
-	<div class="read-the-docs">
-		<div class="foo">Click on the Vite and Svelte logos to learn more</div>
-	</div>
+	<Footer />
 </main>
 
 <style lang="scss">
-	.logo {
-		height: 6em;
-		padding: 1.5em;
-		will-change: filter;
-		transition: filter 300ms;
+	@use "./styles/custom-variables" as c;
+
+	main {
+		min-height: 100%;
+		display: grid;
+		grid-template-rows: 1fr auto;
 	}
-	.logo:hover {
-		filter: drop-shadow(0 0 2em #646cffaa);
-	}
-	.logo.svelte:hover {
-		filter: drop-shadow(0 0 2em #ff3e00aa);
-	}
-	.read-the-docs {
-		color: #888;
-		.foo {
-			color: red;
-		}
+
+	@media only screen and (width <= c.$bp-small) {
 	}
 </style>
