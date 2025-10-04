@@ -44,8 +44,8 @@ button {
 
 	&.secondary {
 		color: c.$body-background;
-		background-color: color.adjust(c.$main-color, $lightness: 15%);
-		outline: 1px solid color.adjust(c.$dark-background, $lightness: 10%);
+		background-color: color.adjust(c.$main-color, $lightness: 20%);
+		border: 1px solid color.adjust(c.$dark-background, $lightness: 25%);
 	}
 
 	&.narrow {

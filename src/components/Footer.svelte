@@ -1,9 +1,13 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import SignIn from "./SignIn.svelte";
+
+	let isOpenModal = $state(false);
+
 	let login = (e: Event) => {
 		e && e.preventDefault();
-		alert("Login clicked");
+		isOpenModal = true;
 	};
 
 	let yr = new Date().getFullYear() - 2000;
@@ -22,6 +26,8 @@
 	<a href="/" onclick={scrollToTop}>Top</a> | &copy;2001-{yr} Polson Company |
 	<a href="/" onclick={login}>Admin</a>
 </footer>
+
+<SignIn bind:isOpen={isOpenModal} />
 
 <style lang="scss">
 	@use "../styles/_custom-variables" as c;

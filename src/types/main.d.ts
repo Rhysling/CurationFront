@@ -9,15 +9,6 @@ type Route = {
 	children?: Route[];
 };
 
-type UserClient = {
-	id: number;
-	email: string;
-	fullName: string;
-	token: string;
-	isAdmin: boolean;
-	taxRate: number;
-};
-
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 
 type PageState = {
@@ -27,7 +18,3 @@ type PageState = {
 	startIndex: number;
 	endIndex: number;
 };
-
-interface ILogItemOut {
-	showDetail: boolean;
-}
