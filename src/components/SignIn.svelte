@@ -3,20 +3,19 @@
 <script lang="ts">
 	import type { AxiosResponse } from "axios";
 	import Modal from "./Modal.svelte";
-	import { user, getIsLoggedIn } from "../stores/user-store.svelte";
+	import { user, getIsLoggedIn, logOut } from "../stores/user-store.svelte";
 	import { getHttpClient as ax } from "../stores/httpclient-store.svelte";
 
 	let { isOpen = $bindable(false) } = $props();
 
-	//let isShowModal = $derived(isOpen);
 	let userLogin: UserLogin = $state({
 		email: "",
 		pw: "",
 	});
 
 	let isValidEmail: boolean | null = $state(null); // null / true / false
-	let emailValidationMessage = $state("Test error message here");
-	let submitErrorMessage = $state("Test error message here");
+	let emailValidationMessage = $state("");
+	let submitErrorMessage = $state("");
 
 	let showLogin = () => {
 		isOpen = true;
@@ -25,8 +24,8 @@
 
 	let resetUserLogin = () => {
 		isValidEmail = null;
-		emailValidationMessage = "Test error message here";
-		submitErrorMessage = "Test error message here";
+		emailValidationMessage = "";
+		submitErrorMessage = "";
 
 		userLogin = {
 			email: "",
@@ -35,7 +34,7 @@
 	};
 
 	let signOut = () => {
-		user.logOut();
+		logOut();
 	};
 
 	let validateEmail = function () {
@@ -57,15 +56,22 @@
 			emailValidationMessage = "Email address doesn't look right.";
 	};
 
-	let signIn = function () {
+	const signInOut = function () {
+		if (getIsLoggedIn()) {
+			signOut();
+			isOpen = false;
+			return;
+		}
+
 		validateEmail();
 
 		if (!isValidEmail) return;
 
 		ax()
-			.post("/api/Login", userLogin)
+			.post("/api/Users/Login", userLogin)
 			.then(function (response: AxiosResponse<UserClientRemote>) {
-				user.value = response.data;
+				if (response.data) user.value = response.data;
+
 				resetUserLogin();
 				isOpen = false;
 			})
@@ -86,30 +92,40 @@
 		resetUserLogin();
 		isOpen = false;
 	};
+
+	let focusEmail = () => document.getElementById("login-email")?.focus();
+
+	$effect(() => {
+		if (isOpen && !getIsLoggedIn()) focusEmail();
+	});
 </script>
 
 <Modal bind:isOpen>
 	<div class="sign-in">
-		<div class="title">Sign In</div>
-		<input
-			id="login-email"
-			type="email"
-			class="signin"
-			placeholder="Email"
-			bind:value={userLogin.email}
-			onblur={validateEmail}
-		/>
-		<div class="error">{emailValidationMessage}&nbsp;</div>
+		<div class="title">{getIsLoggedIn() ? "Sign Out" : "Sign In"}</div>
+		{#if getIsLoggedIn()}
+			<div>{user?.value?.fullName} ({user?.value?.email})</div>
+		{:else}
+			<input
+				id="login-email"
+				type="email"
+				class="signin"
+				placeholder="Email"
+				bind:value={userLogin.email}
+				onblur={validateEmail}
+			/>
+			<div class="error">{emailValidationMessage}&nbsp;</div>
 
-		<input
-			id="login-pw"
-			type="password"
-			class="signin"
-			placeholder="Password"
-			bind:value={userLogin.pw}
-		/>
+			<input
+				id="login-pw"
+				type="password"
+				class="signin"
+				placeholder="Password"
+				bind:value={userLogin.pw}
+			/>
+		{/if}
 		<div>
-			<button onclick={signIn} disabled={isValidEmail === false}>Go</button>
+			<button onclick={signInOut} disabled={isValidEmail === false}>Go</button>
 			<button onclick={cancel} class="secondary">Cancel</button>
 		</div>
 		<div class="error">{submitErrorMessage}&nbsp;</div>
@@ -121,7 +137,7 @@
 	@use "sass:color";
 
 	.title {
-		font-size: 1.5rem;
+		font-size: 1.75rem;
 		font-weight: bold;
 		text-align: center;
 		text-wrap: balance;

@@ -1,36 +1,41 @@
-export class LocalStore<T extends JsonValue> {
-	value = $state<T>() as T;
-	key = "";
+export const localStore = <T extends JsonValue | null>(key: string, initial: T | null) => {
 
-	constructor(key: string, value: T) {
-		this.key = key;
-		this.value = value;
+	const toString = (val: T) => JSON.stringify(val);
+	const toObj = JSON.parse;
+	const isLocalStorage = !!(window && window.localStorage);
 
-		if (window && window.localStorage) {
-			const item = localStorage.getItem(key);
-			if (item) this.value = this.toObj(item);
+	const saveItem = (val: T | null) => {
+		if (!isLocalStorage) return;
+
+		if (!val) {
+			localStorage.removeItem(key);
+			return;
 		}
 
-		$effect.root(() => {
-			$effect(() => {
-				if (value !== undefined && value !== null) { // Only store if not null/undefined
-					localStorage.setItem(this.key, this.toString(this.value));
-				} else {
-					localStorage.removeItem(key); // Remove if value becomes null/undefined
-				}
-			});
-		});
+		localStorage.setItem(key, toString(val));
+	};
+
+
+	const retrieveItem = (): T | null => {
+		const v = localStorage.getItem(key);
+		return v ? toObj(v) as T : null;
 	}
 
-	toString(value: T): string {
-		return JSON.stringify(value, null, 2);
+	if (initial) {
+		saveItem(initial);
+	} else {
+		initial = retrieveItem();
 	}
 
-	toObj(item: string): T {
-		return JSON.parse(item);
-	}
-}
+	let lsv: T | null = $state(initial);
 
-export function localStore<T extends JsonValue>(key: string, value: T) {
-	return new LocalStore(key, value);
+	return {
+		get value(): T | null {
+			return lsv;
+		},
+		set value(newValue: T | null) {
+			saveItem(newValue);
+			lsv = newValue;
+		},
+	}
 }

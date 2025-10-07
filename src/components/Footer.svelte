@@ -1,9 +1,11 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import { getName } from "../stores/user-store.svelte";
 	import SignIn from "./SignIn.svelte";
 
 	let isOpenModal = $state(false);
+	let displayName = $derived(getName() || "Sign In");
 
 	let login = (e: Event) => {
 		e && e.preventDefault();
@@ -24,7 +26,7 @@
 
 <footer>
 	<a href="/" onclick={scrollToTop}>Top</a> | &copy;2001-{yr} Polson Company |
-	<a href="/" onclick={login}>Admin</a>
+	<a href="/" onclick={login}>{displayName}</a>
 </footer>
 
 <SignIn bind:isOpen={isOpenModal} />

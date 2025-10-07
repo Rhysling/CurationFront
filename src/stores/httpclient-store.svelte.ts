@@ -7,7 +7,7 @@ const httpClient = $derived.by(() => {
 
 	let opts = { baseURL };
 
-	if (user.value.token)
+	if (user.value?.token)
 		opts = { ...opts, ...{ headers: { Authorization: `Bearer ${user.value.token}` } } };
 
 	let instance = axios.create(opts);

@@ -1,5 +1,4 @@
-//import { writable, derived, get } from "svelte/store";
-//import { user } from "./user-store";
+import { user } from "./user-store.svelte";
 
 const baseRoutes: Route = {
 	title: "Home",
@@ -37,16 +36,14 @@ const baseRoutes: Route = {
 };
 
 
-function filterAdminRoutes(node: Route) {
+const filterAdminRoutes = (node: Route) => {
 	if (node.children)
 		node.children = node.children.filter(a => a.isAdmin !== true).map(a => filterAdminRoutes(a));
 
 	return node;
-}
+};
 
-
-
-function findRoute(routeRoot: Route, path: string): Route {
+const findRoute = (routeRoot: Route, path: string): Route => {
 	let cr: Route | undefined;
 
 	function traverse(node: Route): Route | undefined {
@@ -69,7 +66,8 @@ function findRoute(routeRoot: Route, path: string): Route {
 	cr = traverse(routeRoot);
 
 	return cr || routeRoot;
-}
+};
+
 
 // Stores
 
@@ -78,7 +76,7 @@ export const currentParams = $state({ paramObj: {} });
 
 let routes = $derived.by(() => {
 	let r = { ...baseRoutes };
-	// if (!user..isAdmin)
+	// if (!user.value?.isAdmin)
 	// 	r = filterAdminRoutes(r)
 	return r;
 });

@@ -15,11 +15,18 @@ const getEmptyUser = () => {
 };
 
 const uStore = localStore<UserClientRemote>("user", getEmptyUser());
-const isLoggedIn = $derived(uStore.value.token !== "");
+const isLoggedIn = $derived(!!uStore.value?.token);
+const userName = $derived(uStore.value?.fullName || uStore.value?.email);
 
 export const user = {
-	...uStore,
-	logOut: () => uStore.value = getEmptyUser()
+	get value(): UserClientRemote {
+		return uStore.value || getEmptyUser();
+	},
+	set value(newValue: UserClientRemote) {
+		uStore.value = newValue;
+	},
 };
 
+export const logOut = () => user.value = { ...getEmptyUser() };
 export const getIsLoggedIn = () => isLoggedIn;
+export const getName = () => userName;
