@@ -13,26 +13,27 @@ type INullable<T> = T | null | undefined;
 
 // NAMESPACE: temp
 
-type UserClientRemote =
-	{
-		id: number
-		email: string;
-		fullName: string;
-		token: string;
-		isAdmin: boolean;
-		isDisabled: boolean;
-		isDeleted: boolean;
-	}
-
-type UserLogin =
-	{
-		email: string;
-		pw: string;
-	}
-
-interface IEditPropertyRequest {
-	objectId: INullable<string>;
-	propName: INullable<string>;
-	value: INullable<string>;
+type UserClientRemote = {
+	id: number;
+	email: string;
+	fullName: string;
+	token: string;
+	isAdmin: boolean;
+	isDisabled: boolean;
+	isDeleted: boolean;
 }
 
+type UserLogin = {
+	email: string;
+	pw: string;
+}
+
+type PictureItem = {
+	id: number;
+	fileName: string;
+	seq: number;
+	keywords: string[];
+	description: INullable<string>;
+	isMissing: boolean;
+	isDeleted: boolean;
+}

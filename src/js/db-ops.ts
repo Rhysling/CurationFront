@@ -1,6 +1,19 @@
 import type { AxiosResponse } from "axios";
 import { getHttpClient as ax } from "../stores/httpclient-store.svelte";
 
+// Pictures
+//GetPublicList
+export const picsGetPublicList = async () => {
+	try {
+		const response: AxiosResponse<PictureItem[]> = await ax().get("/api/Pictures/GetPublicList");
+		return response;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+
+// Users
 export const postLogin = async (userLogin: UserLogin) => {
 	try {
 		const response: AxiosResponse<UserClientRemote | undefined> = await ax().post("/api/Login", userLogin);
@@ -11,7 +24,7 @@ export const postLogin = async (userLogin: UserLogin) => {
 	}
 };
 
-
+// Testing
 export const getSecuredValue = async () => {
 	try {
 		const response: AxiosResponse<string> = await ax().get("/api/Test/GetSecuredValue");
@@ -19,7 +32,7 @@ export const getSecuredValue = async () => {
 	} catch (error) {
 		console.error(error);
 	}
-}
+};
 
 export const getAdminValue = async () => {
 	try {
@@ -28,7 +41,7 @@ export const getAdminValue = async () => {
 	} catch (error) {
 		console.error(error);
 	}
-}
+};
 
 // ax()
 // 		.post("/api/Login", userLogin)

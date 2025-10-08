@@ -76,8 +76,8 @@ export const currentParams = $state({ paramObj: {} });
 
 let routes = $derived.by(() => {
 	let r = { ...baseRoutes };
-	// if (!user.value?.isAdmin)
-	// 	r = filterAdminRoutes(r)
+	if (!user.value?.isAdmin)
+		r = filterAdminRoutes(r)
 	return r;
 });
 
