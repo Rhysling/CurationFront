@@ -1,7 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	let { isOpen = $bindable(false), children } = $props();
+	let { isOpen = $bindable(false), children = null } = $props();
 
 	const hideModal = () => (isOpen = false);
 
@@ -75,9 +75,13 @@
 	}
 
 	.content {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 		min-width: 400px;
 		min-height: 200px;
-		max-width: 80vw;
-		max-height: 80vh;
+		max-width: 90vw;
+		max-height: 90vh;
 	}
 </style>

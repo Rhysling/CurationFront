@@ -3,9 +3,12 @@
 <script lang="ts">
 	import { picsGetPublicList } from "../js/db-ops";
 	import Carousel from "../components/carousel/Carousel.svelte";
+	import Modal from "../components/Modal.svelte";
 	import Menu from "../components/Menu.svelte";
 
 	let picList = $state([] as PictureItem[]);
+	let isOpenModal = $state(false);
+	let currentPic: PictureItem | null = $state(null);
 
 	let loadPicList = async () => {
 		try {
@@ -19,7 +22,27 @@
 
 	loadPicList();
 
-	let carousel;
+	type CarouselOps = {
+		next: () => void;
+		prev: () => void;
+		goTo: (slide: number) => void;
+		getCurrentSlide: () => number;
+	};
+
+	let carousel: CarouselOps;
+
+	const enlarge = (e: Event) => {
+		e.preventDefault();
+		currentPic = null;
+
+		try {
+			currentPic = picList[carousel.getCurrentSlide()];
+		} catch (error) {
+			console.error(error);
+		}
+
+		isOpenModal = true;
+	};
 </script>
 
 <div class="title">Curated Pictures</div>
@@ -27,14 +50,19 @@
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div class="car">
-	<Carousel slides={picList} containerClass={"carousel-container"}>
+	<Carousel
+		bind:this={carousel}
+		slides={picList}
+		containerClass={"carousel-container"}
+	>
 		{#snippet slide({ slide })}
 			<img
+				class="carousel-img"
 				src={"./pics/" + slide.fileName}
 				alt={slide.description}
 				onclick={(e) => {
-					e.stopPropagation();
-					alert("Clicked!");
+					e.stopImmediatePropagation();
+					enlarge(e);
 				}}
 			/>
 			<div class="slide-description">{slide.description}</div>
@@ -85,6 +113,25 @@
 </div>
 
 <Menu />
+<Modal bind:isOpen={isOpenModal}>
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<div class="big-picture">
+		{#if currentPic}
+			<img
+				class="modal-img"
+				src={"./pics/" + currentPic.fileName}
+				alt={currentPic.description}
+			/>
+		{:else}
+			<div
+				style="font-size: 5rem;font-weight:bold;text-align:center;margin:0 auto;"
+			>
+				No Picture
+			</div>
+		{/if}
+	</div>
+</Modal>
 
 <style lang="scss">
 	@use "../styles/custom-variables" as c;
@@ -137,15 +184,25 @@
 		}
 	}
 
-	img {
+	.carousel-img {
 		display: block;
-		//object-fit: contain;
 		width: 100%;
-		margin: 1rem auto 0;
+		margin: 0 auto;
+		max-height: 80vh;
+	}
 
-		// &:hover {
-		// 	transform: scale(1.5);
-		// }
+	.big-picture {
+		width: 90vw;
+		height: 90vw;
+	}
+
+	.modal-img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		max-width: 90vw;
+		max-height: 90vh;
+		object-fit: contain;
 	}
 
 	.slide-description {

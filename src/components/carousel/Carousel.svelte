@@ -48,8 +48,10 @@
 	let scrollTo: (slide: number) => void;
 	let navigate: (slide: number) => void;
 
-	const next = () => canScrollNext && navigate(currentSlide + 1);
-	const prev = () => canScrollPrev && navigate(currentSlide - 1);
+	export const next = () => canScrollNext && navigate(currentSlide + 1);
+	export const prev = () => canScrollPrev && navigate(currentSlide - 1);
+	export const goTo = (slide: number) => navigate(slide);
+	export const getCurrentSlide = () => currentSlide;
 
 	const onInit = (event: OnInitEvent) => {
 		scrollTo = event.scrollTo;
@@ -80,8 +82,21 @@
 		"aria-controls": `${id}-slides`,
 		"aria-label": type === "prev" ? "Previous slide" : "Next slide",
 	});
+
+	const handleKeydown = (e: KeyboardEvent) => {
+		if (!mounted) return;
+
+		if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+			e.preventDefault();
+			next();
+		} else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+			e.preventDefault();
+			prev();
+		}
+	};
 </script>
 
+<svelte:window onkeydown={handleKeydown} />
 {#if slides.length > 0}
 	<div
 		aria-roledescription="carousel"
