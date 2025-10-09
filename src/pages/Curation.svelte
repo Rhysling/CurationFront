@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import { picsGetPublicList } from "../js/db-ops";
-	import Carousel from "svelte-light-carousel";
+	import Carousel from "../components/carousel/Carousel.svelte";
 	import Menu from "../components/Menu.svelte";
 
 	let picList = $state([] as PictureItem[]);
