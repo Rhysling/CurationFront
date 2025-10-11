@@ -1,7 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { picsGetPublicList } from "../js/db-ops";
+	import { getPicPublicList } from "../js/db-ops";
 	import Carousel from "../components/carousel/Carousel.svelte";
 	import Modal from "../components/Modal.svelte";
 	import Menu from "../components/Menu.svelte";
@@ -12,7 +12,7 @@
 
 	let loadPicList = async () => {
 		try {
-			picList = ((await picsGetPublicList())?.data || []).sort(
+			picList = ((await getPicPublicList())?.data || []).sort(
 				(a, b) => a.seq - b.seq,
 			);
 		} catch (error) {

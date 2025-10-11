@@ -1,10 +1,9 @@
 import type { AxiosResponse } from "axios";
 import { getHttpClient as ax } from "../stores/httpclient-store.svelte";
 
-// Pictures
-//GetPublicList
+// Pictures ***
 
-export const picsGetPublicList = async () => {
+export const getPicPublicList = async () => {
 	try {
 		const response: AxiosResponse<PictureItem[]> = await ax().get("/api/Pictures/GetPublicList");
 		return response;
@@ -13,16 +12,50 @@ export const picsGetPublicList = async () => {
 	}
 };
 
-export const picsGetAdminList = async () => {
+export const getPicAdminList = async () => {
 	try {
-		const response: AxiosResponse<PictureItemEdit[]> = await ax().get("/api/Pictures/GetAll");
+		const response: AxiosResponse<PictureItem[]> = await ax().get("/api/Pictures/GetAll");
 		return response;
 	} catch (error) {
 		console.error(error);
 	}
 };
 
-// Users
+export const getCleanPics = async () => {
+	try {
+		const response: AxiosResponse<PictureItem[]> = await ax().get("/api/Pictures/GetCleanPics");
+		return response;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const postPic = async (picItem: PictureItem) => {
+	try {
+		const response: AxiosResponse<PictureItem | undefined> = await ax().post("/api/Pictures/Save", picItem);
+		return response;
+	}
+	catch (error) {
+		console.error(error);
+	}
+};
+
+export const postPicWithImg = async (picWithImg: FormData) => {
+	try {
+		const response: AxiosResponse<PictureItem | undefined> = await ax().post("/api/Pictures/SaveWithImg", picWithImg, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		});
+		return response;
+	}
+	catch (error) {
+		console.error(error);
+	}
+};
+
+// Users ***
+
 export const postLogin = async (userLogin: UserLogin) => {
 	try {
 		const response: AxiosResponse<UserClientRemote | undefined> = await ax().post("/api/Login", userLogin);
@@ -33,7 +66,8 @@ export const postLogin = async (userLogin: UserLogin) => {
 	}
 };
 
-// Testing
+// Testing ***
+
 export const getSecuredValue = async () => {
 	try {
 		const response: AxiosResponse<string> = await ax().get("/api/Test/GetSecuredValue");
@@ -51,45 +85,3 @@ export const getAdminValue = async () => {
 		console.error(error);
 	}
 };
-
-// ax()
-// 		.post("/api/Login", userLogin)
-// 		.then(function (response: AxiosResponse<UserClientRemote>) {
-// 			user.value = response.data;
-// 			resetUserLogin();
-// 			isOpen = false;
-// 		})
-// 		.catch(function (error) {
-// 			if (error?.response?.status) {
-// 				let s = +error.response.status;
-// 				submitErrorMessage =
-// 					s >= 400 && s < 500
-// 						? "Email/password incorrect."
-// 						: "Something went wrong.";
-// 			} else {
-// 				submitErrorMessage = "Something went wrong.";
-// 			}
-// 		});
-// 		}
-
-// const getUsersFeeds = async () => {
-// 	try {
-// 		const response: AxiosResponse<IUsersFeedsVM> = await $ax.get(
-// 			"/api/Stats/UsersFeeds",
-// 		);
-// 		ufvm = response.data;
-// 	} catch (error) {
-// 		console.error(error);
-// 	}
-// }
-
-// const getFeedsAsync = async (uid: string) => {
-// 	try {
-// 		const response: AxiosResponse<IFeed[]> = await $ax.get(
-// 			`/api/User/GetFeedsForUser/${uid}`,
-// 		);
-// 		return response.data;
-// 	} catch (error) {
-// 		console.error(error);
-// 	}
-// };

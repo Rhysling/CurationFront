@@ -1,18 +1,32 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { picsGetAdminList } from "../js/db-ops";
+	import { getPicAdminList, postPic, postPicWithImg } from "../js/db-ops";
 	import Menu from "../components/Menu.svelte";
 	import EditPic from "../components/EditPic.svelte";
+
+	const getEmptyPicItem = () => {
+		const p: PictureItem = {
+			id: 0,
+			fileName: "",
+			seq: 0,
+			keywords: [],
+			description: "",
+			isMissing: false,
+			isDeleted: false,
+		};
+		return { ...p };
+	};
 
 	let picList = $state([] as PictureItem[]);
 	let isListEditMode = $state(false);
 	let editingPicId = $state(0);
-	// let isOpenModal = $state(false);
 
-	let loadPicList = async () => {
+	let picListDisplay: PictureItem[] = $derived([getEmptyPicItem(), ...picList]);
+
+	const loadPicList = async () => {
 		try {
-			picList = ((await picsGetAdminList())?.data || []).sort(
+			picList = ((await getPicAdminList())?.data || []).sort(
 				(a, b) => a.seq - b.seq,
 			);
 		} catch (error) {
@@ -20,16 +34,24 @@
 		}
 	};
 
-	var setEditMode = (picId: number, isEdit: boolean) => {
+	const setEditMode = (picId: number, isEdit: boolean) => {
 		editingPicId = picId;
 		isListEditMode = isEdit;
 	};
 
-	var saveItem = (pic: PictureItem) => {
+	const savePic = async (pic: PictureItem) => {
 		let p = picList.find((a) => a.id === pic.id);
 		if (p) p = pic;
-		alert(p?.fileName || "Pic Missing!");
-		// SaveToDb()
+		await postPic(pic);
+	};
+
+	const savePicWithImg = async (form: FormData) => {
+		const savedPic = (await postPicWithImg(form))?.data;
+		if (savedPic) {
+			const ix = picList.findIndex((a) => a.id === savedPic.id);
+			if (ix >= 0) picList[ix] = savedPic;
+			else picList = [savedPic, ...picList];
+		}
 	};
 
 	loadPicList();
@@ -38,13 +60,14 @@
 <div class="title">Admin Pictures Here</div>
 
 <div class="pic-list">
-	{#each picList as pic, ix (pic.id)}
+	{#each picListDisplay as pic, ix (pic.id)}
 		<EditPic
 			picItem={pic}
 			{isListEditMode}
 			{editingPicId}
 			{setEditMode}
-			{saveItem}
+			{savePic}
+			{savePicWithImg}
 		/>
 	{/each}
 </div>

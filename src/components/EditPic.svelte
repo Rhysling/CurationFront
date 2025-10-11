@@ -1,12 +1,15 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import PicDrop from "./PicDrop.svelte";
+
 	type EditPicProps = {
 		picItem: PictureItem;
 		isListEditMode: boolean;
 		editingPicId: number;
 		setEditMode: (picId: number, isEdit: boolean) => void;
-		saveItem: (pic: PictureItem) => void;
+		savePic: (pic: PictureItem) => void;
+		savePicWithImg: (form: FormData) => void;
 	};
 
 	let {
@@ -14,15 +17,45 @@
 		isListEditMode,
 		editingPicId,
 		setEditMode,
-		saveItem,
+		savePic,
+		savePicWithImg,
 	}: EditPicProps = $props();
+
+	const getEmptyPicItem = () => {
+		const p: PictureItem = {
+			id: 0,
+			fileName: "",
+			seq: 0,
+			keywords: [],
+			description: "",
+			isMissing: false,
+			isDeleted: false,
+		};
+		return { ...p };
+	};
 
 	let pic: PictureItem = $state({ ...picItem });
 	let isEditMode = $state(false);
+
+	const setItemEditMode = (picId: number, isEdit: boolean) => {
+		setEditMode(picId, isEdit);
+
+		if (picId === 0) pic = getEmptyPicItem();
+
+		isEditMode = isEdit;
+	};
 </script>
 
-<div class="pic-img" style:background-image={`url("pics/${pic.fileName}")`}>
-	&nbsp;
+<div
+	class="pic-img"
+	style:background-image={pic.fileName ? `url("pics/${pic.fileName}")` : null}
+	style="background-color:pink;"
+>
+	{#if isListEditMode && pic.id === editingPicId}
+		<PicDrop bind:picItem={pic} {savePicWithImg} {setItemEditMode} />
+	{:else}
+		&nbsp;
+	{/if}
 	<div
 		class="cover"
 		class:visible={isListEditMode && pic.id !== editingPicId}
@@ -35,9 +68,9 @@
 		>
 		{#if isEditMode}<input
 				type="text"
-				class="warning"
+				class="info"
 				style:width="4rem"
-				value={pic.seq}
+				bind:value={pic.seq}
 			/>
 		{:else}<span>Seq: {pic.seq}</span>
 		{/if}
@@ -47,7 +80,7 @@
 		{#if isEditMode}<input
 				type="text"
 				class="info"
-				value={pic.description}
+				bind:value={pic.description}
 				placeholder="Title"
 			/>
 		{:else}Title: {pic.description}
@@ -56,9 +89,12 @@
 	<div>
 		{#if isEditMode}<input
 				type="text"
-				class="error"
-				value={pic.keywords.join(",")}
-				placeholder="Title"
+				class="plain"
+				bind:value={
+					() => pic.keywords.join(","),
+					(v) => (pic.keywords = v.split(",").map((a) => a.trim()))
+				}
+				placeholder="key,words,here"
 			/>
 		{:else}Keywords: {pic.keywords.join(",")}
 		{/if}
@@ -84,7 +120,7 @@
 		<div>
 			<button
 				onclick={() => {
-					saveItem(pic);
+					savePic(pic);
 					setEditMode(0, false);
 					isEditMode = false;
 				}}>Save</button

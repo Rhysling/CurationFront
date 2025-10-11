@@ -1,6 +1,7 @@
 @use "sass:color";
 
 $main-color: rgb(31, 141, 214);
+$main-darker: color.adjust($main-color, $lightness: -10%);
 $secondary-color: rgb(66, 184, 221);
 
 $body-text: #222222;
