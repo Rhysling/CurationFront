@@ -14,7 +14,10 @@ const getEmptyUser = () => {
 	return { ...u };
 };
 
-const uStore = localStore<UserClientRemote>("user", getEmptyUser());
+const uStore = localStore<UserClientRemote>("user", null);
+
+if (!uStore.value) uStore.value = getEmptyUser();
+
 const isLoggedIn = $derived(!!uStore.value?.token);
 const userName = $derived(uStore.value?.fullName || uStore.value?.email);
 

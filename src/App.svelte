@@ -12,7 +12,7 @@
 	import AdminUsers from "./pages/AdminUsers.svelte";
 	import Testing from "./pages/Testing.svelte";
 
-	import { getCurrentRoute } from "./stores/route-store.svelte";
+	import { getCurrentRoute, navFromUrl } from "./stores/route-store.svelte";
 	//import { user } from "./stores/user-store.js";
 
 	let pages = {
@@ -36,7 +36,7 @@
 	});
 
 	onMount(() => {
-		//navFromUrl();
+		navFromUrl();
 	});
 </script>
 
