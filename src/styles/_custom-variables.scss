@@ -7,7 +7,7 @@ $body-text: #333333;
 $body-background: #e6e6e6;
 $dark-text: #2d3e50;
 $light-text: #aaaaaa;
-$light-background: #cccccc;
+$light-background: #ffffff;
 $dark-background: #2d3e50;
 $disabled-text: #999999;
 
@@ -17,8 +17,11 @@ $color-success-bg: color.adjust($color-success, $lightness: 50%);
 $color-error: rgb(202, 60, 60);
 $color-error-bg: rgb(255, 212, 209);
 
-$color-warning: rgb(223, 117, 20);
-$color-warning-bg: color.adjust($color-warning, $lightness: 30%);
+$color-warning: hsl(29, 91%, 49%);
+$color-warning-bg: color.adjust($color-warning, $lightness: 40%);
+
+$color-info: $main-color;
+$color-info-bg: color.adjust($color-info, $lightness: 50%);
 
 $gray-light: $body-text;
 $gray-lighter: color.adjust($dark-text, $lightness: 70%);

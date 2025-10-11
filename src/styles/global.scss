@@ -99,8 +99,34 @@ textarea {
 	border-radius: 2px;
 }
 
-input:disabled {
-	color: c.$disabled-text;
+input {
+	&.info {
+		border-color: c.$color-info;
+		outline: 1px solid c.$color-info;
+		background-color: c.$color-info-bg;
+	}
+
+	&.warning {
+		border-color: c.$color-warning;
+		outline: 1px solid c.$color-warning;
+		background-color: c.$color-warning-bg;
+	}
+
+	&.error {
+		border-color: c.$color-error;
+		outline: 1px solid c.$color-error;
+		background-color: c.$color-error-bg;
+	}
+
+	&:focus {
+		box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.5);
+		outline-width: 2px;
+		outline-offset: 1px;
+	}
+
+	&:disabled {
+		color: c.$disabled-text;
+	}
 }
 
 #app {

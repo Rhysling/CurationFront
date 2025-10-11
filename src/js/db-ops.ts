@@ -3,6 +3,7 @@ import { getHttpClient as ax } from "../stores/httpclient-store.svelte";
 
 // Pictures
 //GetPublicList
+
 export const picsGetPublicList = async () => {
 	try {
 		const response: AxiosResponse<PictureItem[]> = await ax().get("/api/Pictures/GetPublicList");
@@ -12,6 +13,14 @@ export const picsGetPublicList = async () => {
 	}
 };
 
+export const picsGetAdminList = async () => {
+	try {
+		const response: AxiosResponse<PictureItemEdit[]> = await ax().get("/api/Pictures/GetAll");
+		return response;
+	} catch (error) {
+		console.error(error);
+	}
+};
 
 // Users
 export const postLogin = async (userLogin: UserLogin) => {

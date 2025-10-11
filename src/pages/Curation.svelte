@@ -213,10 +213,10 @@
 	}
 
 	.title {
-		font-size: 3rem;
+		font-size: 2rem;
 		font-weight: bold;
 		text-align: center;
-		margin: 2rem auto;
+		margin: 1rem auto;
 	}
 
 	@media only screen and (width <= c.$bp-small) {

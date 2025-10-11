@@ -26,6 +26,7 @@ export interface Props<TSlide> {
 	axis?: ResponsiveProperty<"x" | "y">;
 	dragFree?: boolean;
 	disableNativeScroll?: ResponsiveProperty<boolean>;
+	disableArrowKeyNav?: boolean;
 	oneAtTime?: boolean;
 	autoHeight?: boolean;
 	autoPlay?: number;

@@ -19,6 +19,7 @@
 		axis = { default: "x" },
 		dragFree = false,
 		disableNativeScroll = { default: false },
+		disableArrowKeyNav = false,
 		oneAtTime = false,
 		autoHeight = false,
 		autoPlay = 0,
@@ -85,6 +86,7 @@
 
 	const handleKeydown = (e: KeyboardEvent) => {
 		if (!mounted) return;
+		if (disableArrowKeyNav) return;
 
 		if (e.key === "ArrowRight" || e.key === "ArrowDown") {
 			e.preventDefault();

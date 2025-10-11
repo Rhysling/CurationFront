@@ -148,10 +148,11 @@
 		flex-direction: column;
 		flex-wrap: nowrap;
 		align-items: center;
-		padding: 1.2rem 0;
+		padding: 1.2rem;
 		background-color: c.$body-background;
 		border: 1px solid c.$secondary-color;
 		border-radius: 0.5rem;
+		width: 400px;
 
 		input {
 			margin: 1rem 0 0;

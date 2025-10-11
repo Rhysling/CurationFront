@@ -18,3 +18,9 @@ type PageState = {
 	startIndex: number;
 	endIndex: number;
 };
+
+// type Editing = {
+// 	isEditMode: boolean | undefined;
+// };
+
+// type PictureItemEdit = PictureItem & Editing;
