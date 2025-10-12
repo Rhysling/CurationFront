@@ -12,6 +12,8 @@
 		savePicWithImg: (form: FormData) => void;
 	};
 
+	type ValidationState = boolean | undefined;
+
 	let {
 		picItem,
 		isListEditMode,
@@ -34,15 +36,60 @@
 		return { ...p };
 	};
 
+	// *** State ***
 	let pic: PictureItem = $state({ ...picItem });
 	let isEditMode = $state(false);
+	let isValidSeq: ValidationState = $state(undefined);
+	let isValidDescription: ValidationState = $state(undefined);
+	let isValidAll: boolean = $derived(!!isValidSeq && !!isValidDescription);
 
+	// ** Validations **
+	const validateSeq = () => (isValidSeq = !isNaN(pic.seq));
+	const validateDescription = () => (isValidDescription = !!pic.description);
+	const validateAll = () => {
+		validateSeq();
+		validateDescription();
+	};
+
+	// ** Edit / Save / Cancel **
+	const edit = () => {
+		setEditMode(pic.id, true);
+		isEditMode = true;
+	};
+
+	const save = () => {
+		validateAll();
+		if (isValidAll) {
+			if (pic.description) pic.description = pic.description.trim();
+			savePic(pic);
+			setEditMode(0, false);
+			isValidSeq = undefined;
+			isValidDescription = undefined;
+			isEditMode = false;
+		}
+	};
+
+	const cancel = () => {
+		pic = { ...picItem };
+		setEditMode(0, false);
+		isValidSeq = undefined;
+		isValidDescription = undefined;
+		isEditMode = false;
+	};
+
+	// ** PicDrop functions **
 	const setItemEditMode = (picId: number, isEdit: boolean) => {
 		setEditMode(picId, isEdit);
 
 		if (picId === 0) pic = getEmptyPicItem();
 
 		isEditMode = isEdit;
+	};
+
+	const savePicWithImgDZ = (form: FormData, newPic: PictureItem) => {
+		savePicWithImg(form);
+		//setTimeout(() => (pic.fileName = fileName), 600);
+		pic = newPic;
 	};
 </script>
 
@@ -52,7 +99,13 @@
 	style="background-color:pink;"
 >
 	{#if isListEditMode && pic.id === editingPicId}
-		<PicDrop bind:picItem={pic} {savePicWithImg} {setItemEditMode} />
+		<PicDrop
+			{pic}
+			{isValidAll}
+			{validateAll}
+			{savePicWithImgDZ}
+			{setItemEditMode}
+		/>
 	{:else}
 		&nbsp;
 	{/if}
@@ -64,12 +117,15 @@
 <div class="pic-info">
 	<div>
 		<span style:font-style={pic.id === 5 ? "italic" : "normal"}
-			>Id: {pic.id === 5 ? "New" : pic.id}</span
+			>Id: {pic.id === 0 ? "New" : pic.id}</span
 		>
 		{#if isEditMode}<input
 				type="text"
-				class="info"
+				class:info={isValidSeq === undefined}
+				class:success={isValidSeq === true}
+				class:error={isValidSeq === false}
 				style:width="4rem"
+				onblur={validateSeq}
 				bind:value={pic.seq}
 			/>
 		{:else}<span>Seq: {pic.seq}</span>
@@ -79,8 +135,11 @@
 	<div>
 		{#if isEditMode}<input
 				type="text"
-				class="info"
-				bind:value={pic.description}
+				class:info={isValidDescription === undefined}
+				class:success={isValidDescription === true}
+				class:error={isValidDescription === false}
+				onblur={validateDescription}
+				bind:value={() => pic.description, (v) => (pic.description = v || "")}
 				placeholder="Title"
 			/>
 		{:else}Title: {pic.description}
@@ -101,14 +160,13 @@
 	</div>
 	<div>
 		{#if isEditMode}<span>Is Deleted</span>
-			<input type="checkbox" checked={pic.isDeleted} style="width:auto;" />
-		{:else if pic.isDeleted}<span style="font-style:italic;">Deleted</span>{/if}
-		{#if pic.isMissing}
-			<span style="font-style:italic;font-weight:bold;font-color:red;"
-				>Deleted</span
-			>
+			<input type="checkbox" bind:checked={pic.isDeleted} style="width:auto;" />
+		{:else}
+			{#if pic.isDeleted}<span class="warning">Deleted</span>{/if}
+			{#if pic.isMissing}<span class="error">Missing</span>{/if}
+			{#if !pic.description && pic.id != 0}<span class="error">Orphan</span
+				>{/if}
 		{/if}
-		&nbsp;
 	</div>
 	<div
 		class="cover"
@@ -118,26 +176,10 @@
 <div class="pic-controls">
 	{#if isEditMode}
 		<div>
-			<button
-				onclick={() => {
-					savePic(pic);
-					setEditMode(0, false);
-					isEditMode = false;
-				}}>Save</button
-			>
-			<button
-				onclick={() => {
-					setEditMode(0, false);
-					isEditMode = false;
-				}}>Cancel</button
-			>
+			<button onclick={save}>Save</button>
+			<button onclick={cancel}>Cancel</button>
 		</div>
-	{:else}<button
-			onclick={() => {
-				setEditMode(pic.id, true);
-				isEditMode = true;
-			}}>Edit</button
-		>
+	{:else}<button onclick={edit}>Edit</button>
 	{/if}
 	<div
 		class="cover"
@@ -175,6 +217,7 @@
 			// background-color: c.$color-info-bg;
 			font-size: 0.9rem;
 			width: min(300px, 80%);
+			padding: 0.2rem 0.4rem;
 		}
 	}
 
@@ -200,6 +243,22 @@
 
 		&.visible {
 			display: block;
+		}
+	}
+
+	span {
+		&.error {
+			font-style: italic;
+			font-weight: bold;
+			color: c.$color-error;
+			margin: 0 1rem 0 0;
+		}
+
+		&.warning {
+			font-style: italic;
+			font-weight: bold;
+			color: c.$color-warning;
+			margin: 0 1rem 0 0;
 		}
 	}
 

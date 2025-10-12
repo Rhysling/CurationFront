@@ -4,6 +4,7 @@
 	import { getPicAdminList, postPic, postPicWithImg } from "../js/db-ops";
 	import Menu from "../components/Menu.svelte";
 	import EditPic from "../components/EditPic.svelte";
+	import CleanPics from "../components/CleanPics.svelte";
 
 	const getEmptyPicItem = () => {
 		const p: PictureItem = {
@@ -21,8 +22,9 @@
 	let picList = $state([] as PictureItem[]);
 	let isListEditMode = $state(false);
 	let editingPicId = $state(0);
+	let emptyPicItem = $state(getEmptyPicItem());
 
-	let picListDisplay: PictureItem[] = $derived([getEmptyPicItem(), ...picList]);
+	let picListDisplay: PictureItem[] = $derived([emptyPicItem, ...picList]);
 
 	const loadPicList = async () => {
 		try {
@@ -50,14 +52,23 @@
 		if (savedPic) {
 			const ix = picList.findIndex((a) => a.id === savedPic.id);
 			if (ix >= 0) picList[ix] = savedPic;
-			else picList = [savedPic, ...picList];
+			else {
+				emptyPicItem = getEmptyPicItem();
+				picList = [savedPic, ...picList];
+			}
 		}
+	};
+
+	const refreshPicList = (pics: PictureItem[]) => {
+		picList = pics.sort((a, b) => a.seq - b.seq);
 	};
 
 	loadPicList();
 </script>
 
 <div class="title">Admin Pictures Here</div>
+
+<CleanPics {picList} {isListEditMode} {refreshPicList} />
 
 <div class="pic-list">
 	{#each picListDisplay as pic, ix (pic.id)}

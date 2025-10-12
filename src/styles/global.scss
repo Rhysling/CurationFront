@@ -106,6 +106,12 @@ input {
 		background-color: c.$color-info-bg;
 	}
 
+	&.success {
+		border-color: c.$color-success;
+		outline: 1px solid c.$color-success;
+		background-color: c.$color-success-bg;
+	}
+
 	&.warning {
 		border-color: c.$color-warning;
 		outline: 1px solid c.$color-warning;

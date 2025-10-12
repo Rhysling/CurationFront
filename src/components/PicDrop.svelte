@@ -13,14 +13,18 @@
 	};
 
 	type PicDropProps = {
-		picItem: PictureItem;
-		savePicWithImg: (form: FormData) => void;
+		pic: PictureItem;
+		isValidAll: boolean;
+		validateAll: () => void;
+		savePicWithImgDZ: (form: FormData, newPic: PictureItem) => void;
 		setItemEditMode: (picId: number, isEdit: boolean) => void;
 	};
 
 	let {
-		picItem = $bindable(),
-		savePicWithImg,
+		pic,
+		isValidAll,
+		validateAll,
+		savePicWithImgDZ,
 		setItemEditMode,
 	}: PicDropProps = $props();
 
@@ -36,20 +40,24 @@
 			return;
 		}
 
-		if (!picItem.description) {
-			alert("Need a title first.");
+		if (!acceptedFiles || !acceptedFiles.length) {
+			alert("No file to upload.");
 			return;
 		}
 
-		if (acceptedFiles.length) {
-			picItem.fileName = acceptedFiles[0].name;
-			//console.log($state.snapshot(picItem));
-			const formData = new FormData();
-			formData.append("file", acceptedFiles[0] as any);
-			formData.append("picItemJSON", JSON.stringify(picItem));
-			savePicWithImg(formData);
-			setItemEditMode(0, false);
-		}
+		validateAll();
+		if (!isValidAll) return;
+
+		let picLocal = { ...pic };
+		console.log({ picLocal });
+
+		picLocal.fileName = acceptedFiles[0].name;
+		//console.log($state.snapshot(picItem));
+		const formData = new FormData();
+		formData.append("file", acceptedFiles[0] as any);
+		formData.append("picItemJSON", JSON.stringify(picLocal));
+		savePicWithImgDZ(formData, picLocal);
+		setItemEditMode(picLocal.id, false);
 
 		//console.log({ acceptedFiles, fileRejections });
 	};
