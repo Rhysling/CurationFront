@@ -43,6 +43,32 @@
 
 		isOpenModal = true;
 	};
+
+	// Test scrolling
+
+	const scrollUp = () => {
+		let el = document.getElementsByClassName("carousel-class")?.item(0);
+		if (!el) return;
+		el?.scrollBy({ top: 40, left: 0, behavior: "smooth" });
+		console.log({
+			scrollHeight: el.scrollHeight,
+			scrollTop: el.scrollTop,
+			clientHeight: el.clientHeight,
+		});
+		if (el.scrollHeight - el.scrollTop === el.clientHeight) alert("At top");
+	};
+
+	const scrollDown = () => {
+		let el = document.getElementsByClassName("carousel-class")?.item(0);
+		if (!el) return;
+		el.scrollBy({ top: -40, left: 0, behavior: "smooth" });
+		console.log({
+			scrollHeight: el.scrollHeight,
+			scrollTop: el.scrollTop,
+			clientHeight: el.clientHeight,
+		});
+		if (el.scrollTop === 0) alert("At bottom");
+	};
 </script>
 
 <div class="title">Curated Pictures</div>
@@ -54,12 +80,14 @@
 		bind:this={carousel}
 		slides={picList}
 		containerClass={"carousel-container"}
+		class={"carousel-class"}
 	>
 		{#snippet slide({ slide })}
 			<img
 				class="carousel-img"
 				src={"./pics/" + slide.fileName}
 				alt={slide.description}
+				loading="lazy"
 				onclick={(e) => {
 					e.stopImmediatePropagation();
 					enlarge(e);
@@ -142,6 +170,10 @@
 		max-height: 70vh;
 	}
 
+	:global(.carousel-class) {
+		max-height: 70vh;
+	}
+
 	.car {
 		max-width: min(600px, 90vw);
 		margin: 0 auto;
@@ -187,7 +219,7 @@
 	.carousel-img {
 		display: block;
 		width: 100%;
-		margin: 0 auto;
+		margin: 0.25rem auto 0;
 		max-height: 80vh;
 	}
 

@@ -84,21 +84,85 @@
 		"aria-label": type === "prev" ? "Previous slide" : "Next slide",
 	});
 
-	const handleKeydown = (e: KeyboardEvent) => {
+	const handleArrowNav = (e: KeyboardEvent) => {
 		if (!mounted) return;
 		if (disableArrowKeyNav) return;
+		const el = document.getElementsByClassName("carousel-class")?.item(0);
 
-		if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+		if (e.key === "ArrowRight") {
+			// || e.key === "ArrowDown"
 			e.preventDefault();
+			if (el) {
+				el.scrollBy({
+					top: -(el.clientHeight + 20),
+					left: 0,
+					behavior: "smooth",
+				});
+				setTimeout(() => {
+					next();
+				}, 200);
+				return;
+			}
 			next();
-		} else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+		}
+
+		if (e.key === "ArrowLeft") {
+			//|| e.key === "ArrowUp"
 			e.preventDefault();
+			if (el) {
+				el.scrollBy({
+					top: -(el.clientHeight + 20),
+					left: 0,
+					behavior: "smooth",
+				});
+				setTimeout(() => {
+					prev();
+				}, 200);
+				return;
+			}
 			prev();
+			return;
+		}
+
+		if (e.key === "ArrowDown") {
+			e.preventDefault();
+			if (!el) return;
+			// console.log({
+			// 	scrollHeight: el.scrollHeight,
+			// 	scrollTop: el.scrollTop,
+			// 	clientHeight: el.clientHeight,
+			// });
+			if (el.scrollHeight - el.scrollTop === el.clientHeight) {
+				el.scrollBy({
+					top: -(el.clientHeight + 20),
+					left: 0,
+					behavior: "smooth",
+				});
+				setTimeout(() => {
+					next();
+				}, 300);
+
+				return;
+			}
+			//
+			el.scrollBy({ top: 40, left: 0, behavior: "smooth" });
+			return;
+		}
+
+		if (e.key === "ArrowUp") {
+			e.preventDefault();
+			if (!el) return;
+			if (el.scrollTop === 0) {
+				prev();
+				return;
+			}
+
+			el.scrollBy({ top: -40, left: 0, behavior: "smooth" });
 		}
 	};
 </script>
 
-<svelte:window onkeydown={handleKeydown} />
+<svelte:window onkeydown={handleArrowNav} />
 {#if slides.length > 0}
 	<div
 		aria-roledescription="carousel"

@@ -56,10 +56,29 @@ export const postPicWithImg = async (picWithImg: FormData) => {
 
 // Users ***
 
+export const getUserList = async () => {
+	try {
+		const response: AxiosResponse<UserClientRemote[]> = await ax().get("/api/Users/GetUserList");
+		return response;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const postUser = async (user: UserClientRemote) => {
+	try {
+		const response: AxiosResponse<UserClientRemote | undefined> = await ax().post("/api/Users/Save", user);
+		return response;
+	}
+	catch (error) {
+		console.error(error);
+	}
+};
+
 export const postLogin = async (userLogin: UserLogin) => {
 	try {
 		const response: AxiosResponse<UserClientRemote | undefined> = await ax().post("/api/Login", userLogin);
-		return response.data;
+		return response;
 	}
 	catch (error) {
 		console.error(error);

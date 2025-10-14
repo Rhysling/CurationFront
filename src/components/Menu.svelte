@@ -27,6 +27,10 @@
 	.menu {
 		margin: 1rem auto;
 		text-align: center;
+
+		button {
+			margin-bottom: 0.5rem;
+		}
 	}
 
 	@media only screen and (width <= c.$bp-small) {
