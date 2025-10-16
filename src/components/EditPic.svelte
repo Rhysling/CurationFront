@@ -40,15 +40,15 @@
 	let pic: PictureItem = $state({ ...picItem });
 	let isEditMode = $state(false);
 	let isValidSeq: ValidationState = $state(undefined);
-	let isValidDescription: ValidationState = $state(undefined);
-	let isValidAll: boolean = $derived(!!isValidSeq && !!isValidDescription);
+	//let isValidDescription: ValidationState = $state(undefined);
+	let isValidAll: boolean = $derived(!!isValidSeq); // && !!isValidDescription);
 
 	// ** Validations **
 	const validateSeq = () => (isValidSeq = !isNaN(pic.seq));
-	const validateDescription = () => (isValidDescription = !!pic.description);
+	//const validateDescription = () => (isValidDescription = !!pic.description);
 	const validateAll = () => {
 		validateSeq();
-		validateDescription();
+		//	validateDescription();
 	};
 
 	// ** Edit / Save / Cancel **
@@ -64,7 +64,7 @@
 			savePic(pic);
 			setEditMode(0, false);
 			isValidSeq = undefined;
-			isValidDescription = undefined;
+			// isValidDescription = undefined;
 			isEditMode = false;
 		}
 	};
@@ -73,7 +73,7 @@
 		pic = { ...picItem };
 		setEditMode(0, false);
 		isValidSeq = undefined;
-		isValidDescription = undefined;
+		// isValidDescription = undefined;
 		isEditMode = false;
 	};
 
@@ -135,11 +135,10 @@
 	<div>
 		{#if isEditMode}<input
 				type="text"
-				class:info={isValidDescription === undefined}
-				class:success={isValidDescription === true}
-				class:error={isValidDescription === false}
-				onblur={validateDescription}
-				bind:value={() => pic.description, (v) => (pic.description = v || "")}
+				class="plain"
+				bind:value={
+					() => pic.description, (v) => (pic.description = (v || "").trim())
+				}
 				placeholder="Title"
 			/>
 		{:else}Title: {pic.description}
@@ -164,8 +163,7 @@
 		{:else}
 			{#if pic.isDeleted}<span class="warning">Deleted</span>{/if}
 			{#if pic.isMissing}<span class="error">Missing</span>{/if}
-			{#if !pic.description && pic.id != 0}<span class="error">Orphan</span
-				>{/if}
+			{#if !pic.seq && pic.id != 0}<span class="error">Orphan</span>{/if}
 		{/if}
 	</div>
 	<div

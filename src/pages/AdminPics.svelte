@@ -23,8 +23,12 @@
 	let isListEditMode = $state(false);
 	let editingPicId = $state(0);
 	let emptyPicItem = $state(getEmptyPicItem());
+	let hideDeleted = $state(false);
 
-	let picListDisplay: PictureItem[] = $derived([emptyPicItem, ...picList]);
+	let picListDisplay: PictureItem[] = $derived.by(() => {
+		const pl = [emptyPicItem, ...picList];
+		return hideDeleted ? pl.filter((a) => !a.isDeleted) : pl;
+	});
 
 	const loadPicList = async () => {
 		try {
@@ -69,7 +73,11 @@
 <div class="title">Admin Pictures</div>
 
 <CleanPics {picList} {isListEditMode} {refreshPicList} />
-
+<div class="mgt-bar">
+	<span
+		>Hide Deleted: = <input type="checkbox" bind:checked={hideDeleted} /></span
+	>
+</div>
 <div class="pic-list">
 	{#each picListDisplay as pic, ix (pic.id)}
 		<EditPic
@@ -95,13 +103,26 @@
 		margin: 1rem auto;
 	}
 
+	.mgt-bar {
+		border: 2px solid c.$main-color;
+		border-radius: 0.5rem;
+		max-width: 800px;
+		margin: 1rem auto;
+		padding: 0.25rem 0;
+
+		span {
+			display: inline-block;
+			margin: 0 1rem;
+		}
+	}
+
 	.pic-list {
 		display: grid;
 		grid-template-columns: 150px 3fr 1fr;
 		gap: 0.5rem 0;
 		max-width: 800px;
 		margin: 1rem auto;
-		max-height: 75vh;
+		max-height: 70vh;
 		overflow-y: scroll;
 	}
 

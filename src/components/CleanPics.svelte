@@ -14,9 +14,7 @@
 	let missingCount: number = $derived(
 		picList.filter((a) => a.isMissing == true).length,
 	);
-	let orphanCount: number = $derived(
-		picList.filter((a) => !a.description).length,
-	);
+	let orphanCount: number = $derived(picList.filter((a) => !a.seq).length);
 
 	const cleanPics = async () => {
 		refreshPicList((await getCleanPics())?.data || []);
