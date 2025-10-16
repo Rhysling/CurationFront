@@ -143,6 +143,12 @@ export const navTo = function (e: MouseEvent | null, path: string, params?: any)
 	currentPath.path = path;
 	currentParams.paramObj = params || {};
 	document.title = `Polson-${currentRoute.title}`;
+
+	window.scroll({
+		top: 0,
+		left: 0,
+		behavior: "smooth",
+	});
 };
 
 // Back Button

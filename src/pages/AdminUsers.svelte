@@ -56,17 +56,17 @@
 	loadList();
 </script>
 
-<div class="title">Admin Pictures Here</div>
+<div class="title">Admin Users</div>
 
 <div class="user-list">
 	{#each userListDisplay as user (user.id)}
-		<!-- <EditUser
-			{user}
+		<EditUser
+			userIn={user}
 			{isListEditMode}
 			{editingUserId}
 			{setEditMode}
 			{saveUser}
-		/> -->
+		/>
 	{/each}
 </div>
 
@@ -84,10 +84,12 @@
 
 	.user-list {
 		display: grid;
-		grid-template-columns: 150px 3fr 1fr;
+		grid-template-columns: 1fr 7rem;
 		gap: 0.5rem 0;
-		max-width: 800px;
+		max-width: 600px;
 		margin: 1rem auto;
+		// border-top: 1px solid black;
+		// border-bottom: 1px solid black;
 	}
 
 	@media only screen and (width <= c.$bp-small) {

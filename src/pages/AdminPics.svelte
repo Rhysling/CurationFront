@@ -66,7 +66,7 @@
 	loadPicList();
 </script>
 
-<div class="title">Admin Pictures Here</div>
+<div class="title">Admin Pictures</div>
 
 <CleanPics {picList} {isListEditMode} {refreshPicList} />
 
@@ -101,6 +101,8 @@
 		gap: 0.5rem 0;
 		max-width: 800px;
 		margin: 1rem auto;
+		max-height: 75vh;
+		overflow-y: scroll;
 	}
 
 	@media only screen and (width <= c.$bp-small) {

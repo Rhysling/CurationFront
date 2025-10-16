@@ -116,7 +116,7 @@
 </div>
 <div class="pic-info">
 	<div>
-		<span style:font-style={pic.id === 5 ? "italic" : "normal"}
+		<span style:font-style={pic.id === 0 ? "italic" : "normal"}
 			>Id: {pic.id === 0 ? "New" : pic.id}</span
 		>
 		{#if isEditMode}<input
