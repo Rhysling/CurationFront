@@ -9,6 +9,7 @@
 	let picList = $state([] as PictureItem[]);
 	let isOpenModal = $state(false);
 	let currentPic: PictureItem | null = $state(null);
+	let slideCount = $derived(picList.length);
 
 	let loadPicList = async () => {
 		try {
@@ -29,14 +30,14 @@
 		getCurrentSlide: () => number;
 	};
 
-	let carousel: CarouselOps;
+	let carousel: CarouselOps | undefined = $state();
 
 	const enlarge = (e: Event) => {
 		e.preventDefault();
 		currentPic = null;
 
 		try {
-			currentPic = picList[carousel.getCurrentSlide()];
+			currentPic = (carousel && picList[carousel.getCurrentSlide()]) || null;
 		} catch (error) {
 			console.error(error);
 		}
@@ -140,7 +141,7 @@
 	</Carousel>
 </div>
 
-<Menu />
+<Menu gotoSlideIx={carousel?.goTo} {slideCount} />
 <Modal bind:isOpen={isOpenModal}>
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
