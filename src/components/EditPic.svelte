@@ -136,9 +136,7 @@
 		{#if isEditMode}<input
 				type="text"
 				class="plain"
-				bind:value={
-					() => pic.description, (v) => (pic.description = (v || "").trim())
-				}
+				bind:value={() => pic.description, (v) => (pic.description = v)}
 				placeholder="Title"
 			/>
 		{:else}Title: {pic.description}

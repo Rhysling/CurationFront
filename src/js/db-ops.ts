@@ -12,6 +12,15 @@ export const getPicPublicList = async () => {
 	}
 };
 
+export const getPicBySlug = async (slug: string) => {
+	try {
+		const response: AxiosResponse<PictureItem> = await ax().get(`/api/Pictures/GetBySlug?slug=${slug}`);
+		return response;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 export const getPicAdminList = async () => {
 	try {
 		const response: AxiosResponse<PictureItem[]> = await ax().get("/api/Pictures/GetAll");

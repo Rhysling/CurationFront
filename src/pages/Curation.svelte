@@ -2,13 +2,15 @@
 
 <script lang="ts">
 	import { getPicPublicList } from "../js/db-ops";
+	import { user } from "../stores/user-store.svelte";
+
 	import Carousel from "../components/carousel/Carousel.svelte";
 	import Modal from "../components/Modal.svelte";
 	import Menu from "../components/Menu.svelte";
+	import CurationMenu from "../components/CurationMenu.svelte";
 
 	let picList = $state([] as PictureItem[]);
 	let isOpenModal = $state(false);
-	let currentPic: PictureItem | null = $state(null);
 	let slideCount = $derived(picList.length);
 
 	let loadPicList = async () => {
@@ -31,17 +33,12 @@
 	};
 
 	let carousel: CarouselOps | undefined = $state();
+	let currentPic: PictureItem | null = $derived(
+		(carousel && picList[carousel.getCurrentSlide()]) || null,
+	);
 
 	const enlarge = (e: Event) => {
 		e.preventDefault();
-		currentPic = null;
-
-		try {
-			currentPic = (carousel && picList[carousel.getCurrentSlide()]) || null;
-		} catch (error) {
-			console.error(error);
-		}
-
 		isOpenModal = true;
 	};
 
@@ -141,7 +138,17 @@
 	</Carousel>
 </div>
 
-<Menu gotoSlideIx={carousel?.goTo} {slideCount} />
+<CurationMenu
+	gotoSlideIx={carousel?.goTo}
+	prev={carousel?.prev}
+	next={carousel?.next}
+	{slideCount}
+	{currentPic}
+/>
+{#if user.value.isAdmin}
+	<Menu />
+{/if}
+
 <Modal bind:isOpen={isOpenModal}>
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<!-- svelte-ignore a11y_click_events_have_key_events -->

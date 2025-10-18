@@ -31,6 +31,14 @@ const baseRoutes: Route = {
 			path: "/testing",
 			isAdmin: true,
 			children: []
+		},
+		{
+			title: "Picture",
+			page: "Picture",
+			path: "/picture",
+			isAdmin: false,
+			isHidden: true,
+			children: []
 		}
 	]
 };
@@ -77,7 +85,7 @@ export const currentParams = $state({ paramObj: {} });
 let routes = $derived.by(() => {
 	let r = { ...baseRoutes };
 	if (!user.value?.isAdmin)
-		r = filterAdminRoutes(r)
+		r = filterAdminRoutes(r);
 	return r;
 });
 
