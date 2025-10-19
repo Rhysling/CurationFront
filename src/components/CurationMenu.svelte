@@ -9,30 +9,43 @@
 		gotoSlideIx,
 		prev,
 		next,
+		ixSlide,
 		slideCount,
 		currentPic,
 	}: {
 		gotoSlideIx: (ix: number) => void;
 		prev: () => void;
 		next: () => void;
+		ixSlide: number;
 		slideCount: number;
 		currentPic: PictureItem | null;
 	} = $props();
 
 	let currentSlug = $derived.by(() => {
 		if (!currentPic || !currentPic.fileName) return "";
-		let ix = currentPic.fileName.lastIndexOf(".");
-		if (ix > 0) return currentPic.fileName.substring(0, ix);
+		let ixp = currentPic.fileName.lastIndexOf(".");
+		if (ixp > 0) return currentPic.fileName.substring(0, ixp);
 		return "";
 	});
+
+	let isFirst = $derived(ixSlide == 0);
+	let isLast = $derived(ixSlide == slideCount - 1);
 </script>
 
 <div class="c-menu">
-	<NavButton buttonType="first" onclick={() => gotoSlideIx(0)} />
-	<NavButton buttonType="prev" onclick={() => prev()} />
+	<NavButton
+		buttonType="first"
+		disabled={isFirst}
+		onclick={() => gotoSlideIx(0)}
+	/>
+	<NavButton buttonType="prev" disabled={isFirst} onclick={() => prev()} />
 	<a href="/picture?p={currentSlug}" target="_blank">permalink</a>
-	<NavButton buttonType="next" onclick={() => next()} />
-	<NavButton buttonType="last" onclick={() => gotoSlideIx(slideCount - 1)} />
+	<NavButton buttonType="next" disabled={isLast} onclick={() => next()} />
+	<NavButton
+		buttonType="last"
+		disabled={isLast}
+		onclick={() => gotoSlideIx(slideCount - 1)}
+	/>
 </div>
 
 <style lang="scss">

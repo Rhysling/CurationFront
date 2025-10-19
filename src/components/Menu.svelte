@@ -33,7 +33,7 @@
 		text-align: center;
 
 		button {
-			margin-bottom: 0;
+			margin-bottom: 0.5rem;
 		}
 	}
 

@@ -53,7 +53,7 @@
 	@use "./styles/custom-variables" as c;
 
 	main {
-		min-height: 100%;
+		min-height: 99.9vh;
 		display: grid;
 		grid-template-rows: 1fr auto;
 	}

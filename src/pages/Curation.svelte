@@ -36,6 +36,7 @@
 	let currentPic: PictureItem | null = $derived(
 		(carousel && picList[carousel.getCurrentSlide()]) || null,
 	);
+	let ixSlide: number = $derived((carousel && carousel.getCurrentSlide()) || 0);
 
 	const enlarge = (e: Event) => {
 		e.preventDefault();
@@ -142,6 +143,7 @@
 	gotoSlideIx={carousel?.goTo}
 	prev={carousel?.prev}
 	next={carousel?.next}
+	{ixSlide}
 	{slideCount}
 	{currentPic}
 />

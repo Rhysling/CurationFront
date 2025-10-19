@@ -9,12 +9,14 @@
 		margin = "0.5rem",
 		width = "2rem",
 		height = "2rem",
+		disabled = false,
 	}: {
 		buttonType: NavButtonType;
 		onclick?: (e: MouseEvent | undefined) => void;
 		margin?: string;
 		width?: string;
 		height?: string;
+		disabled?: boolean;
 	} = $props();
 
 	const titles = {
@@ -31,6 +33,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <button
 	{title}
+	{disabled}
 	{onclick}
 	style="margin:{margin};height:{height};width:{width};"
 >
