@@ -3,6 +3,10 @@
 <script lang="ts">
 	import { getPicPublicList } from "../js/db-ops";
 	import { user } from "../stores/user-store.svelte";
+	import {
+		userSettings,
+		setIsNewestFirst,
+	} from "../stores/user-settings-store.svelte";
 
 	import Carousel from "../components/carousel/Carousel.svelte";
 	import Modal from "../components/Modal.svelte";
@@ -13,14 +17,28 @@
 	let isOpenModal = $state(false);
 	let slideCount = $derived(picList.length);
 
-	let loadPicList = async () => {
+	const loadPicList = async () => {
 		try {
 			picList = ((await getPicPublicList())?.data || []).sort(
 				(a, b) => a.seq - b.seq,
 			);
+
+			if (userSettings.value.isNewestFirst) {
+				orderByTs();
+				carousel && carousel.goTo(0);
+			}
 		} catch (error) {
 			console.error(error);
 		}
+	};
+
+	const orderBySeq = () => {
+		picList.sort((a, b) => a.seq - b.seq);
+		setIsNewestFirst(false);
+	};
+	const orderByTs = () => {
+		picList.sort((a, b) => b.ts - a.ts);
+		setIsNewestFirst(true);
 	};
 
 	loadPicList();
@@ -71,6 +89,32 @@
 </script>
 
 <div class="title">Curated Pictures</div>
+
+<div class="sort">
+	{#if userSettings.value.isNewestFirst}
+		<a
+			href="/"
+			onclick={(e) => {
+				e.preventDefault();
+				orderBySeq();
+			}}>Curation Order</a
+		>
+	{:else}
+		<span>Curation Order</span>
+	{/if}
+	-
+	{#if !userSettings.value.isNewestFirst}
+		<a
+			href="/"
+			onclick={(e) => {
+				e.preventDefault();
+				orderByTs();
+			}}>Newest First</a
+		>
+	{:else}
+		<span>Newest First</span>
+	{/if}
+</div>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -182,6 +226,19 @@
 
 	:global(.carousel-class) {
 		max-height: 70vh;
+	}
+
+	.sort {
+		border: 3px solid c.$main-color;
+		border-radius: 1rem;
+		max-width: min(600px, 90vw);
+		margin: 1rem auto;
+		padding: 0.3rem 1rem;
+		position: relative;
+
+		span {
+			font-weight: bold;
+		}
 	}
 
 	.car {

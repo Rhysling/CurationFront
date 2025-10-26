@@ -32,6 +32,7 @@ type PictureItem = {
 	id: number;
 	fileName: string;
 	seq: number;
+	ts: number;
 	keywords: string[];
 	description: INullable<string>;
 	isMissing: boolean;

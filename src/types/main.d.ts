@@ -19,8 +19,8 @@ type PageState = {
 	endIndex: number;
 };
 
-// type Editing = {
-// 	isEditMode: boolean | undefined;
-// };
+type UserSettings = {
+	isNewestFirst: boolean;
+};
 
 // type PictureItemEdit = PictureItem & Editing;

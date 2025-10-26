@@ -8,6 +8,7 @@
 
 	import Home from "./pages/Home.svelte";
 	import Curation from "./pages/Curation.svelte";
+	import Curation2 from "./pages/Curation2.svelte";
 	import AdminPics from "./pages/AdminPics.svelte";
 	import AdminUsers from "./pages/AdminUsers.svelte";
 	import Testing from "./pages/Testing.svelte";
@@ -19,6 +20,7 @@
 	let pages = {
 		Home,
 		Curation,
+		Curation2,
 		AdminPics,
 		AdminUsers,
 		Testing,

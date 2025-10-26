@@ -49,17 +49,13 @@
 		if (!isValidAll) return;
 
 		let picLocal = { ...pic };
-		console.log({ picLocal });
 
 		picLocal.fileName = acceptedFiles[0].name;
-		//console.log($state.snapshot(picItem));
 		const formData = new FormData();
 		formData.append("file", acceptedFiles[0] as any);
 		formData.append("picItemJSON", JSON.stringify(picLocal));
 		savePicWithImgDZ(formData, picLocal);
 		setItemEditMode(picLocal.id, false);
-
-		//console.log({ acceptedFiles, fileRejections });
 	};
 
 	const stopProp = (e: Event) => e.stopPropagation();

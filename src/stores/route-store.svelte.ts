@@ -10,6 +10,12 @@ const baseRoutes: Route = {
 			page: "Curation",
 			path: "/curation",
 			children: []
+		}, {
+			title: "Curation-2",
+			page: "Curation2",
+			path: "/curation2",
+			isAdmin: true,
+			children: []
 		},
 		{
 			title: "Admin Pictures",

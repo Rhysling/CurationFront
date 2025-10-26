@@ -28,6 +28,7 @@
 			id: 0,
 			fileName: "",
 			seq: 0,
+			ts: 0,
 			keywords: [],
 			description: "",
 			isMissing: false,
