@@ -23,22 +23,10 @@
 				(a, b) => a.seq - b.seq,
 			);
 
-			if (userSettings.value.isNewestFirst) {
-				orderByTs();
-				carousel && carousel.goTo(0);
-			}
+			if (userSettings.value.isNewestFirst) orderByTs();
 		} catch (error) {
 			console.error(error);
 		}
-	};
-
-	const orderBySeq = () => {
-		picList.sort((a, b) => a.seq - b.seq);
-		setIsNewestFirst(false);
-	};
-	const orderByTs = () => {
-		picList.sort((a, b) => b.ts - a.ts);
-		setIsNewestFirst(true);
 	};
 
 	loadPicList();
@@ -55,6 +43,17 @@
 		(carousel && picList[carousel.getCurrentSlide()]) || null,
 	);
 	let ixSlide: number = $derived((carousel && carousel.getCurrentSlide()) || 0);
+
+	const orderBySeq = () => {
+		picList.sort((a, b) => a.seq - b.seq);
+		setIsNewestFirst(false);
+		carousel?.goTo(0);
+	};
+	const orderByTs = () => {
+		picList.sort((a, b) => b.ts - a.ts);
+		setIsNewestFirst(true);
+		carousel?.goTo(6);
+	};
 
 	const enlarge = (e: Event) => {
 		e.preventDefault();

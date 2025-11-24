@@ -46,8 +46,8 @@
 	let currentSlide: number = $state(0);
 	let mounted: boolean = $state(false);
 
-	let scrollTo: (slide: number) => void;
-	let navigate: (slide: number) => void;
+	let scrollTo: (slide: number) => void = () => {};
+	let navigate: (slide: number) => void = () => {};
 
 	export const next = () => canScrollNext && navigate(currentSlide + 1);
 	export const prev = () => canScrollPrev && navigate(currentSlide - 1);
