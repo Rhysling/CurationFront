@@ -52,7 +52,7 @@
 	const orderByTs = () => {
 		picList.sort((a, b) => b.ts - a.ts);
 		setIsNewestFirst(true);
-		carousel?.goTo(6);
+		carousel?.goTo(0);
 	};
 
 	const enlarge = (e: Event) => {
