@@ -90,28 +90,26 @@
 <div class="title">Curated Pictures</div>
 
 <div class="sort">
-	{#if userSettings.value.isNewestFirst}
-		<a
-			href="/"
-			onclick={(e) => {
-				e.preventDefault();
-				orderBySeq();
-			}}>Curation Order</a
-		>
-	{:else}
-		<span>Curation Order</span>
-	{/if}
-	-
 	{#if !userSettings.value.isNewestFirst}
+		<span>Displayed in Curation Order</span>
+		<span class="dot">&#8226;</span>
 		<a
 			href="/"
 			onclick={(e) => {
 				e.preventDefault();
 				orderByTs();
-			}}>Newest First</a
+			}}>Show Newest First</a
 		>
 	{:else}
-		<span>Newest First</span>
+		<span>Displayed Newest First</span>
+		<span class="dot">&#8226;</span>
+		<a
+			href="/"
+			onclick={(e) => {
+				e.preventDefault();
+				orderBySeq();
+			}}>Show in Curation Order</a
+		>
 	{/if}
 </div>
 
@@ -228,15 +226,31 @@
 	}
 
 	.sort {
-		border: 3px solid c.$main-color;
-		border-radius: 1rem;
-		max-width: min(600px, 90vw);
-		margin: 1rem auto;
-		padding: 0.3rem 1rem;
-		position: relative;
+		text-align: center;
 
 		span {
 			font-weight: bold;
+		}
+
+		span,
+		a {
+			display: inline-block;
+		}
+
+		@media only screen and (width <= c.$bp-small) {
+			span {
+				display: block;
+				margin: 0.25rem auto 0;
+			}
+
+			span.dot {
+				display: none;
+			}
+
+			a {
+				display: block;
+				margin: 0 auto 0.25rem;
+			}
 		}
 	}
 
@@ -314,7 +328,7 @@
 		font-size: 2rem;
 		font-weight: bold;
 		text-align: center;
-		margin: 1rem auto;
+		margin: 1rem auto 0.5rem;
 	}
 
 	@media only screen and (width <= c.$bp-small) {
