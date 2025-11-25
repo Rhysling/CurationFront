@@ -86,7 +86,7 @@ const findRoute = (routeRoot: Route, path: string): Route => {
 // Stores
 
 export const currentPath = $state({ path: "/" });
-export const currentParams = $state({ paramObj: {} });
+export const currentParams: { paramObj: KVPair } = $state({ paramObj: {} });
 
 let routes = $derived.by(() => {
 	let r = { ...baseRoutes };

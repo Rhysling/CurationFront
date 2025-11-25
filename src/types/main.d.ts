@@ -11,6 +11,8 @@ type Route = {
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 
+type KVPair = Record<string, string>;
+
 type PageState = {
 	itemsPerPage: number;
 	itemCount: number;

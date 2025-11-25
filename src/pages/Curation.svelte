@@ -7,6 +7,7 @@
 		userSettings,
 		setIsNewestFirst,
 	} from "../stores/user-settings-store.svelte";
+	import { currentParams } from "../stores/route-store.svelte";
 
 	import Carousel from "../components/carousel/Carousel.svelte";
 	import Modal from "../components/Modal.svelte";
@@ -24,6 +25,17 @@
 			);
 
 			if (userSettings.value.isNewestFirst) orderByTs();
+
+			if (currentParams.paramObj.p) {
+				const ix = picList.findIndex((p) =>
+					p.fileName.startsWith(currentParams.paramObj.p),
+				);
+				if (ix >= 0) {
+					setTimeout(() => {
+						carousel?.goTo(ix);
+					}, 100);
+				}
+			}
 		} catch (error) {
 			console.error(error);
 		}

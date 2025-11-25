@@ -2,14 +2,9 @@
 
 <script lang="ts">
 	import { getPicBySlug } from "../js/db-ops";
+	import { currentParams } from "../stores/route-store.svelte";
 
-	const entries = new URLSearchParams(window.location.search).entries();
-	const qp: any = {};
-	for (let [key, val] of entries) {
-		qp[key] = val;
-	}
-
-	const slug: string | undefined = qp["p"];
+	const slug: string | undefined = currentParams.paramObj.p;
 	let pic: PictureItem | undefined = $state();
 	let fileName: string | undefined = $derived(pic?.fileName);
 
@@ -17,9 +12,7 @@
 		pic = (await getPicBySlug(slug))?.data;
 	};
 
-	if (slug) {
-		getPic(slug);
-	}
+	if (slug) getPic(slug);
 </script>
 
 <div class="pic-container">
@@ -33,11 +26,16 @@
 		<div class="not-found">Picture Not Found</div>
 	{/if}
 </div>
+
 {#if pic?.description}
 	<div class="description">
 		{pic.description}
 	</div>
 {/if}
+
+<div class="to-curation">
+	<a href={fileName ? "/curation?p=" + slug : "/curation"}>Go to Curation</a>
+</div>
 
 <style lang="scss">
 	@use "../styles/custom-variables" as c;
@@ -72,6 +70,11 @@
 	.not-found {
 		font-size: 3rem;
 		font-weight: bold;
+	}
+
+	.to-curation {
+		text-align: center;
+		margin: 1rem auto;
 	}
 
 	@media only screen and (height <= 700px) {
