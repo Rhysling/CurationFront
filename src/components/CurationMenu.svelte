@@ -30,6 +30,21 @@
 
 	let isFirst = $derived(ixSlide == 0);
 	let isLast = $derived(ixSlide == slideCount - 1);
+
+	// Keep qs in sync
+
+	const updateQueryStringParam = (key: string, value: string) => {
+		const url = new URL(window.location.href);
+		url.searchParams.set(key, value);
+		window.history.replaceState({}, "", url);
+	};
+
+	$effect(() => {
+		const fn = currentPic?.fileName ?? "";
+		const ixp = fn.lastIndexOf(".");
+		const slug = ixp > 0 ? fn.substring(0, ixp) : "";
+		updateQueryStringParam("p", slug);
+	});
 </script>
 
 <div class="c-menu">
