@@ -41,15 +41,42 @@
 	let pic: PictureItem = $state({ ...picItem });
 	let isEditMode = $state(false);
 	let isValidSeq: ValidationState = $state(undefined);
-	//let isValidDescription: ValidationState = $state(undefined);
-	let isValidAll: boolean = $derived(!!isValidSeq); // && !!isValidDescription);
+	let isValidFileName: ValidationState = $state(undefined);
+	let isValidAll: boolean = $derived(!!isValidSeq && !!isValidFileName);
 
 	// ** Validations **
 	const validateSeq = () => (isValidSeq = !isNaN(pic.seq));
-	//const validateDescription = () => (isValidDescription = !!pic.description);
+	const validateFileName = () => {
+		if (!picItem.fileName && !pic.fileName) {
+			isValidFileName = true;
+			return;
+		}
+
+		const rx = /[^A-Za-z0-9\-_\.]/;
+		if (rx.test(pic.fileName)) {
+			isValidFileName = false;
+			return;
+		}
+
+		const fn = pic.fileName.toLowerCase();
+		if (
+			!(
+				fn.endsWith(".jpeg") ||
+				fn.endsWith(".jpg") ||
+				fn.endsWith(".png") ||
+				fn.endsWith(".gif")
+			)
+		) {
+			isValidFileName = false;
+			return;
+		}
+
+		isValidFileName = true;
+	};
+
 	const validateAll = () => {
 		validateSeq();
-		//	validateDescription();
+		validateFileName();
 	};
 
 	// ** Edit / Save / Cancel **
@@ -65,7 +92,7 @@
 			savePic(pic);
 			setEditMode(0, false);
 			isValidSeq = undefined;
-			// isValidDescription = undefined;
+			isValidFileName = undefined;
 			isEditMode = false;
 		}
 	};
@@ -131,7 +158,18 @@
 			/>
 		{:else}<span>Seq: {pic.seq}</span>
 		{/if}
-		<span>{pic.fileName}</span>
+		{#if isEditMode && pic.fileName}<input
+				type="text"
+				class:info={isValidFileName === undefined}
+				class:success={isValidFileName === true}
+				class:error={isValidFileName === false}
+				onblur={validateFileName}
+				bind:value={pic.fileName}
+			/>
+		{:else}<span style:font-style={pic.fileName ? "normal" : "italic"}
+				>{pic.fileName || "No Filename"}</span
+			>
+		{/if}
 	</div>
 	<div>
 		{#if isEditMode}<input
