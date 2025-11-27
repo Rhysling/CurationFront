@@ -89,6 +89,7 @@
 		validateAll();
 		if (isValidAll) {
 			if (pic.description) pic.description = pic.description.trim();
+			pic.ts = parseInt(<string>(<unknown>pic.ts)) || 0;
 			savePic(pic);
 			setEditMode(0, false);
 			isValidSeq = undefined;
@@ -178,7 +179,21 @@
 				bind:value={() => pic.description, (v) => (pic.description = v)}
 				placeholder="Title"
 			/>
-		{:else}Title: {pic.description}
+		{:else}<span style:font-style={pic.description ? "normal" : "italic"}
+				>{pic.description || "No Title"}</span
+			>
+		{/if}
+	</div>
+	<div>
+		{#if isEditMode}<input type="text" class="plain" bind:value={pic.ts} />
+			<button
+				class="small"
+				onclick={() => (pic.ts = Math.floor(new Date().getTime() / 1000))}
+				>Now</button
+			>
+		{:else}<span style:font-style={pic.ts ? "normal" : "italic"}
+				>{pic.ts ? "Ts:" + pic.ts : "No Timestamp"}</span
+			>
 		{/if}
 	</div>
 	<div>

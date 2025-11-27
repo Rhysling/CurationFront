@@ -23,8 +23,8 @@
 
 <div class="clean-bar">
 	<button onclick={cleanPics} disabled={isListEditMode}>Clean Pic List</button>
-	<span>Missing Count = {missingCount}</span>
-	<span>Orphan Count = {orphanCount}</span>
+	<span>Missing = {missingCount}</span>
+	<span>Orphans = {orphanCount}</span>
 </div>
 
 <style lang="scss">
