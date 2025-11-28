@@ -1,7 +1,12 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { getPicAdminList, postPic, postPicWithImg } from "../js/db-ops";
+	import {
+		getPicAdminList,
+		postPic,
+		postPicWithImg,
+		postDestroyPic,
+	} from "../js/db-ops";
 	import Menu from "../components/Menu.svelte";
 	import EditPic from "../components/EditPic.svelte";
 	import CleanPics from "../components/CleanPics.svelte";
@@ -64,6 +69,12 @@
 		}
 	};
 
+	const destroyPic = async (pic: PictureItem) => {
+		const id = pic.id;
+		await postDestroyPic(pic);
+		picList = picList.filter((a) => a.id !== id);
+	};
+
 	const refreshPicList = (pics: PictureItem[]) => {
 		picList = pics.sort((a, b) => a.seq - b.seq);
 	};
@@ -88,6 +99,7 @@
 			{setEditMode}
 			{savePic}
 			{savePicWithImg}
+			{destroyPic}
 		/>
 	{/each}
 </div>

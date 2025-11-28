@@ -10,6 +10,7 @@
 		setEditMode: (picId: number, isEdit: boolean) => void;
 		savePic: (pic: PictureItem) => void;
 		savePicWithImg: (form: FormData) => void;
+		destroyPic: (pic: PictureItem) => void;
 	};
 
 	type ValidationState = boolean | undefined;
@@ -21,6 +22,7 @@
 		setEditMode,
 		savePic,
 		savePicWithImg,
+		destroyPic,
 	}: EditPicProps = $props();
 
 	const getEmptyPicItem = () => {
@@ -79,7 +81,7 @@
 		validateFileName();
 	};
 
-	// ** Edit / Save / Cancel **
+	// ** Edit / Save / Destroy / Cancel **
 	const edit = () => {
 		setEditMode(pic.id, true);
 		isEditMode = true;
@@ -98,11 +100,25 @@
 		}
 	};
 
+	const destroy = () => {
+		let isOk = confirm(
+			`Are you sure you want to DESTROY picture Id ${pic.id}? This action cannot be undone.`,
+		);
+
+		if (isOk) {
+			destroyPic(pic);
+			setEditMode(0, false);
+			isValidSeq = undefined;
+			isValidFileName = undefined;
+			isEditMode = false;
+		}
+	};
+
 	const cancel = () => {
 		pic = { ...picItem };
 		setEditMode(0, false);
 		isValidSeq = undefined;
-		// isValidDescription = undefined;
+		isValidFileName = undefined;
 		isEditMode = false;
 	};
 
@@ -212,6 +228,7 @@
 	<div>
 		{#if isEditMode}<span>Is Deleted</span>
 			<input type="checkbox" bind:checked={pic.isDeleted} style="width:auto;" />
+			{#if pic.id}<button class="small" onclick={destroy}>Destroy</button>{/if}
 		{:else}
 			{#if pic.isDeleted}<span class="warning">Deleted</span>{/if}
 			{#if pic.isMissing}<span class="error">Missing</span>{/if}

@@ -63,6 +63,16 @@ export const postPicWithImg = async (picWithImg: FormData) => {
 	}
 };
 
+export const postDestroyPic = async (picItem: PictureItem) => {
+	try {
+		const response: AxiosResponse<undefined> = await ax().post("/api/Pictures/Destroy", picItem);
+		return response;
+	}
+	catch (error) {
+		console.error(error);
+	}
+};
+
 // Users ***
 
 export const getUserList = async () => {
