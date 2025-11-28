@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import { dragAttachment } from "../js/drag.svelte";
-	import { getPicPublicList } from "../js/db-ops";
+	import { getPicAdminList } from "../js/db-ops";
 	import Menu from "../components/Menu.svelte";
 
 	let picList = $state([] as PictureItem[]);
@@ -11,7 +11,7 @@
 
 	const loadPicList = async () => {
 		try {
-			picList = ((await getPicPublicList())?.data || []).sort(
+			picList = ((await getPicAdminList())?.data || []).sort(
 				(a, b) => a.seq - b.seq,
 			);
 		} catch (error) {
@@ -67,9 +67,13 @@
 				class="carousel-img"
 				src={"./pics/" + p.fileName}
 				alt={p.description}
-				title={p.description}
 			/>
-			<div>{p.ts}</div>
+			<div class="subtitle" class:deleted={p.isDeleted}>
+				{#if p.description}
+					{p.description}<br />
+				{/if}
+				{p.id}-{p.seq}<br />{p.ts}
+			</div>
 		</div>
 	{/each}
 </div>
@@ -142,9 +146,15 @@
 			flex: 0;
 		}
 
-		div {
+		.subtitle {
+			line-height: 1em;
+			font-size: 0.8rem;
 			text-align: center;
 			flex: 0;
+
+			&.deleted {
+				color: c.$color-warning;
+			}
 		}
 	}
 
