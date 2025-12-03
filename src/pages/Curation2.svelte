@@ -1,19 +1,26 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { dragAttachment } from "../js/drag.svelte";
 	import { getPicAdminList } from "../js/db-ops";
+	import {
+		userSettings,
+		setIsNewestFirst,
+	} from "../stores/user-settings-store.svelte";
+	import {
+		currentParams,
+		updateQueryStringParam,
+	} from "../stores/route-store.svelte";
 	import Menu from "../components/Menu.svelte";
 
 	let picList = $state([] as PictureItem[]);
-	let slideCount = $derived(picList.length);
-	let isNewestFirst = $state(false);
 
 	const loadPicList = async () => {
 		try {
-			picList = ((await getPicAdminList())?.data || []).sort(
-				(a, b) => a.seq - b.seq,
-			);
+			picList = (await getPicAdminList())?.data || [];
+
+			if (currentParams.paramObj["newest"]) orderByTs();
+			else if (userSettings.value.isNewestFirst) orderByTs();
+			else orderBySeq();
 		} catch (error) {
 			console.error(error);
 		}
@@ -21,12 +28,14 @@
 
 	const orderBySeq = () => {
 		picList.sort((a, b) => a.seq - b.seq);
-		isNewestFirst = false;
+		setIsNewestFirst(false);
+		updateQueryStringParam("newest", undefined);
 	};
 
 	const orderByTs = () => {
 		picList.sort((a, b) => b.ts - a.ts);
-		isNewestFirst = true;
+		setIsNewestFirst(true);
+		updateQueryStringParam("newest", "true");
 	};
 
 	loadPicList();
@@ -35,7 +44,7 @@
 <div class="title">Curated Pictures</div>
 <Menu />
 <div class="sort">
-	{#if !isNewestFirst}
+	{#if !userSettings.value.isNewestFirst}
 		<span>Displayed in Curation Order</span>
 		<span class="dot">&#8226;</span>
 		<a

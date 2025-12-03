@@ -7,7 +7,10 @@
 		userSettings,
 		setIsNewestFirst,
 	} from "../stores/user-settings-store.svelte";
-	import { currentParams } from "../stores/route-store.svelte";
+	import {
+		currentParams,
+		updateQueryStringParam,
+	} from "../stores/route-store.svelte";
 
 	import Carousel from "../components/carousel/Carousel.svelte";
 	import Modal from "../components/Modal.svelte";
@@ -20,11 +23,11 @@
 
 	const loadPicList = async () => {
 		try {
-			picList = ((await getPicPublicList())?.data || []).sort(
-				(a, b) => a.seq - b.seq,
-			);
+			picList = (await getPicPublicList())?.data || [];
 
-			if (userSettings.value.isNewestFirst) orderByTs();
+			if (currentParams.paramObj["newest"]) orderByTs();
+			else if (userSettings.value.isNewestFirst) orderByTs();
+			else orderBySeq();
 
 			if (currentParams.paramObj.p) {
 				const ix = picList.findIndex((p) =>
@@ -59,11 +62,13 @@
 	const orderBySeq = () => {
 		picList.sort((a, b) => a.seq - b.seq);
 		setIsNewestFirst(false);
+		updateQueryStringParam("newest", undefined);
 		carousel?.goTo(0);
 	};
 	const orderByTs = () => {
 		picList.sort((a, b) => b.ts - a.ts);
 		setIsNewestFirst(true);
+		updateQueryStringParam("newest", "true");
 		carousel?.goTo(0);
 	};
 

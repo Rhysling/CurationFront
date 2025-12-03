@@ -1,8 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	//import { user } from "../stores/user-store.svelte";
-
+	import { updateQueryStringParam } from "../stores/route-store.svelte";
 	import NavButton from "./NavButton.svelte";
 
 	let {
@@ -32,12 +31,7 @@
 	let isLast = $derived(ixSlide == slideCount - 1);
 
 	// Keep qs in sync
-
-	const updateQueryStringParam = (key: string, value: string) => {
-		const url = new URL(window.location.href);
-		url.searchParams.set(key, value);
-		window.history.replaceState({}, "", url);
-	};
+	// updateQueryStringParam
 
 	$effect(() => {
 		const fn = currentPic?.fileName ?? "";

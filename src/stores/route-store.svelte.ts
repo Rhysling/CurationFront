@@ -165,6 +165,18 @@ export const navTo = function (e: MouseEvent | null, path: string, params?: any)
 	});
 };
 
+export const updateQueryStringParam = (key: string, value: string | undefined) => {
+	const url = new URL(window.location.href);
+	if (!value) {
+		url.searchParams.delete(key);
+		delete currentParams.paramObj[key];
+	} else {
+		url.searchParams.set(key, value);
+		currentParams.paramObj[key] = value;
+	}
+	window.history.replaceState({}, "", url);
+};
+
 // Back Button
 
 window.onpopstate = () => {
