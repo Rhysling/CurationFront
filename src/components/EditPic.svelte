@@ -207,9 +207,13 @@
 				onclick={() => (pic.ts = Math.floor(new Date().getTime() / 1000))}
 				>Now</button
 			>
-		{:else}<span style:font-style={pic.ts ? "normal" : "italic"}
-				>{pic.ts ? "Ts:" + pic.ts : "No Timestamp"}</span
+		{:else if pic.ts}
+			<span>{`Ts:${pic.ts.toLocaleString()}`}</span>
+			<span style="font-size:0.8rem;"
+				>{`(${new Date(pic.ts * 1000).toLocaleString()})`}</span
 			>
+		{:else}
+			<span style="font-style:italic;">No Timestamp</span>
 		{/if}
 	</div>
 	<div>

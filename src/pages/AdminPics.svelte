@@ -7,6 +7,14 @@
 		postPicWithImg,
 		postDestroyPic,
 	} from "../js/db-ops";
+	import {
+		userSettings,
+		setIsNewestFirst,
+	} from "../stores/user-settings-store.svelte";
+	import {
+		currentParams,
+		updateQueryStringParam,
+	} from "../stores/route-store.svelte";
 	import Menu from "../components/Menu.svelte";
 	import EditPic from "../components/EditPic.svelte";
 	import CleanPics from "../components/CleanPics.svelte";
@@ -38,12 +46,26 @@
 
 	const loadPicList = async () => {
 		try {
-			picList = ((await getPicAdminList())?.data || []).sort(
-				(a, b) => a.seq - b.seq,
-			);
+			picList = (await getPicAdminList())?.data || [];
+
+			if (currentParams.paramObj["newest"]) orderByTs();
+			else if (userSettings.value.isNewestFirst) orderByTs();
+			else orderBySeq();
 		} catch (error) {
 			console.error(error);
 		}
+	};
+
+	const orderBySeq = () => {
+		picList.sort((a, b) => a.seq - b.seq);
+		setIsNewestFirst(false);
+		updateQueryStringParam("newest", undefined);
+	};
+
+	const orderByTs = () => {
+		picList.sort((a, b) => b.ts - a.ts);
+		setIsNewestFirst(true);
+		updateQueryStringParam("newest", "true");
 	};
 
 	const setEditMode = (picId: number, isEdit: boolean) => {
@@ -85,9 +107,30 @@
 <div class="title">Admin Pictures</div>
 
 <CleanPics {picList} {isListEditMode} {refreshPicList} />
-<div class="mgt-bar">
-	<span
-		>Hide Deleted: = <input type="checkbox" bind:checked={hideDeleted} /></span
+<div class="sort">
+	{#if !userSettings.value.isNewestFirst}
+		<span>Displayed in Curation Order</span>
+		<span class="dot">&#8226;</span>
+		<a
+			href="/"
+			onclick={(e) => {
+				e.preventDefault();
+				orderByTs();
+			}}>Show Newest First</a
+		>
+	{:else}
+		<span>Displayed Newest First</span>
+		<span class="dot">&#8226;</span>
+		<a
+			href="/"
+			onclick={(e) => {
+				e.preventDefault();
+				orderBySeq();
+			}}>Show in Curation Order</a
+		>
+	{/if}
+	<span class="dot">&#8226;</span>
+	<span>Hide Deleted: <input type="checkbox" bind:checked={hideDeleted} /></span
 	>
 </div>
 <div class="pic-list">
@@ -116,16 +159,28 @@
 		margin: 1rem auto;
 	}
 
-	.mgt-bar {
-		border: 2px solid c.$main-color;
-		border-radius: 0.5rem;
-		max-width: 800px;
-		margin: 1rem auto;
-		padding: 0.25rem 0;
+	.sort {
+		text-align: center;
 
 		span {
+			font-weight: bold;
+		}
+
+		span,
+		a {
 			display: inline-block;
-			margin: 0 1rem;
+		}
+
+		@media only screen and (width <= c.$bp-small) {
+			span,
+			a {
+				display: block;
+				margin: 0 auto;
+			}
+
+			span.dot {
+				display: none;
+			}
 		}
 	}
 
@@ -134,9 +189,13 @@
 		grid-template-columns: 150px 3fr 1fr;
 		gap: 0.5rem 0;
 		max-width: 800px;
-		margin: 1rem auto;
+		margin: 0.5rem auto;
 		max-height: 70vh;
 		overflow-y: scroll;
+
+		@media only screen and (width <= c.$bp-small) {
+			margin: 0.25rem auto;
+		}
 	}
 
 	@media only screen and (width <= c.$bp-small) {

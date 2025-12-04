@@ -127,11 +127,6 @@
 		if (e.key === "ArrowDown") {
 			e.preventDefault();
 			if (!el) return;
-			// console.log({
-			// 	scrollHeight: el.scrollHeight,
-			// 	scrollTop: el.scrollTop,
-			// 	clientHeight: el.clientHeight,
-			// });
 			if (el.scrollHeight - el.scrollTop === el.clientHeight) {
 				el.scrollBy({
 					top: -(el.clientHeight + 20),

@@ -127,7 +127,7 @@ let objToParamString = (inp: any) => {
 	return "?" + p.toString();
 };
 
-// Public Functions
+// Public Functions ***
 
 export const navFromUrl = function () {
 	let pathName = window.location.pathname;
@@ -147,7 +147,6 @@ export const navFromUrl = function () {
 export const navTo = function (e: MouseEvent | null, path: string, params?: any) {
 	e && e.preventDefault();
 
-	//let pathName = e.currentTarget.dataset.dest;
 	let url = window.location.origin + path;
 
 	if (params)

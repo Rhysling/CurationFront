@@ -34,12 +34,16 @@
 		border: 2px solid c.$main-color;
 		border-radius: 0.5rem;
 		max-width: 800px;
-		margin: 1rem auto;
+		margin: 0.5rem auto;
 		padding: 0.25rem 0;
 
 		span {
 			display: inline-block;
 			margin: 0 1rem;
+		}
+
+		@media only screen and (width <= c.$bp-small) {
+			margin: 0.25rem auto;
 		}
 	}
 
