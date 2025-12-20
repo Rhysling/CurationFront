@@ -81,7 +81,7 @@
 				{#if p.description}
 					{p.description}<br />
 				{/if}
-				{p.id}-{p.seq}<br />{p.ts}
+				{p.id}-{p.seq}<br />{p.ts.toLocaleString()}
 			</div>
 		</div>
 	{/each}

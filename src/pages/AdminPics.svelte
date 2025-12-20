@@ -23,7 +23,7 @@
 		const p: PictureItem = {
 			id: 0,
 			fileName: "",
-			seq: 0,
+			seq: 999,
 			ts: 0,
 			keywords: [],
 			description: "",
@@ -190,7 +190,7 @@
 		gap: 0.5rem 0;
 		max-width: 800px;
 		margin: 0.5rem auto;
-		max-height: 70vh;
+		max-height: 67vh;
 		overflow-y: scroll;
 
 		@media only screen and (width <= c.$bp-small) {

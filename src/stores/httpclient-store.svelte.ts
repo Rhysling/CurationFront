@@ -1,5 +1,5 @@
 import axios from "axios";
-import { user } from "./user-store.svelte";
+import { user, logOut } from "./user-store.svelte";
 
 declare var baseURL: string;
 
@@ -15,9 +15,7 @@ const httpClient = $derived.by(() => {
 	instance.interceptors.response.use(
 		res => res,
 		err => {
-			// if (err.response.status === 401)
-			//   user.logout();
-
+			if (err.response.status === 401) logOut();
 			return Promise.reject(err);
 		}
 	);

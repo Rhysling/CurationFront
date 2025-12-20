@@ -29,7 +29,7 @@
 		const p: PictureItem = {
 			id: 0,
 			fileName: "",
-			seq: 0,
+			seq: 999,
 			ts: 0,
 			keywords: [],
 			description: "",
