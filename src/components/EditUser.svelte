@@ -33,6 +33,7 @@
 	};
 
 	// *** State ***
+	//svelte-ignore state_referenced_locally
 	let userEdited: UserClientRemote = $state({ ...userIn });
 	let isEditMode = $state(false);
 	let isValidEmail: ValidationState = $state(undefined);

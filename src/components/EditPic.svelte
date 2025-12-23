@@ -40,6 +40,7 @@
 	};
 
 	// *** State ***
+	//svelte-ignore state_referenced_locally
 	let pic: PictureItem = $state({ ...picItem });
 	let isEditMode = $state(false);
 	let isValidSeq: ValidationState = $state(undefined);
