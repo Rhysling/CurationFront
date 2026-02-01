@@ -30,3 +30,23 @@ export const postBackup = async (dbName: Db) => {
 		console.error(error);
 	}
 };
+
+export const postRestore = async (fileName: string) => {
+	try {
+		const response: AxiosResponse<string> = await ax().post(`/api/Db/Restore?fileName=${fileName}`);
+		return response;
+	}
+	catch (error) {
+		console.error(error);
+	}
+};
+
+export const postDelete = async (fileName: string) => {
+	try {
+		const response: AxiosResponse<string> = await ax().post(`/api/Db/Delete?fileName=${fileName}`);
+		return response;
+	}
+	catch (error) {
+		console.error(error);
+	}
+};

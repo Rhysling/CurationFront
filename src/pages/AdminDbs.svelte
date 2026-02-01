@@ -1,7 +1,13 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { getBackupList, getFile, postBackup } from "../js/db-admin-ops";
+	import {
+		getBackupList,
+		getFile,
+		postBackup,
+		postRestore,
+		postDelete,
+	} from "../js/db-admin-ops";
 	import Menu from "../components/Menu.svelte";
 
 	let pdbList: string[] = $state([]);
@@ -10,6 +16,7 @@
 	const loadPdbList = async () => {
 		try {
 			pdbList = (await getBackupList("PicturesDb"))?.data || [];
+			pdbList = ["PicturesDb.json", ...pdbList];
 		} catch (error) {
 			pdbList = ["Error loading list"];
 		}
@@ -18,6 +25,7 @@
 	const loadUdbList = async () => {
 		try {
 			udbList = (await getBackupList("UsersDb"))?.data || [];
+			udbList = ["UsersDb.json", ...udbList];
 		} catch (error) {
 			udbList = ["Error loading list"];
 		}
@@ -58,16 +66,8 @@
 <div class="list">
 	<div class="list-title">PicturesDb Backup List</div>
 	<div>&nbsp;</div>
-	<div>PicturesDb.json</div>
-	<div>
-		<a
-			href="/"
-			onclick={async (e: Event) => {
-				e.preventDefault();
-				downloadAndSave("PicturesDb.json");
-			}}>Download</a
-		>
-	</div>
+	<div>&nbsp;</div>
+	<div>&nbsp;</div>
 	{#each pdbList as item (item)}
 		<div>{item}</div>
 		<div>
@@ -79,31 +79,53 @@
 				}}>Download</a
 			>
 		</div>
+		<div>
+			{#if item.indexOf("_") > 0}
+				<a
+					href="/"
+					onclick={async (e: Event) => {
+						e.preventDefault();
+						if (confirm(`Restore ${item} "?`)) {
+							await postBackup("PicturesDb");
+							await postRestore(item);
+							await loadPdbList();
+						}
+					}}>Restore</a
+				>
+			{/if}
+		</div>
+		<div>
+			{#if item.indexOf("_") > 0}<a
+					href="/"
+					onclick={async (e: Event) => {
+						e.preventDefault();
+						if (confirm(`Delete ${item} "?`)) {
+							await postDelete(item);
+							await loadPdbList();
+						}
+					}}>Delete</a
+				>
+			{/if}
+		</div>
 	{/each}
 	<div>
 		<button
 			onclick={async () => {
 				await postBackup("PicturesDb");
 				await loadPdbList();
-			}}>Create PicturesDb Backup</button
+			}}>Backup PicturesDb</button
 		>
 	</div>
+	<div>&nbsp;</div>
+	<div>&nbsp;</div>
 	<div>&nbsp;</div>
 </div>
 
 <div class="list">
 	<div class="list-title">UsersDb Backup List</div>
 	<div>&nbsp;</div>
-	<div>UsersDb.json</div>
-	<div>
-		<a
-			href="/"
-			onclick={async (e: Event) => {
-				e.preventDefault();
-				downloadAndSave("UsersDb.json");
-			}}>Download</a
-		>
-	</div>
+	<div>&nbsp;</div>
+	<div>&nbsp;</div>
 	{#each udbList as item (item)}
 		<div>{item}</div>
 		<div>
@@ -115,15 +137,45 @@
 				}}>Download</a
 			>
 		</div>
+		<div>
+			{#if item.indexOf("_") > 0}
+				<a
+					href="/"
+					onclick={async (e: Event) => {
+						e.preventDefault();
+						if (confirm(`Restore ${item} "?`)) {
+							await postBackup("UsersDb");
+							await postRestore(item);
+							await loadUdbList();
+						}
+					}}>Restore</a
+				>
+			{/if}
+		</div>
+		<div>
+			{#if item.indexOf("_") > 0}<a
+					href="/"
+					onclick={async (e: Event) => {
+						e.preventDefault();
+						if (confirm(`Delete ${item} "?`)) {
+							await postDelete(item);
+							await loadUdbList();
+						}
+					}}>Delete</a
+				>
+			{/if}
+		</div>
 	{/each}
 	<div>
 		<button
 			onclick={async () => {
 				await postBackup("UsersDb");
 				await loadUdbList();
-			}}>Create UsersDb Backup</button
+			}}>Backup UsersDb</button
 		>
 	</div>
+	<div>&nbsp;</div>
+	<div>&nbsp;</div>
 	<div>&nbsp;</div>
 </div>
 
@@ -142,7 +194,7 @@
 
 	.list {
 		display: grid;
-		grid-template-columns: 1fr 7rem;
+		grid-template-columns: 1fr auto auto auto;
 		gap: 0;
 		max-width: 600px;
 		margin: 1rem auto;
@@ -155,7 +207,7 @@
 		}
 
 		> div {
-			padding: 0 0 0 1rem;
+			margin: 0 1rem;
 		}
 		button {
 			margin: 1rem 0;
