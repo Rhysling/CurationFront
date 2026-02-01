@@ -25,4 +25,4 @@ type UserSettings = {
 	isNewestFirst: boolean;
 };
 
-// type PictureItemEdit = PictureItem & Editing;
+type Db = "PicturesDb" | "UsersDb";

@@ -32,9 +32,9 @@ const baseRoutes: Route = {
 			children: []
 		},
 		{
-			title: "Testing",
-			page: "Testing",
-			path: "/testing",
+			title: "Admin Dbs",
+			page: "AdminDbs",
+			path: "/admin-dbs",
 			isAdmin: true,
 			children: []
 		},

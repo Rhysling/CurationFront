@@ -11,7 +11,7 @@
 	import Curation2 from "./pages/Curation2.svelte";
 	import AdminPics from "./pages/AdminPics.svelte";
 	import AdminUsers from "./pages/AdminUsers.svelte";
-	import Testing from "./pages/Testing.svelte";
+	import AdminDbs from "./pages/AdminDbs.svelte";
 	import Picture from "./pages/Picture.svelte";
 
 	import { getCurrentRoute, navFromUrl } from "./stores/route-store.svelte";
@@ -23,7 +23,7 @@
 		Curation2,
 		AdminPics,
 		AdminUsers,
-		Testing,
+		AdminDbs,
 		Picture,
 	};
 
