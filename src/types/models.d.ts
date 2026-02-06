@@ -35,6 +35,7 @@ type PictureItem = {
 	ts: number;
 	keywords: string[];
 	description: INullable<string>;
+	link: INullable<string>;
 	isMissing: boolean;
 	isDeleted: boolean;
 }

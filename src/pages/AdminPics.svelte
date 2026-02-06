@@ -27,6 +27,7 @@
 			ts: 0,
 			keywords: [],
 			description: "",
+			link: "",
 			isMissing: false,
 			isDeleted: false,
 		};

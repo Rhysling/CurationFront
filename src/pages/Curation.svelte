@@ -150,7 +150,13 @@
 					enlarge(e);
 				}}
 			/>
-			<div class="slide-description">{slide.description}</div>
+			{#if slide.link}
+				<div class="slide-description">
+					<a href={slide.link} target="_blank">{slide.description || "Link"}</a>
+				</div>
+			{:else}
+				<div class="slide-description">{slide.description}</div>
+			{/if}
 		{/snippet}
 
 		<!--//canScrollPrev: boolean, prev: () => void, canScrollNext: boolean, next: () => void, nextA11y: any, prevA11y: any-->

@@ -33,6 +33,7 @@
 			ts: 0,
 			keywords: [],
 			description: "",
+			link: "",
 			isMissing: false,
 			isDeleted: false,
 		};
@@ -92,6 +93,14 @@
 		validateAll();
 		if (isValidAll) {
 			if (pic.description) pic.description = pic.description.trim();
+			// Clean Link
+			if (pic.link) {
+				pic.link = pic.link.trim();
+				if (pic.link && !/^https?:\/\//.test(pic.link)) {
+					pic.link = "https://" + pic.link;
+				}
+			}
+
 			pic.ts = parseInt(<string>(<unknown>pic.ts)) || 0;
 			savePic(pic);
 			setEditMode(0, false);
@@ -198,6 +207,18 @@
 			/>
 		{:else}<span style:font-style={pic.description ? "normal" : "italic"}
 				>{pic.description || "No Title"}</span
+			>
+		{/if}
+	</div>
+	<div>
+		{#if isEditMode}<input
+				type="text"
+				class="plain"
+				bind:value={() => pic.link, (v) => (pic.link = v)}
+				placeholder="Link URL"
+			/>
+		{:else}<span style:font-style={pic.description ? "normal" : "italic"}
+				>{pic.link || "No Link URL"}</span
 			>
 		{/if}
 	</div>
