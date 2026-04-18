@@ -5,6 +5,7 @@
 
 	type EditPicProps = {
 		picItem: PictureItem;
+		picList: PictureItem[];
 		isListEditMode: boolean;
 		editingPicId: number;
 		setEditMode: (picId: number, isEdit: boolean) => void;
@@ -13,10 +14,9 @@
 		destroyPic: (pic: PictureItem) => void;
 	};
 
-	type ValidationState = boolean | undefined;
-
 	let {
 		picItem,
+		picList,
 		isListEditMode,
 		editingPicId,
 		setEditMode,
@@ -46,11 +46,27 @@
 	let isEditMode = $state(false);
 	let isValidSeq: ValidationState = $state(undefined);
 	let isValidFileName: ValidationState = $state(undefined);
-	let isValidAll: boolean = $derived(!!isValidSeq && !!isValidFileName);
+	let isValidLink: ValidationState = $state(undefined);
+	let isValidAll: ValidationState = $derived.by(() => {
+		if (
+			isValidSeq === undefined &&
+			isValidFileName === undefined &&
+			isValidLink === undefined
+		)
+			return undefined;
+		if (
+			isValidSeq === false ||
+			isValidFileName === false ||
+			isValidLink === false
+		)
+			return false;
+		return true;
+	});
 
 	// ** Validations **
 	const validateSeq = () => (isValidSeq = !isNaN(pic.seq));
 	const validateFileName = () => {
+		// If both old and new file names are empty, consider it valid (for new pics without an image)
 		if (!picItem.fileName && !pic.fileName) {
 			isValidFileName = true;
 			return;
@@ -75,12 +91,44 @@
 			return;
 		}
 
+		// No duplicate file names allowed (except if it's the same pic being edited)
+		// console.log({
+		// 	pic: $state.snapshot(pic),
+		// 	picList: $state.snapshot(picList),
+		// });
+		if (
+			picList.some(
+				(a) =>
+					a.fileName.toLowerCase() === pic.fileName.toLowerCase() &&
+					a.id !== pic.id,
+			)
+		) {
+			isValidFileName = false;
+			return;
+		}
+
 		isValidFileName = true;
+	};
+
+	const validateLink = () => {
+		if (!pic.link) {
+			isValidLink = true;
+			return;
+		}
+
+		const rx = /^https?:\/\/\w+/;
+		if (!rx.test(pic.link)) {
+			isValidLink = false;
+			return;
+		}
+
+		isValidLink = true;
 	};
 
 	const validateAll = () => {
 		validateSeq();
 		validateFileName();
+		validateLink();
 	};
 
 	// ** Edit / Save / Destroy / Cancel **
@@ -129,6 +177,7 @@
 		setEditMode(0, false);
 		isValidSeq = undefined;
 		isValidFileName = undefined;
+		isValidLink = undefined;
 		isEditMode = false;
 	};
 
@@ -148,11 +197,7 @@
 	};
 </script>
 
-<div
-	class="pic-img"
-	style:background-image={pic.fileName ? `url("pics/${pic.fileName}")` : null}
-	style="background-color:pink;"
->
+<div style="background-color:white;position:relative;">
 	{#if isListEditMode && pic.id === editingPicId}
 		<PicDrop
 			{pic}
@@ -162,7 +207,15 @@
 			{setItemEditMode}
 		/>
 	{:else}
-		&nbsp;
+		<img
+			id={"pic-" + pic.id}
+			class="pic-img"
+			src={pic.fileName
+				? `/pics/${pic.fileName}`
+				: "/assets/img/zzzzz-no-picture.png"}
+			alt={pic.description}
+			title={`ID: ${pic.id} | ${pic.description}`}
+		/>
 	{/if}
 	<div
 		class="cover"
@@ -185,7 +238,7 @@
 			/>
 		{:else}<span>Seq: {pic.seq}</span>
 		{/if}
-		{#if isEditMode && pic.fileName}<input
+		{#if isEditMode && picItem.fileName}<input
 				type="text"
 				class:info={isValidFileName === undefined}
 				class:success={isValidFileName === true}
@@ -213,7 +266,10 @@
 	<div>
 		{#if isEditMode}<input
 				type="text"
-				class="plain"
+				class:info={isValidLink === undefined}
+				class:success={isValidLink === true}
+				class:error={isValidLink === false}
+				onblur={validateLink}
 				bind:value={() => pic.link, (v) => (pic.link = v)}
 				placeholder="Link URL"
 			/>
@@ -269,7 +325,7 @@
 <div class="pic-controls">
 	{#if isEditMode}
 		<div>
-			<button onclick={save}>Save</button>
+			<button onclick={save} disabled={isValidAll === false}>Save</button>
 			<button onclick={cancel}>Cancel</button>
 		</div>
 	{:else}<button onclick={edit}>Edit</button>

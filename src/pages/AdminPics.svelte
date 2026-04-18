@@ -74,21 +74,49 @@
 		isListEditMode = isEdit;
 	};
 
-	const savePic = async (pic: PictureItem) => {
-		let p = picList.find((a) => a.id === pic.id);
-		if (p) p = pic;
-		await postPic(pic);
+	const savePic = async (picNew: PictureItem) => {
+		const updatedPic = (await postPic(picNew))?.data;
+		if (!updatedPic) return;
+
+		const ix = picList.findIndex((a) => a.id === updatedPic.id);
+		if (ix >= 0) {
+			picList[ix] = updatedPic;
+
+			// Preload the image so the <img> tag never shows a broken state
+			setTimeout(() => {
+				const imgPath = `/pics/${picNew.fileName}`;
+				const probe = new Image();
+				probe.onload = () => {
+					const el = document.getElementById("pic-" + picNew.id);
+					if (el) {
+						const img = <HTMLImageElement>el;
+						img.src = imgPath;
+					}
+				};
+				probe.onerror = () => {
+					console.error(`Failed to load image: ${imgPath}`);
+				};
+
+				probe.src = imgPath;
+			}, 100);
+		}
 	};
 
 	const savePicWithImg = async (form: FormData) => {
 		const savedPic = (await postPicWithImg(form))?.data;
 		if (savedPic) {
-			const ix = picList.findIndex((a) => a.id === savedPic.id);
-			if (ix >= 0) picList[ix] = savedPic;
-			else {
-				emptyPicItem = getEmptyPicItem();
-				picList = [savedPic, ...picList];
-			}
+			// Preload the image so the <img> tag never shows a broken state
+			const imgPath = `/pics/${savedPic.fileName}`;
+			const probe = new Image();
+			probe.onload = probe.onerror = () => {
+				const ix = picList.findIndex((a) => a.id === savedPic.id);
+				if (ix >= 0) picList[ix] = savedPic;
+				else {
+					emptyPicItem = getEmptyPicItem();
+					picList = [savedPic, ...picList];
+				}
+			};
+			probe.src = imgPath;
 		}
 	};
 
@@ -138,6 +166,7 @@
 	{#each picListDisplay as pic, ix (pic.id)}
 		<EditPic
 			picItem={pic}
+			{picList}
 			{isListEditMode}
 			{editingPicId}
 			{setEditMode}
@@ -195,6 +224,7 @@
 		overflow-y: scroll;
 
 		@media only screen and (width <= c.$bp-small) {
+			grid-template-columns: 150px 1fr auto;
 			margin: 0.25rem auto;
 		}
 	}

@@ -14,7 +14,8 @@
 	let missingCount: number = $derived(
 		picList.filter((a) => a.isMissing == true).length,
 	);
-	let orphanCount: number = $derived(picList.filter((a) => !a.seq).length);
+	let orphanList: PictureItem[] = $derived(picList.filter((a) => !a.seq));
+	let orphanCount: number = $derived(orphanList.length);
 
 	const cleanPics = async () => {
 		refreshPicList((await getCleanPics())?.data || []);
@@ -22,9 +23,21 @@
 </script>
 
 <div class="clean-bar">
-	<button onclick={cleanPics} disabled={isListEditMode}>Clean Pic List</button>
-	<span>Missing = {missingCount}</span>
-	<span>Orphans = {orphanCount}</span>
+	<div>
+		<button onclick={cleanPics} disabled={isListEditMode}>Clean Pic List</button
+		>
+		<span>Missing = {missingCount}</span>
+		<span>Orphans = {orphanCount}</span>
+	</div>
+	{#if orphanCount > 0}
+		{#each orphanList as pic}
+			<img
+				src={`/pics/${pic.fileName}`}
+				alt={pic.description}
+				title={`ID: ${pic.id} | ${pic.description}`}
+			/>
+		{/each}
+	{/if}
 </div>
 
 <style lang="scss">
@@ -40,6 +53,16 @@
 		span {
 			display: inline-block;
 			margin: 0 1rem;
+		}
+
+		img {
+			display: inline-block;
+			width: 150px;
+			height: 150px;
+			object-fit: cover;
+			border: 1px solid c.$main-color;
+			border-radius: 0.25rem;
+			margin: 0.25rem;
 		}
 
 		@media only screen and (width <= c.$bp-small) {

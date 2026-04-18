@@ -13,6 +13,8 @@ type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string
 
 type KVPair = Record<string, string>;
 
+type ValidationState = boolean | undefined;
+
 type PageState = {
 	itemsPerPage: number;
 	itemCount: number;

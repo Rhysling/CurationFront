@@ -14,7 +14,7 @@
 
 	type PicDropProps = {
 		pic: PictureItem;
-		isValidAll: boolean;
+		isValidAll: ValidationState;
 		validateAll: () => void;
 		savePicWithImgDZ: (form: FormData, newPic: PictureItem) => void;
 		setItemEditMode: (picId: number, isEdit: boolean) => void;
