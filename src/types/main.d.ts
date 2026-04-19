@@ -23,6 +23,11 @@ type PageState = {
 	endIndex: number;
 };
 
+type AuditList = {
+	missing: PictureItem[];
+	orphans: PictureItem[];
+};
+
 type UserSettings = {
 	isNewestFirst: boolean;
 };

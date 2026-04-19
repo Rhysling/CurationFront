@@ -1,41 +1,48 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { getCleanPics } from "../js/db-ops";
+	import { getAuditList, postCleanPics } from "../js/db-ops";
 
-	type CleanPicsProps = {
-		picList: PictureItem[];
+	let {
+		isListEditMode,
+		refreshPicList,
+	}: {
 		isListEditMode: boolean;
 		refreshPicList: (pics: PictureItem[]) => void;
+	} = $props();
+
+	let auditList: AuditList = $state({ missing: [], orphans: [] });
+	let isChecked = $state(false);
+
+	let missingCount: number = $derived(auditList.missing.length);
+	let orphanCount: number = $derived(auditList.orphans.length);
+
+	const checkPics = async () => {
+		auditList = (await getAuditList())?.data || { missing: [], orphans: [] };
+		isChecked = true;
 	};
 
-	let { picList, isListEditMode, refreshPicList }: CleanPicsProps = $props();
-
-	let missingCount: number = $derived(
-		picList.filter((a) => a.isMissing == true).length,
-	);
-	let orphanList: PictureItem[] = $derived(picList.filter((a) => !a.seq));
-	let orphanCount: number = $derived(orphanList.length);
-
 	const cleanPics = async () => {
-		refreshPicList((await getCleanPics())?.data || []);
+		let pl = (await postCleanPics())?.data || [];
+		let missing = pl.filter((a) => a.isMissing == true);
+		let orphans = pl.filter((a) => !a.seq);
+		auditList = { missing, orphans };
+		refreshPicList(pl);
+		isChecked = true;
 	};
 </script>
 
 <div class="clean-bar">
 	<div>
+		<button onclick={checkPics} disabled={isListEditMode}>Check Pics</button>
+		<span>Missing = {isChecked ? missingCount : "??"}</span>
+		<span>Orphans = {isChecked ? orphanCount : "??"}</span> --
 		<button onclick={cleanPics} disabled={isListEditMode}>Clean Pic List</button
 		>
-		<span>Missing = {missingCount}</span>
-		<span>Orphans = {orphanCount}</span>
 	</div>
 	{#if orphanCount > 0}
-		{#each orphanList as pic}
-			<img
-				src={`/pics/${pic.fileName}`}
-				alt={pic.description}
-				title={`ID: ${pic.id} | ${pic.description}`}
-			/>
+		{#each auditList.orphans as pic}
+			<img src={`/pics/${pic.fileName}`} alt="Orphan Pic" />
 		{/each}
 	{/if}
 </div>

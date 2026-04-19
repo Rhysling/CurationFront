@@ -30,9 +30,18 @@ export const getPicAdminList = async () => {
 	}
 };
 
-export const getCleanPics = async () => {
+export const getAuditList = async () => {
 	try {
-		const response: AxiosResponse<PictureItem[]> = await ax().get("/api/Pictures/GetCleanPics");
+		const response: AxiosResponse<AuditList> = await ax().get("/api/Pictures/GetAuditList");
+		return response;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const postCleanPics = async () => {
+	try {
+		const response: AxiosResponse<PictureItem[]> = await ax().post("/api/Pictures/CleanPics");
 		return response;
 	} catch (error) {
 		console.error(error);

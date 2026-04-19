@@ -154,6 +154,7 @@
 			setEditMode(0, false);
 			isValidSeq = undefined;
 			isValidFileName = undefined;
+			isValidLink = undefined;
 			isEditMode = false;
 		}
 	};
@@ -168,6 +169,7 @@
 			setEditMode(0, false);
 			isValidSeq = undefined;
 			isValidFileName = undefined;
+			isValidLink = undefined;
 			isEditMode = false;
 		}
 	};

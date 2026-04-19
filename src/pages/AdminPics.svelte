@@ -135,7 +135,7 @@
 
 <div class="title">Admin Pictures</div>
 
-<CleanPics {picList} {isListEditMode} {refreshPicList} />
+<CleanPics {isListEditMode} {refreshPicList} />
 <div class="sort">
 	{#if !userSettings.value.isNewestFirst}
 		<span>Displayed in Curation Order</span>
