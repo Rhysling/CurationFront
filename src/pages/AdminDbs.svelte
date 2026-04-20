@@ -85,7 +85,7 @@
 					href="/"
 					onclick={async (e: Event) => {
 						e.preventDefault();
-						if (confirm(`Restore ${item} "?`)) {
+						if (confirm(`Restore ${item}?`)) {
 							await postBackup("PicturesDb");
 							await postRestore(item);
 							await loadPdbList();
@@ -99,7 +99,7 @@
 					href="/"
 					onclick={async (e: Event) => {
 						e.preventDefault();
-						if (confirm(`Delete ${item} "?`)) {
+						if (confirm(`Delete ${item}?`)) {
 							await postDelete(item);
 							await loadPdbList();
 						}
@@ -143,7 +143,7 @@
 					href="/"
 					onclick={async (e: Event) => {
 						e.preventDefault();
-						if (confirm(`Restore ${item} "?`)) {
+						if (confirm(`Restore ${item}?`)) {
 							await postBackup("UsersDb");
 							await postRestore(item);
 							await loadUdbList();
@@ -157,7 +157,7 @@
 					href="/"
 					onclick={async (e: Event) => {
 						e.preventDefault();
-						if (confirm(`Delete ${item} "?`)) {
+						if (confirm(`Delete ${item}?`)) {
 							await postDelete(item);
 							await loadUdbList();
 						}

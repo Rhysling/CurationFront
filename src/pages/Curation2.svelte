@@ -2,14 +2,9 @@
 
 <script lang="ts">
 	import { getPicAdminList } from "../js/db-ops";
-	import {
-		userSettings,
-		setIsNewestFirst,
-	} from "../stores/user-settings-store.svelte";
-	import {
-		currentParams,
-		updateQueryStringParam,
-	} from "../stores/route-store.svelte";
+	import { orderBySeq, orderByTs } from "../js/utils";
+	import { userSettings } from "../stores/user-settings-store.svelte";
+	import { currentParams } from "../stores/route-store.svelte";
 	import Menu from "../components/Menu.svelte";
 
 	let picList = $state([] as PictureItem[]);
@@ -18,24 +13,12 @@
 		try {
 			picList = (await getPicAdminList())?.data || [];
 
-			if (currentParams.paramObj["newest"]) orderByTs();
-			else if (userSettings.value.isNewestFirst) orderByTs();
-			else orderBySeq();
+			if (currentParams.paramObj["newest"]) orderByTs(picList);
+			else if (userSettings.value.isNewestFirst) orderByTs(picList);
+			else orderBySeq(picList);
 		} catch (error) {
 			console.error(error);
 		}
-	};
-
-	const orderBySeq = () => {
-		picList.sort((a, b) => a.seq - b.seq);
-		setIsNewestFirst(false);
-		updateQueryStringParam("newest", undefined);
-	};
-
-	const orderByTs = () => {
-		picList.sort((a, b) => b.ts - a.ts);
-		setIsNewestFirst(true);
-		updateQueryStringParam("newest", "true");
 	};
 
 	loadPicList();
@@ -51,7 +34,7 @@
 			href="/"
 			onclick={(e) => {
 				e.preventDefault();
-				orderByTs();
+				orderByTs(picList);
 			}}>Show Newest First</a
 		>
 	{:else}
@@ -61,7 +44,7 @@
 			href="/"
 			onclick={(e) => {
 				e.preventDefault();
-				orderBySeq();
+				orderBySeq(picList);
 			}}>Show in Curation Order</a
 		>
 	{/if}

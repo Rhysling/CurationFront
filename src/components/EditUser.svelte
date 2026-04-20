@@ -9,8 +9,6 @@
 		saveUser: (user: UserClientRemote) => void;
 	};
 
-	type ValidationState = boolean | undefined;
-
 	let {
 		userIn,
 		isListEditMode,
@@ -18,19 +16,6 @@
 		setEditMode,
 		saveUser,
 	}: EditUserProps = $props();
-
-	const getEmptyUser = () => {
-		const u: UserClientRemote = {
-			id: 0,
-			email: "",
-			fullName: "",
-			token: "",
-			isAdmin: false,
-			isDisabled: false,
-			isDeleted: false,
-		};
-		return { ...u };
-	};
 
 	// *** State ***
 	//svelte-ignore state_referenced_locally

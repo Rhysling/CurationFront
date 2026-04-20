@@ -3,15 +3,13 @@
 <script lang="ts">
 	import { getPicPublicList } from "../js/db-ops";
 	import { user } from "../stores/user-store.svelte";
-	import {
-		userSettings,
-		setIsNewestFirst,
-	} from "../stores/user-settings-store.svelte";
-	import {
-		currentParams,
-		updateQueryStringParam,
-	} from "../stores/route-store.svelte";
+	import { userSettings } from "../stores/user-settings-store.svelte";
+	import { currentParams } from "../stores/route-store.svelte";
 
+	import {
+		orderBySeq as applyOrderBySeq,
+		orderByTs as applyOrderByTs,
+	} from "../js/utils";
 	import Carousel from "../components/carousel/Carousel.svelte";
 	import Modal from "../components/Modal.svelte";
 	import Menu from "../components/Menu.svelte";
@@ -60,47 +58,17 @@
 	let ixSlide: number = $derived((carousel && carousel.getCurrentSlide()) || 0);
 
 	const orderBySeq = () => {
-		picList.sort((a, b) => a.seq - b.seq);
-		setIsNewestFirst(false);
-		updateQueryStringParam("newest", undefined);
+		applyOrderBySeq(picList);
 		carousel?.goTo(0);
 	};
 	const orderByTs = () => {
-		picList.sort((a, b) => b.ts - a.ts);
-		setIsNewestFirst(true);
-		updateQueryStringParam("newest", "true");
+		applyOrderByTs(picList);
 		carousel?.goTo(0);
 	};
 
 	const enlarge = (e: Event) => {
 		e.preventDefault();
 		isOpenModal = true;
-	};
-
-	// Test scrolling
-
-	const scrollUp = () => {
-		let el = document.getElementsByClassName("carousel-class")?.item(0);
-		if (!el) return;
-		el?.scrollBy({ top: 40, left: 0, behavior: "smooth" });
-		console.log({
-			scrollHeight: el.scrollHeight,
-			scrollTop: el.scrollTop,
-			clientHeight: el.clientHeight,
-		});
-		if (el.scrollHeight - el.scrollTop === el.clientHeight) alert("At top");
-	};
-
-	const scrollDown = () => {
-		let el = document.getElementsByClassName("carousel-class")?.item(0);
-		if (!el) return;
-		el.scrollBy({ top: -40, left: 0, behavior: "smooth" });
-		console.log({
-			scrollHeight: el.scrollHeight,
-			scrollTop: el.scrollTop,
-			clientHeight: el.clientHeight,
-		});
-		if (el.scrollTop === 0) alert("At bottom");
 	};
 </script>
 
@@ -137,7 +105,6 @@
 		bind:this={carousel}
 		slides={picList}
 		containerClass={"carousel-container"}
-		class={"carousel-class"}
 	>
 		{#snippet slide({ slide })}
 			<img
@@ -162,7 +129,7 @@
 		<!--//canScrollPrev: boolean, prev: () => void, canScrollNext: boolean, next: () => void, nextA11y: any, prevA11y: any-->
 		{#snippet prev(x)}
 			<button
-				{...x.a11y}
+				title="Previous"
 				class={`prev ${!x.canScrollPrev ? "opacity-50 cursor-not-allowed" : ""}`}
 				onclick={x.prev}
 				disabled={!x.canScrollPrev}
@@ -183,7 +150,7 @@
 		{/snippet}
 		{#snippet next(x)}
 			<button
-				{...x.a11y}
+				title="Next"
 				class={`next ${!x.canScrollNext ? "opacity-50 !cursor-not-allowed" : ""}`}
 				onclick={x.next}
 				disabled={!x.canScrollNext}
@@ -321,9 +288,11 @@
 
 	.carousel-img {
 		display: block;
-		width: 100%;
+		max-width: 100%;
+		max-height: 60vh;
+		width: auto;
+		height: auto;
 		margin: 0.25rem auto 0;
-		max-height: 80vh;
 	}
 
 	.big-picture {

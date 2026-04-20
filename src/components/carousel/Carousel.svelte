@@ -1,420 +1,174 @@
 <script lang="ts" generics="Slide">
-	import type { Props, Snippets } from "./carousel-types";
-
-	import {
-		dragScroll,
-		type DotA11y,
-		type OnChangeEvent,
-		type OnInitEvent,
-		type ResponsiveProperty,
-		type Dot,
-	} from "./carousel.js";
+	import { cubicOut } from "svelte/easing";
+	import type { CarouselProps, CarouselSnippets } from "./carousel-types.js";
 
 	let {
-		class: className,
-		id = "carousel" + Math.random().toString(36).substring(2, 9),
 		slides = [],
-		withGrabCursor = true,
 		key = undefined,
-		axis = { default: "x" },
-		dragFree = false,
-		disableNativeScroll = { default: false },
-		disableArrowKeyNav = false,
-		oneAtTime = false,
-		autoHeight = false,
-		autoPlay = 0,
-		pauseOnHover = false,
-		layout = { default: 1 },
-		gaps: gap = { default: 20 },
-		partialDelta = { default: 0 },
 		containerClass = "",
 		slideClass = "",
-
 		slide: slideSnippet,
-		pagination: paginationSnippet,
 		prev: prevSnippet,
 		next: nextSnippet,
-		progress: progressSnippet,
 		dots: dotsSnippet,
-	}: Props<Slide> & Snippets<Slide> = $props();
+		pagination: paginationSnippet,
+	}: CarouselProps<Slide> & CarouselSnippets<Slide> = $props();
 
-	let slidesInView: number[] = $state([]);
-	let dots: Dot[] = $state([]);
-	let canScrollNext = $state(false);
-	let canScrollPrev = $state(false);
-	let progress: number = $state(0);
-	let currentSlide: number = $state(0);
-	let mounted: boolean = $state(false);
+	let currentIndex = $state(0);
+	let direction = $state(1);
+	let stage: HTMLElement | undefined = $state();
 
-	let scrollTo: (slide: number) => void = () => {};
-	let navigate: (slide: number) => void = () => {};
+	let dragStartX = 0;
+	let dragging = false;
 
-	export const next = () => canScrollNext && navigate(currentSlide + 1);
-	export const prev = () => canScrollPrev && navigate(currentSlide - 1);
-	export const goTo = (slide: number) => navigate(slide);
-	export const getCurrentSlide = () => currentSlide;
-
-	const onInit = (event: OnInitEvent) => {
-		scrollTo = event.scrollTo;
-		navigate = event.navigate;
-		mounted = true;
-	};
-
-	const onChange = (event: OnChangeEvent) => {
-		progress = event.progress;
-		slidesInView = event.slidesInView;
-		dots = event.dots;
-		canScrollNext = event.canScrollNext;
-		canScrollPrev = event.canScrollPrev;
-		currentSlide = event.currentSlide;
-	};
-
-	const scrollProgress = (e: PointerEvent) => {
-		const track = e.currentTarget;
-		if (track instanceof HTMLElement) {
-			const pointerPositionOnTrackInPercent =
-				(e.clientX - track.getBoundingClientRect().left) / track.clientWidth;
-			navigate(Math.floor(pointerPositionOnTrackInPercent * slides.length));
+	export const next = () => {
+		if (currentIndex < slides.length - 1) {
+			direction = 1;
+			currentIndex++;
 		}
 	};
-	const scrollDot = (dot: number) => navigate(dot);
 
-	const buttonA11y = (type: "prev" | "next") => ({
-		"aria-controls": `${id}-slides`,
-		"aria-label": type === "prev" ? "Previous slide" : "Next slide",
-	});
+	export const prev = () => {
+		if (currentIndex > 0) {
+			direction = -1;
+			currentIndex--;
+		}
+	};
 
-	const handleArrowNav = (e: KeyboardEvent) => {
-		if (!mounted) return;
-		if (disableArrowKeyNav) return;
-		const el = document.getElementsByClassName("carousel-class")?.item(0);
+	export const goTo = (index: number) => {
+		const clamped = Math.max(0, Math.min(slides.length - 1, index));
+		direction = clamped >= currentIndex ? 1 : -1;
+		currentIndex = clamped;
+	};
 
+	export const getCurrentSlide = () => currentIndex;
+
+	const canScrollNext = $derived(currentIndex < slides.length - 1);
+	const canScrollPrev = $derived(currentIndex > 0);
+	const dots = $derived(
+		slides.map((_, i) => ({ active: i === currentIndex, index: i })),
+	);
+
+	// Entering slide: translate in from off-screen, stays in normal flow to provide height.
+	function slideIn(node: HTMLElement, { dir }: { dir: number }) {
+		const w = stage?.clientWidth ?? node.clientWidth ?? 800;
+		return {
+			duration: 280,
+			easing: cubicOut,
+			css: (t: number, u: number) => `transform: translateX(${dir * u * w}px)`,
+		};
+	}
+
+	// Exiting slide: translate out, switched to absolute so it doesn't affect layout height.
+	function slideOut(node: HTMLElement, { dir }: { dir: number }) {
+		const w = stage?.clientWidth ?? node.clientWidth ?? 800;
+		return {
+			duration: 280,
+			easing: cubicOut,
+			css: (_t: number, u: number) => `
+				position: absolute;
+				inset: 0;
+				transform: translateX(${dir * u * w}px);
+			`,
+		};
+	}
+
+	const onPointerDown = (e: PointerEvent) => {
+		if ((e.target as HTMLElement).closest("a")) return;
+		dragStartX = e.clientX;
+		dragging = true;
+		(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+	};
+
+	const onPointerUp = (e: PointerEvent) => {
+		if (!dragging) return;
+		dragging = false;
+		const delta = e.clientX - dragStartX;
+		if (Math.abs(delta) > 50) delta < 0 ? next() : prev();
+	};
+
+	const onKeydown = (e: KeyboardEvent) => {
 		if (e.key === "ArrowRight") {
-			// || e.key === "ArrowDown"
 			e.preventDefault();
-			if (el) {
-				el.scrollBy({
-					top: -(el.clientHeight + 20),
-					left: 0,
-					behavior: "smooth",
-				});
-				setTimeout(() => {
-					next();
-				}, 200);
-				return;
-			}
 			next();
 		}
-
 		if (e.key === "ArrowLeft") {
-			//|| e.key === "ArrowUp"
 			e.preventDefault();
-			if (el) {
-				el.scrollBy({
-					top: -(el.clientHeight + 20),
-					left: 0,
-					behavior: "smooth",
-				});
-				setTimeout(() => {
-					prev();
-				}, 200);
-				return;
-			}
 			prev();
-			return;
-		}
-
-		if (e.key === "ArrowDown") {
-			e.preventDefault();
-			if (!el) return;
-			if (el.scrollHeight - el.scrollTop === el.clientHeight) {
-				el.scrollBy({
-					top: -(el.clientHeight + 20),
-					left: 0,
-					behavior: "smooth",
-				});
-				setTimeout(() => {
-					next();
-				}, 300);
-
-				return;
-			}
-			//
-			el.scrollBy({ top: 40, left: 0, behavior: "smooth" });
-			return;
-		}
-
-		if (e.key === "ArrowUp") {
-			e.preventDefault();
-			if (!el) return;
-			if (el.scrollTop === 0) {
-				prev();
-				return;
-			}
-
-			el.scrollBy({ top: -40, left: 0, behavior: "smooth" });
 		}
 	};
 </script>
 
-<svelte:window onkeydown={handleArrowNav} />
+<svelte:window onkeydown={onKeydown} />
+
 {#if slides.length > 0}
-	<div
-		aria-roledescription="carousel"
-		{id}
-		class={containerClass}
-		data-carousel-container
-	>
+	<div class="c2-root {containerClass}" aria-roledescription="carousel">
+		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 		<div
-			class={className}
-			data-carousel-slider
-			data-carousel-with-grab-cursor={withGrabCursor}
-			data-dragging="false"
-			data-drag-free={dragFree}
-			use:dragScroll={{
-				layout,
-				id,
-				autoHeight,
-				pauseOnHover,
-				partialDelta,
-				onInit,
-				onChange,
-				dragFree,
-				oneAtTime,
-				autoPlay,
-				axis,
+			class="c2-stage"
+			bind:this={stage}
+			onpointerdown={onPointerDown}
+			onpointerup={onPointerUp}
+			onpointercancel={() => {
+				dragging = false;
 			}}
-			style:--padding-xs={`${(axis.xs || axis.default) === "x" ? "0 " : ""}${
-				gap.xs ?? gap.default ?? 20
-			}px ${(axis.xs || axis.default) === "x" ? "" : "0"}`}
-			style:--padding-sm={`${(axis.sm || axis.default) === "x" ? "0 " : ""}${
-				gap.sm ?? gap.default ?? 20
-			}px ${(axis.sm || axis.default) === "x" ? "" : "0"}`}
-			style:--padding-md={`${(axis.md || axis.default) === "x" ? "0 " : ""}${
-				gap.md ?? gap.default ?? 20
-			}px ${(axis.md || axis.default) === "x" ? "" : "0"}`}
-			style:--padding-lg={`${(axis.lg || axis.default) === "x" ? "0 " : ""}${
-				gap.lg ?? gap.default ?? 20
-			}px ${(axis.lg || axis.default) === "x" ? "" : "0"}`}
-			style:--padding-xl={`${(axis.xl || axis.default) === "x" ? "0 " : ""}${
-				gap.xl ?? gap.default ?? 20
-			}px ${(axis.xl || axis.default) === "x" ? "" : "0"}`}
-			style:--overflow-xs={axis.xs === "x"
-				? `${(disableNativeScroll.xs ?? disableNativeScroll.default) ? "hidden" : "auto"} visible`
-				: `visible ${(disableNativeScroll.xs ?? disableNativeScroll.default) ? "hidden" : "auto"}`}
-			style:--overflow-sm={axis.sm === "x"
-				? `${(disableNativeScroll.sm ?? disableNativeScroll.default) ? "hidden" : "auto"} visible`
-				: `visible ${(disableNativeScroll.sm ?? disableNativeScroll.default) ? "hidden" : "auto"}`}
-			style:--overflow-md={axis.md === "x"
-				? `${(disableNativeScroll.md ?? disableNativeScroll.default) ? "hidden" : "auto"} visible`
-				: `visible ${(disableNativeScroll.md ?? disableNativeScroll.default) ? "hidden" : "auto"}`}
-			style:--overflow-lg={axis.lg === "x"
-				? `${(disableNativeScroll.lg ?? disableNativeScroll.default) ? "hidden" : "auto"} visible`
-				: `visible ${(disableNativeScroll.lg ?? disableNativeScroll.default) ? "hidden" : "auto"}`}
-			style:--overflow-xl={axis.xl === "x"
-				? `${(disableNativeScroll.xl ?? disableNativeScroll.default) ? "hidden" : "auto"} visible`
-				: `visible ${(disableNativeScroll.xl ?? disableNativeScroll.default) ? "hidden" : "auto"}`}
-			style:--layout-xs={`${100 / (layout.xs ?? layout.default ?? 1)}%`}
-			style:--layout-sm={`${100 / (layout.sm ?? layout.default ?? 2)}%`}
-			style:--layout-md={`${100 / (layout.md ?? layout.default ?? 2)}%`}
-			style:--layout-lg={`${100 / (layout.lg ?? layout.default ?? 3)}%`}
-			style:--layout-xl={`${100 / (layout.xl ?? layout.default ?? 4)}%`}
-			style:--partial-delta-xs={`${partialDelta.xs ?? partialDelta.default ?? 0}px`}
-			style:--partial-delta-sm={`${partialDelta.sm ?? partialDelta.default ?? 0}px`}
-			style:--partial-delta-md={`${partialDelta.md ?? partialDelta.default ?? 0}px`}
-			style:--partial-delta-lg={`${partialDelta.lg ?? partialDelta.default ?? 0}px`}
-			style:--partial-delta-xl={`${partialDelta.xl ?? partialDelta.default ?? 0}px`}
-			data-axis-xs={axis.xs || axis.default || "x"}
-			data-axis-sm={axis.sm || axis.default || "x"}
-			data-axis-md={axis.md || axis.default || "x"}
-			data-axis-lg={axis.lg || axis.default || "x"}
-			data-axis-xl={axis.xl || axis.default || "x"}
-			style:transform={autoHeight ? "scaleY(0%)" : ""}
-			id={`${id}-slides`}
+			role="region"
+			aria-label="Slide {currentIndex + 1} of {slides.length}"
 		>
-			<!-- style:--flex-direction={axis === 'x' ? 'row' : 'column'}
-			style:--display={axis === 'x' ? 'flex' : 'grid'}
-			style:--snap-type={axis === 'x' ? 'x mandatory' : 'y mandatory'} -->
-			{#each slides as slide, index (key ? slide[key] : index)}
+			{#key currentIndex}
 				<div
-					id={`${id}-slide-${index + 1}`}
-					aria-label={`Slide ${index + 1} of ${slides.length} `}
+					class="c2-slide {slideClass}"
+					aria-label="Slide {currentIndex + 1} of {slides.length}"
 					aria-roledescription="slide"
-					role="tabpanel"
-					class={slideClass}
-					data-carousel-slide={index}
+					in:slideIn={{ dir: direction }}
+					out:slideOut={{ dir: -direction }}
 				>
 					{@render slideSnippet({
-						inView: slidesInView.includes(index),
-						index,
-						slide,
+						slide: slides[currentIndex],
+						index: currentIndex,
 					})}
 				</div>
-			{/each}
+			{/key}
 		</div>
 
-		{@render progressSnippet?.({ scrollTo: scrollProgress, progress })}
-		{@render dotsSnippet?.({
-			a11y: { "aria-label": "Slides", role: "tablist" },
-			scrollTo: scrollDot,
-			dots,
-		})}
-		{@render paginationSnippet?.({
-			next,
-			canScrollNext,
-			prev,
-			canScrollPrev,
-			nextA11y: buttonA11y("next"),
-			prevA11y: buttonA11y("prev"),
-		})}
-		{@render nextSnippet?.({ next, canScrollNext, a11y: buttonA11y("next") })}
-		{@render prevSnippet?.({ prev, canScrollPrev, a11y: buttonA11y("prev") })}
+		{@render dotsSnippet?.({ dots, scrollTo: (i) => goTo(i) })}
+		{@render paginationSnippet?.({ canScrollPrev, prev, canScrollNext, next })}
+		{@render prevSnippet?.({ canScrollPrev, prev })}
+		{@render nextSnippet?.({ canScrollNext, next })}
 	</div>
 {/if}
 
 <style>
-	[data-carousel-container] {
+	.c2-root {
 		position: relative;
-		overflow: visible;
-		min-height: 100%;
-		display: flex;
-		flex-direction: column;
-		min-width: 100%;
+		container-type: inline-size;
 	}
 
-	[data-carousel-slider] {
-		display: flex;
-		flex-direction: row;
-		user-select: none;
+	.c2-stage {
 		position: relative;
-		flex-wrap: nowrap;
-		max-height: 100%;
-		max-width: 100%;
-	}
-	:global(
-			[data-carousel-slider][data-dragging="false"][data-drag-free="false"]
-		) {
-		scroll-snap-type: x mandatory;
-	}
-	[data-carousel-with-grab-cursor="true"] {
+		overflow: hidden;
 		cursor: grab;
+		touch-action: pan-y;
+		user-select: none;
 	}
-	[data-carousel-with-grab-cursor="true"]:active {
+
+	.c2-stage:active {
 		cursor: grabbing;
 	}
-	[data-carousel-slide] {
+
+	.c2-slide {
+		width: 100%;
+		will-change: transform;
+	}
+
+	/* Prevent images (and any other replaced elements) from overflowing the stage
+	.c2-slide :global(img),
+	.c2-slide :global(video) {
+		display: block;
+		max-width: 100%;
+		max-height: 100%;
 		height: auto;
+		object-fit: contain;
 	}
-
-	@media (max-width: 640px) {
-		[data-carousel-slider] {
-			overflow: var(--overflow-xs);
-		}
-		[data-carousel-slider] > [data-carousel-slide] {
-			flex: 0 0 calc(var(--layout-xs) - var(--partial-delta-xs));
-			padding: var(--padding-xs);
-		}
-		:global([data-carousel-slider][data-axis-xs="y"]) {
-			flex-direction: column !important;
-		}
-		:global(
-				[data-carousel-slider][data-axis-xs="y"][data-dragging="false"][data-drag-free="false"]
-			) {
-			scroll-snap-type: y mandatory;
-		}
-	}
-	@media (min-width: 640px) {
-		[data-carousel-slider] {
-			overflow: var(--overflow-sm);
-		}
-		[data-carousel-slider] > [data-carousel-slide] {
-			flex: 0 0 calc(var(--layout-sm) - var(--partial-delta-sm));
-			padding: var(--padding-sm);
-		}
-		:global([data-carousel-slider][data-axis-sm="y"]) {
-			flex-direction: column !important;
-		}
-		:global(
-				[data-carousel-slider][data-axis-sm="y"][data-dragging="false"][data-drag-free="false"]
-			) {
-			scroll-snap-type: y mandatory;
-		}
-	}
-	@media (min-width: 768px) {
-		[data-carousel-slider] {
-			overflow: var(--overflow-md);
-		}
-		[data-carousel-slider] > [data-carousel-slide] {
-			flex: 0 0 calc(var(--layout-md) - var(--partial-delta-md));
-			padding: var(--padding-md);
-		}
-		:global([data-carousel-slider][data-axis-md="y"]) {
-			flex-direction: column !important;
-		}
-		:global(
-				[data-carousel-slider][data-axis-md="y"][data-dragging="false"][data-drag-free="false"]
-			) {
-			scroll-snap-type: y mandatory;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		[data-carousel-slider] {
-			overflow: var(--overflow-lg);
-		}
-		[data-carousel-slider] > [data-carousel-slide] {
-			flex: 0 0 calc(var(--layout-lg) - var(--partial-delta-lg));
-			padding: var(--padding-lg);
-		}
-		:global([data-carousel-slider][data-axis-lg="y"]) {
-			flex-direction: column !important;
-		}
-		:global(
-				[data-carousel-slider][data-axis-lg="y"][data-dragging="false"][data-drag-free="false"]
-			) {
-			scroll-snap-type: y mandatory;
-		}
-	}
-	@media (min-width: 1280px) {
-		[data-carousel-slider] {
-			overflow: var(--overflow-xl);
-		}
-		[data-carousel-slider] > [data-carousel-slide] {
-			flex: 0 0 calc(var(--layout-xl) - var(--partial-delta-xl));
-			padding: var(--padding-xl);
-		}
-		:global([data-carousel-slider][data-axis-xl="y"]) {
-			flex-direction: column !important;
-		}
-		:global(
-				[data-carousel-slider][data-axis-xl="y"][data-dragging="false"][data-drag-free="false"]
-			) {
-			scroll-snap-type: y mandatory;
-		}
-	}
-
-	:global([data-carousel-slider] img) {
-		user-select: none;
-	}
-
-	[data-carousel-slider]::-webkit-scrollbar {
-		display: none;
-	}
-	[data-carousel-slider] {
-		-ms-overflow-style: none;
-		scrollbar-width: none;
-	}
-
-	:global(
-			[data-carousel-slider][data-dragging="false"][data-drag-free="false"]
-		) {
-		scroll-snap-type: mandatory;
-		scroll-behavior: smooth;
-	}
-	:global(
-			[data-carousel-slider][data-dragging="false"][data-drag-free="false"]
-				> [data-carousel-slide]
-		) {
-		scroll-snap-align: start;
-	}
+	*/
 </style>

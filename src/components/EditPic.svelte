@@ -1,6 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import { getEmptyPicItem } from "../js/utils";
 	import PicDrop from "./PicDrop.svelte";
 
 	type EditPicProps = {
@@ -24,21 +25,6 @@
 		savePicWithImg,
 		destroyPic,
 	}: EditPicProps = $props();
-
-	const getEmptyPicItem = () => {
-		const p: PictureItem = {
-			id: 0,
-			fileName: "",
-			seq: 999,
-			ts: 0,
-			keywords: [],
-			description: "",
-			link: "",
-			isMissing: false,
-			isDeleted: false,
-		};
-		return { ...p };
-	};
 
 	// *** State ***
 	//svelte-ignore state_referenced_locally

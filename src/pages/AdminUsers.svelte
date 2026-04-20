@@ -2,21 +2,9 @@
 
 <script lang="ts">
 	import { getUserList, postUser } from "../js/db-ops";
+	import { getEmptyUser } from "../js/utils";
 	import Menu from "../components/Menu.svelte";
 	import EditUser from "../components/EditUser.svelte";
-
-	const getEmptyUser = () => {
-		const u: UserClientRemote = {
-			id: 0,
-			email: "",
-			fullName: "",
-			token: "",
-			isAdmin: false,
-			isDisabled: false,
-			isDeleted: false,
-		};
-		return { ...u };
-	};
 
 	let userList = $state([] as UserClientRemote[]);
 	let isListEditMode = $state(false);
@@ -44,9 +32,10 @@
 	};
 
 	const saveUser = async (user: UserClientRemote) => {
-		let u = userList.find((a) => a.id === user.id);
-		if (u) u = user;
 		await postUser(user);
+		const idx = userList.findIndex((a) => a.id === user.id);
+		if (idx !== -1) userList[idx] = user;
+		else await loadList();
 	};
 
 	const refreshUserList = (users: UserClientRemote[]) => {

@@ -7,32 +7,12 @@
 		postPicWithImg,
 		postDestroyPic,
 	} from "../js/db-ops";
-	import {
-		userSettings,
-		setIsNewestFirst,
-	} from "../stores/user-settings-store.svelte";
-	import {
-		currentParams,
-		updateQueryStringParam,
-	} from "../stores/route-store.svelte";
+	import { getEmptyPicItem, orderBySeq, orderByTs } from "../js/utils";
+	import { userSettings } from "../stores/user-settings-store.svelte";
+	import { currentParams } from "../stores/route-store.svelte";
 	import Menu from "../components/Menu.svelte";
 	import EditPic from "../components/EditPic.svelte";
 	import CleanPics from "../components/CleanPics.svelte";
-
-	const getEmptyPicItem = () => {
-		const p: PictureItem = {
-			id: 0,
-			fileName: "",
-			seq: 999,
-			ts: 0,
-			keywords: [],
-			description: "",
-			link: "",
-			isMissing: false,
-			isDeleted: false,
-		};
-		return { ...p };
-	};
 
 	let picList = $state([] as PictureItem[]);
 	let isListEditMode = $state(false);
@@ -49,24 +29,12 @@
 		try {
 			picList = (await getPicAdminList())?.data || [];
 
-			if (currentParams.paramObj["newest"]) orderByTs();
-			else if (userSettings.value.isNewestFirst) orderByTs();
-			else orderBySeq();
+			if (currentParams.paramObj["newest"]) orderByTs(picList);
+			else if (userSettings.value.isNewestFirst) orderByTs(picList);
+			else orderBySeq(picList);
 		} catch (error) {
 			console.error(error);
 		}
-	};
-
-	const orderBySeq = () => {
-		picList.sort((a, b) => a.seq - b.seq);
-		setIsNewestFirst(false);
-		updateQueryStringParam("newest", undefined);
-	};
-
-	const orderByTs = () => {
-		picList.sort((a, b) => b.ts - a.ts);
-		setIsNewestFirst(true);
-		updateQueryStringParam("newest", "true");
 	};
 
 	const setEditMode = (picId: number, isEdit: boolean) => {
@@ -144,7 +112,7 @@
 			href="/"
 			onclick={(e) => {
 				e.preventDefault();
-				orderByTs();
+				orderByTs(picList);
 			}}>Show Newest First</a
 		>
 	{:else}
@@ -154,7 +122,7 @@
 			href="/"
 			onclick={(e) => {
 				e.preventDefault();
-				orderBySeq();
+				orderBySeq(picList);
 			}}>Show in Curation Order</a
 		>
 	{/if}
