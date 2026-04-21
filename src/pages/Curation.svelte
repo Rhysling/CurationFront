@@ -207,8 +207,9 @@
 
 	:global(.carousel-container) {
 		border: 3px solid c.$main-color;
-		border-radius: 1rem;
+		border-radius: 0.5rem;
 		max-height: 70vh;
+		padding: 0.3rem 0.3rem 0;
 	}
 
 	:global(.carousel-class) {
@@ -292,7 +293,7 @@
 		max-height: 60vh;
 		width: auto;
 		height: auto;
-		margin: 0.25rem auto 0;
+		margin: 0 auto;
 	}
 
 	.big-picture {

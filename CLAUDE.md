@@ -15,7 +15,13 @@ No test runner is configured.
 
 ## Architecture
 
-**Stack:** Svelte 5 (Runes) + TypeScript + Vite + SCSS + Axios
+**Stack:**
+- Svelte 5 with runes ($state, $derived, $effect)
+- TypeScript (strict mode)
+- SCSS + Axios
+- Vite for bundling
+- Vitest for unit and integration testing
+- Vitest + vitest-puppeteer for E2E testing / browser automation
 
 **Routing:** Client-side only. [src/stores/route-store.svelte.ts](src/stores/route-store.svelte.ts) owns the routing tree, syncs with `window.history`, and enforces `isAdmin` guards on protected routes. Pages are rendered conditionally in [src/App.svelte](src/App.svelte) based on the active route.
 

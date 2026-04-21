@@ -7,18 +7,25 @@
 		"dev": "vite",
 		"build": "vite build && node bust.js && exit",
 		"preview": "vite preview",
-		"check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
+		"check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
+		"test": "vitest",
+		"test:run": "vitest --run",
+		"test:follow": "cross-env HEADLESS=false vitest"
 	},
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
 		"@tsconfig/svelte": "^5.0.5",
+		"cross-env": "^10.1.0",
 		"fs-extra": "^11.1.1",
+		"jsdom": "^29.0.2",
+		"puppeteer-core": "^24.42.0",
 		"sass": "^1.66.1",
 		"sass-embedded": "^1.81.0",
 		"svelte": "^5.39.4",
 		"svelte-check": "^4.3.1",
 		"typescript": "^6.0.0",
-		"vite": "^8.0.0"
+		"vite": "^8.0.0",
+		"vitest": "^4.1.5"
 	},
 	"dependencies": {
 		"axios": "^1.15.0",
