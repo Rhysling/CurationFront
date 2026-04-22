@@ -2,12 +2,6 @@
 
 <script lang="ts">
 	import Menu from "../components/Menu.svelte";
-
-	import {
-		getRoutes,
-		getCurrentRoute,
-		navTo,
-	} from "../stores/route-store.svelte";
 </script>
 
 <div class="hero-box">

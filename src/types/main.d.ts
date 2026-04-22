@@ -16,11 +16,9 @@ type KVPair = Record<string, string>;
 type ValidationState = boolean | undefined;
 
 type PageState = {
-	itemsPerPage: number;
-	itemCount: number;
-	currentPage: number;
-	startIndex: number;
-	endIndex: number;
+	path: string;
+	paramObj: KVPair;
+	isNavFromUrl: boolean;
 };
 
 type AuditList = {

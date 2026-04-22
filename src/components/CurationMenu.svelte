@@ -1,7 +1,10 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { updateQueryStringParam } from "../stores/route-store.svelte";
+	import {
+		updateQueryStringParam,
+		pageState,
+	} from "../stores/route-store.svelte";
 	import NavButton from "./NavButton.svelte";
 
 	let {
@@ -34,7 +37,10 @@
 	// updateQueryStringParam
 
 	$effect(() => {
-		const fn = currentPic?.fileName ?? "";
+		if (pageState.isNavFromUrl) return;
+		if (!currentPic) return;
+
+		const fn = currentPic.fileName;
 		const ixp = fn.lastIndexOf(".");
 		const slug = ixp > 0 ? fn.substring(0, ixp) : "";
 		updateQueryStringParam("p", slug);

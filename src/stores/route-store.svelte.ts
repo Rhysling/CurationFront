@@ -85,22 +85,21 @@ const findRoute = (routeRoot: Route, path: string): Route => {
 
 // Stores
 
-export const currentPath = $state({ path: "/" });
-export const currentParams: { paramObj: KVPair } = $state({ paramObj: {} });
+export const pageState: PageState = $state({ path: "/", paramObj: {}, isNavFromUrl: false });
 
-let routes = $derived.by(() => {
+let allRoutes = $derived.by(() => {
 	let r = { ...baseRoutes };
 	if (!user.value?.isAdmin)
 		r = filterAdminRoutes(r);
-	return r;
+	return <Route>r;
 });
 
-export const getRoutes = () => routes;
+let currentRoute = $derived.by(() => findRoute(baseRoutes, pageState.path))
 
-let currentRoute = $derived(findRoute(routes, currentPath.path));
-
-export const getCurrentRoute = () => currentRoute;
-
+export const routes = {
+	get allRoutes() { return allRoutes },
+	get currentRoute() { return currentRoute },
+};
 
 // Param functions
 
@@ -130,21 +129,21 @@ let objToParamString = (inp: any) => {
 // Public Functions ***
 
 export const navFromUrl = function () {
-	let pathName = window.location.pathname;
-	let r = findRoute(routes, pathName);
-
-	let p = paramStringToObj(window.location.search);
+	const pathName = window.location.pathname;
+	const r = findRoute(baseRoutes, pathName);
+	const p = paramStringToObj(window.location.search);
 
 	if (r) {
-		currentPath.path = pathName;
-		currentParams.paramObj = p;
+		pageState.path = pathName;
+		pageState.paramObj = p;
+		pageState.isNavFromUrl = true;
 		document.title = `Polson-${r.title}`;
 	} else {
 		window.location.replace(window.location.origin);
 	}
 };
 
-export const navTo = function (e: MouseEvent | null, path: string, params?: any) {
+export const navTo = function (e: MouseEvent | null, path: string, params?: KVPair) {
 	e && e.preventDefault();
 
 	let url = window.location.origin + path;
@@ -153,9 +152,9 @@ export const navTo = function (e: MouseEvent | null, path: string, params?: any)
 		url += objToParamString(params);
 
 	window.history.pushState({}, path, url);
-	currentPath.path = path;
-	currentParams.paramObj = params || {};
-	document.title = `Polson-${currentRoute.title}`;
+	pageState.path = path;
+	pageState.paramObj = params || {};
+	document.title = `Polson-${routes.currentRoute.title}`;
 
 	window.scroll({
 		top: 0,
@@ -168,10 +167,10 @@ export const updateQueryStringParam = (key: string, value: string | undefined) =
 	const url = new URL(window.location.href);
 	if (!value) {
 		url.searchParams.delete(key);
-		delete currentParams.paramObj[key];
+		delete pageState.paramObj[key];
 	} else {
 		url.searchParams.set(key, value);
-		currentParams.paramObj[key] = value;
+		pageState.paramObj[key] = value;
 	}
 	window.history.replaceState({}, "", url);
 };
@@ -180,10 +179,10 @@ export const updateQueryStringParam = (key: string, value: string | undefined) =
 
 window.onpopstate = () => {
 	let pathName = window.location.pathname;
-	let r = findRoute(routes, pathName);
+	let r = findRoute(baseRoutes, pathName);
 
 	if (r) {
-		currentPath.path = pathName;
+		pageState.path = pathName;
 	} else {
 		window.location.replace(window.location.origin);
 	}

@@ -1,25 +1,21 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import {
-		getRoutes,
-		getCurrentRoute,
-		navTo,
-	} from "../stores/route-store.svelte";
+	import { routes, navTo } from "../stores/route-store.svelte";
 
-	let routes = $derived(
-		(getRoutes().children ?? []).filter((a) => !a.isHidden),
+	let displayRoutes = $derived(
+		(routes.allRoutes.children ?? []).filter((a) => !a.isHidden),
 	);
 </script>
 
 <div class="menu">
-	{#if getCurrentRoute().path !== "/"}
+	{#if routes.currentRoute.path !== "/"}
 		<button class="button" onclick={(e) => navTo(e, "/")}>{"Home"}</button>
 	{/if}
-	{#each routes as route (route.path)}
+	{#each displayRoutes as route (route.path)}
 		<button
 			class="button"
-			disabled={route.path === getCurrentRoute().path}
+			disabled={route.path === routes.currentRoute.path}
 			onclick={(e) => navTo(e, route.path)}>{route.title}</button
 		>
 	{/each}

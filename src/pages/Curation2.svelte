@@ -4,7 +4,7 @@
 	import { getPicAdminList } from "../js/db-ops";
 	import { orderBySeq, orderByTs } from "../js/utils";
 	import { userSettings } from "../stores/user-settings-store.svelte";
-	import { currentParams } from "../stores/route-store.svelte";
+	import { pageState } from "../stores/route-store.svelte";
 	import Menu from "../components/Menu.svelte";
 
 	let picList = $state([] as PictureItem[]);
@@ -13,7 +13,7 @@
 		try {
 			picList = (await getPicAdminList())?.data || [];
 
-			if (currentParams.paramObj["newest"]) orderByTs(picList);
+			if (pageState.paramObj["newest"]) orderByTs(picList);
 			else if (userSettings.value.isNewestFirst) orderByTs(picList);
 			else orderBySeq(picList);
 		} catch (error) {

@@ -4,7 +4,8 @@
 	import { getPicPublicList } from "../js/db-ops";
 	import { user } from "../stores/user-store.svelte";
 	import { userSettings } from "../stores/user-settings-store.svelte";
-	import { currentParams } from "../stores/route-store.svelte";
+	import { pageState } from "../stores/route-store.svelte";
+	import { onMount } from "svelte";
 
 	import {
 		orderBySeq as applyOrderBySeq,
@@ -22,27 +23,35 @@
 	const loadPicList = async () => {
 		try {
 			picList = (await getPicPublicList())?.data || [];
-
-			if (currentParams.paramObj["newest"]) orderByTs();
+			if (pageState.paramObj["newest"]) orderByTs();
 			else if (userSettings.value.isNewestFirst) orderByTs();
 			else orderBySeq();
-
-			if (currentParams.paramObj.p) {
-				const ix = picList.findIndex((p) =>
-					p.fileName.startsWith(currentParams.paramObj.p),
-				);
-				if (ix >= 0) {
-					setTimeout(() => {
-						carousel?.goTo(ix);
-					}, 100);
-				}
-			}
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
-	loadPicList();
+	$effect(() => {
+		const p = pageState.paramObj.p;
+		if (p && picList.length) {
+			const ix = picList.findIndex((pic) => pic.fileName.startsWith(p));
+			if (ix >= 0) {
+				setTimeout(() => {
+					carousel?.goTo(ix);
+					pageState.isNavFromUrl = false;
+				}, 100);
+				return;
+			}
+		}
+		// Don't clear isNavFromUrl while waiting for picList to load with a pending p param
+		if (!p || picList.length > 0) {
+			pageState.isNavFromUrl = false;
+		}
+	});
+
+	onMount(() => {
+		loadPicList();
+	});
 
 	type CarouselOps = {
 		next: () => void;

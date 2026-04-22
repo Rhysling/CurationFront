@@ -9,7 +9,7 @@
 	} from "../js/db-ops";
 	import { getEmptyPicItem, orderBySeq, orderByTs } from "../js/utils";
 	import { userSettings } from "../stores/user-settings-store.svelte";
-	import { currentParams } from "../stores/route-store.svelte";
+	import { pageState } from "../stores/route-store.svelte";
 	import Menu from "../components/Menu.svelte";
 	import EditPic from "../components/EditPic.svelte";
 	import CleanPics from "../components/CleanPics.svelte";
@@ -29,7 +29,7 @@
 		try {
 			picList = (await getPicAdminList())?.data || [];
 
-			if (currentParams.paramObj["newest"]) orderByTs(picList);
+			if (pageState.paramObj["newest"]) orderByTs(picList);
 			else if (userSettings.value.isNewestFirst) orderByTs(picList);
 			else orderBySeq(picList);
 		} catch (error) {

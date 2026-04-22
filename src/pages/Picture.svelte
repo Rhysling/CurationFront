@@ -2,9 +2,9 @@
 
 <script lang="ts">
 	import { getPicBySlug } from "../js/db-ops";
-	import { currentParams } from "../stores/route-store.svelte";
+	import { pageState } from "../stores/route-store.svelte";
 
-	const slug: string | undefined = currentParams.paramObj.p;
+	const slug: string | undefined = pageState.paramObj.p;
 	let pic: PictureItem | undefined = $state();
 	let fileName: string | undefined = $derived(pic?.fileName);
 

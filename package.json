@@ -10,7 +10,8 @@
 		"check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
 		"test": "vitest",
 		"test:run": "vitest --run",
-		"test:follow": "cross-env HEADLESS=false vitest"
+		"test:follow": "cross-env HEADLESS=false vitest",
+		"screenshots": "node screenshots.js"
 	},
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",

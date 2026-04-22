@@ -14,7 +14,7 @@
 	import AdminDbs from "./pages/AdminDbs.svelte";
 	import Picture from "./pages/Picture.svelte";
 
-	import { getCurrentRoute, navFromUrl } from "./stores/route-store.svelte";
+	import { routes, navFromUrl } from "./stores/route-store.svelte";
 	//import { user } from "./stores/user-store.js";
 
 	let pages = {
@@ -29,7 +29,7 @@
 
 	type PK = keyof typeof pages;
 
-	let CurrentPage = $derived.by(() => pages[getCurrentRoute().page as PK]);
+	let CurrentPage = $derived.by(() => pages[routes.currentRoute.page as PK]);
 
 	$effect(() => {
 		window.scroll({

@@ -31,6 +31,6 @@ No test runner is configured.
 
 **State pattern:** Svelte 5 Runes throughout (`$state`, `$derived`, `$effect`). Persistent state is wrapped via [src/stores/localstorage-store.svelte.ts](src/stores/localstorage-store.svelte.ts).
 
-**Pages:** [src/pages/](src/pages/) — `Curation` and `Curation2` are gallery views with carousel/modal zoom; `AdminPics` handles picture CRUD with file upload (svelte-file-dropzone); `AdminUsers` and `AdminDbs` are admin-only.
+**Pages:** [src/pages/](src/pages/) — `Curation` and `Curation2` are gallery views with carousel/modal zoom; `AdminPics` handles picture CRUD with file upload (svelte-file-dropzone); `AdminPics`, `AdminUsers` and `AdminDbs` are admin-only.
 
 **Build note:** `bust.js` patches `index.html` after `vite build` — it sets `appIsProduction=true` and appends a version key to asset URLs. Do not manually edit `dist/index.html`.
