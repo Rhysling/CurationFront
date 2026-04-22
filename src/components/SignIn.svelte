@@ -150,9 +150,10 @@
 		align-items: center;
 		padding: 1.2rem;
 		background-color: c.$body-background;
-		border: 1px solid c.$secondary-color;
+		border: 2px solid c.$main-darker;
 		border-radius: 0.5rem;
-		width: 400px;
+		box-shadow: 2px 2px 2px 1px rgb(0 0 0 / 20%);
+		width: min(400px, 80vw);
 
 		input {
 			margin: 1rem 0 0;

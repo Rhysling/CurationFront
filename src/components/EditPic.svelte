@@ -314,7 +314,7 @@
 	{#if isEditMode}
 		<div>
 			<button onclick={save} disabled={isValidAll === false}>Save</button>
-			<button onclick={cancel}>Cancel</button>
+			<button onclick={cancel} class="secondary">Cancel</button>
 		</div>
 	{:else}<button onclick={edit}>Edit</button>
 	{/if}

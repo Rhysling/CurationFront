@@ -46,19 +46,19 @@
 	}
 
 	a {
-		color: color.adjust(c.$link-color, $lightness: 25%);
+		color: c.$link-lightest;
 		text-decoration: none;
 		font-size: 0.9rem;
 
 		&:visited {
-			color: color.adjust(c.$link-color, $lightness: 25%);
+			color: c.$link-lightest;
 		}
 
 		&:hover,
 		&:focus {
 			background: none;
 			border: none;
-			color: color.adjust(c.$link-color, $lightness: 45%);
+			color: color.adjust(c.$link-lightest, $lightness: 15%);
 			text-decoration: none;
 		}
 	}
