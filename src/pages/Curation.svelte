@@ -109,6 +109,7 @@
 		{#snippet slide({ slide })}
 			<img
 				class="carousel-img"
+				style:max-height={slide.description || slide.link ? "62vh" : "67vh"}
 				src={"./pics/" + slide.fileName}
 				alt={slide.description}
 				loading="lazy"
@@ -208,13 +209,13 @@
 	:global(.carousel-container) {
 		border: 3px solid c.$main-color;
 		border-radius: 0.5rem;
-		max-height: 70vh;
+		height: 70vh;
 		padding: 0.3rem 0.3rem 0;
 	}
 
-	:global(.carousel-class) {
-		max-height: 70vh;
-	}
+	// :global(.carousel-class) {
+	// 	max-height: 70vh;
+	// }
 
 	.sort {
 		text-align: center;
@@ -290,7 +291,6 @@
 	.carousel-img {
 		display: block;
 		max-width: 100%;
-		max-height: 60vh;
 		width: auto;
 		height: auto;
 		margin: 0 auto;
