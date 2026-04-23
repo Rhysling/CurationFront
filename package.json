@@ -8,10 +8,12 @@
 		"build": "vite build && node bust.js && exit",
 		"preview": "vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
-		"test": "vitest",
-		"test:run": "vitest --run",
-		"test:follow": "cross-env HEADLESS=false vitest",
-		"screenshots": "node screenshots.js"
+		"test": "vitest src/js",
+		"test:run": "vitest --run src/js",
+		"test:browser": "vitest src/__tests__",
+		"test:browser:run": "vitest --run src/__tests__",
+		"test:follow": "cross-env HEADLESS=false vitest src/__tests__",
+		"shots": "node screenshots.js"
 	},
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
