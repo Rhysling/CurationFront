@@ -103,16 +103,16 @@ export const routes = {
 
 // Param functions
 
-let paramStringToObj = (inp: string) => {
+const paramStringToObj = (inp: string) => {
 	let entries = (new URLSearchParams(inp)).entries();
-	let p: any = {};
+	let p: Record<string, string> = {};
 	for (let [key, val] of entries) {
 		p[key] = val;
 	}
 	return p;
 };
 
-let objToParamString = (inp: any) => {
+const objToParamString = (inp: Record<string, string>) => {
 	if (!inp) return "";
 
 	let entries = Object.entries(inp);
@@ -143,17 +143,18 @@ export const navFromUrl = function () {
 	}
 };
 
-export const navTo = function (e: MouseEvent | null, path: string, params?: KVPair) {
+export const navTo = function (e: MouseEvent | null, path: string, params?: Record<string, string>) {
 	e && e.preventDefault();
 
 	let url = window.location.origin + path;
 
-	if (params)
+	if (params && Object.keys(params).length)
 		url += objToParamString(params);
 
 	window.history.pushState({}, path, url);
 	pageState.path = path;
 	pageState.paramObj = params || {};
+	pageState.isNavFromUrl = false;
 	document.title = `Polson-${routes.currentRoute.title}`;
 
 	window.scroll({
@@ -178,12 +179,5 @@ export const updateQueryStringParam = (key: string, value: string | undefined) =
 // Back Button
 
 window.onpopstate = () => {
-	let pathName = window.location.pathname;
-	let r = findRoute(baseRoutes, pathName);
-
-	if (r) {
-		pageState.path = pathName;
-	} else {
-		window.location.replace(window.location.origin);
-	}
+	navFromUrl();
 };

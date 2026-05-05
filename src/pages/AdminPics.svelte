@@ -37,6 +37,14 @@
 		}
 	};
 
+	$effect(() => {
+		if (!picList.length) return;
+		const pid = pageState.paramObj["pid"];
+		if (!pid) return;
+		const el = document.getElementById("pcid-" + pid);
+		el?.scrollIntoView({ block: "center", behavior: "instant" });
+	});
+
 	const setEditMode = (picId: number, isEdit: boolean) => {
 		editingPicId = picId;
 		isListEditMode = isEdit;

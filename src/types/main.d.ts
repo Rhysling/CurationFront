@@ -11,13 +11,11 @@ type Route = {
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 
-type KVPair = Record<string, string>;
-
 type ValidationState = boolean | undefined;
 
 type PageState = {
 	path: string;
-	paramObj: KVPair;
+	paramObj: Record<string, string>;
 	isNavFromUrl: boolean;
 };
 

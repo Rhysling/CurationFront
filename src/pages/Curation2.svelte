@@ -4,7 +4,11 @@
 	import { getPicAdminList } from "../js/db-ops";
 	import { orderBySeq, orderByTs } from "../js/utils";
 	import { userSettings } from "../stores/user-settings-store.svelte";
-	import { pageState } from "../stores/route-store.svelte";
+	import {
+		navTo,
+		pageState,
+		updateQueryStringParam,
+	} from "../stores/route-store.svelte";
 	import Menu from "../components/Menu.svelte";
 
 	let picList = $state([] as PictureItem[]);
@@ -20,6 +24,19 @@
 			console.error(error);
 		}
 	};
+
+	const navToEdit = (e: MouseEvent, pic: PictureItem) => {
+		updateQueryStringParam("pid", pic.id.toString());
+		navTo(e, "/admin-pics", { pid: pic.id.toString() });
+	};
+
+	$effect(() => {
+		if (!picList.length) return;
+		const pid = pageState.paramObj["pid"];
+		if (!pid) return;
+		const el = document.getElementById("c2id-" + pid);
+		el?.scrollIntoView({ block: "center", behavior: "instant" });
+	});
 
 	loadPicList();
 </script>
@@ -54,17 +71,20 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div class="carousel-area">
 	{#each picList as p (p.id)}
-		<div class="pic">
-			<img
-				class="carousel-img"
-				src={"./pics/" + p.fileName}
-				alt={p.description}
-			/>
+		<div class="pic" id={"c2id-" + p.id}>
+			<a href="/curation?p={p.fileName.split('.')[0]}">
+				<img
+					class="carousel-img"
+					src={"./pics/" + p.fileName}
+					alt={p.description}
+				/></a
+			>
 			<div class="subtitle" class:deleted={p.isDeleted}>
 				{#if p.description}
 					{p.description}<br />
 				{/if}
-				{p.id}-{p.seq}<br />{p.ts.toLocaleString()}
+				{p.id}-{p.seq}-<a href="/" onclick={(e) => navToEdit(e, p)}>Edit</a><br
+				/>{p.ts.toLocaleString()}
 			</div>
 		</div>
 	{/each}
@@ -131,11 +151,15 @@
 		flex-direction: column;
 		justify-content: space-between;
 
-		img {
-			max-width: 150px;
-			max-height: 150px;
-			margin: 0 auto;
-			flex: 0;
+		a {
+			text-align: center;
+
+			img {
+				max-width: 150px;
+				max-height: 150px;
+				margin: 0 auto;
+				flex: 0;
+			}
 		}
 
 		.subtitle {

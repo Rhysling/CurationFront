@@ -185,7 +185,7 @@
 	};
 </script>
 
-<div style="background-color:white;position:relative;">
+<div style="background-color:white;position:relative;" id="pcid-{pic.id}">
 	{#if isListEditMode && pic.id === editingPicId}
 		<PicDrop
 			{pic}
