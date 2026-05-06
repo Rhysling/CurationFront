@@ -54,7 +54,7 @@
 		onclick={() => gotoSlideIx(0)}
 	/>
 	<NavButton buttonType="prev" disabled={isFirst} onclick={() => prev()} />
-	<a href="/picture?p={currentSlug}" target="_blank">permalink</a>
+	<a href="/picture?p={currentSlug}">permalink</a>
 	<NavButton buttonType="next" disabled={isLast} onclick={() => next()} />
 	<NavButton
 		buttonType="last"
