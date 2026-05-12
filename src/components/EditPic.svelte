@@ -78,15 +78,13 @@
 		}
 
 		// No duplicate file names allowed (except if it's the same pic being edited)
-		// console.log({
-		// 	pic: $state.snapshot(pic),
-		// 	picList: $state.snapshot(picList),
-		// });
+		const stripExtLower: (str: string) => string = (str) =>
+			str.substring(0, str.lastIndexOf(".")).toLowerCase();
+		const fnNoExt = fn.substring(0, fn.lastIndexOf("."));
+
 		if (
 			picList.some(
-				(a) =>
-					a.fileName.toLowerCase() === pic.fileName.toLowerCase() &&
-					a.id !== pic.id,
+				(a) => stripExtLower(a.fileName) === fnNoExt && a.id !== pic.id,
 			)
 		) {
 			isValidFileName = false;
