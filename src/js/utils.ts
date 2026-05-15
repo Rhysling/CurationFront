@@ -26,6 +26,7 @@ export const getEmptyUser = (): UserClientRemote => ({
 	fullName: "",
 	token: "",
 	isAdmin: false,
+	hasPw: false,
 	isDisabled: false,
 	isDeleted: false,
 });

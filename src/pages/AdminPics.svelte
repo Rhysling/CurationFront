@@ -27,7 +27,7 @@
 
 	const loadPicList = async () => {
 		try {
-			picList = (await getPicAdminList())?.data || [];
+			picList = (await getPicAdminList()) || [];
 
 			if (pageState.paramObj["newest"]) orderByTs(picList);
 			else if (userSettings.value.isNewestFirst) orderByTs(picList);
@@ -51,7 +51,7 @@
 	};
 
 	const savePic = async (picNew: PictureItem) => {
-		const updatedPic = (await postPic(picNew))?.data;
+		const updatedPic = await postPic(picNew);
 		if (!updatedPic) return;
 
 		const ix = picList.findIndex((a) => a.id === updatedPic.id);
@@ -79,7 +79,7 @@
 	};
 
 	const savePicWithImg = async (form: FormData) => {
-		const savedPic = (await postPicWithImg(form))?.data;
+		const savedPic = await postPicWithImg(form);
 		if (savedPic) {
 			// Preload the image so the <img> tag never shows a broken state
 			const imgPath = `/pics/${savedPic.fileName}`;

@@ -22,7 +22,7 @@
 
 	const loadPicList = async () => {
 		try {
-			picList = (await getPicPublicList())?.data || [];
+			picList = (await getPicPublicList()) || [];
 			if (pageState.paramObj["newest"]) orderByTs();
 			else if (userSettings.value.isNewestFirst) orderByTs();
 			else orderBySeq();

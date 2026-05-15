@@ -1,10 +1,9 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import type { AxiosResponse } from "axios";
 	import Modal from "./Modal.svelte";
 	import { user, getIsLoggedIn, logOut } from "../stores/user-store.svelte";
-	import { getHttpClient as ax } from "../stores/httpclient-store.svelte";
+	import { getFetchClient as fc } from "../stores/fetchclient-store.svelte";
 
 	let { isOpen = $bindable(false) } = $props();
 
@@ -67,11 +66,13 @@
 
 		if (!isValidEmail) return;
 
-		ax()
+		fc()
 			.post("/api/Users/Login", userLogin)
-			.then(function (response: AxiosResponse<UserClientRemote>) {
-				if (response.data) user.value = response.data;
-
+			.then(
+				(response: Response) => response.json() as Promise<UserClientRemote>,
+			)
+			.then((userData) => {
+				user.value = userData;
 				resetUserLogin();
 				isOpen = false;
 			})

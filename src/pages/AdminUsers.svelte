@@ -1,26 +1,28 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { getUserList, postUser } from "../js/db-ops";
+	import {
+		getUserList,
+		postSaveUser,
+		postDestroyUser,
+		postUpdatePw,
+	} from "../js/db-ops";
 	import { getEmptyUser } from "../js/utils";
 	import Menu from "../components/Menu.svelte";
 	import EditUser from "../components/EditUser.svelte";
+	import EditPw from "../components/EditPw.svelte";
 
-	let userList = $state([] as UserClientRemote[]);
+	let userList: UserClientRemote[] = $state([]);
 	let isListEditMode = $state(false);
 	let editingUserId = $state(0);
-	let emptyUserItem = $state(getEmptyUser());
-
-	let userListDisplay: UserClientRemote[] = $derived([
-		emptyUserItem,
-		...userList,
-	]);
+	let userListDisplay: UserClientRemote[] = $state([]);
+	let isEditPw = $state(false);
+	let userSetPw: UserClientRemote | undefined = $state(undefined);
 
 	const loadList = async () => {
 		try {
-			userList = ((await getUserList())?.data || []).sort(
-				(a, b) => a.id - b.id,
-			);
+			userList = ((await getUserList()) || []).sort((a, b) => a.id - b.id);
+			userListDisplay = [getEmptyUser(), ...userList];
 		} catch (error) {
 			console.error(error);
 		}
@@ -32,14 +34,37 @@
 	};
 
 	const saveUser = async (user: UserClientRemote) => {
-		await postUser(user);
-		const idx = userList.findIndex((a) => a.id === user.id);
-		if (idx !== -1) userList[idx] = user;
-		else await loadList();
+		const result = await postSaveUser(user);
+
+		if (typeof result === "string") {
+			alert(result);
+			return;
+		}
+
+		userListDisplay = [];
+		await loadList();
 	};
 
-	const refreshUserList = (users: UserClientRemote[]) => {
-		userList = users.sort((a, b) => a.id - b.id);
+	const destroyUser = async (user: UserClientRemote) => {
+		const result = await postDestroyUser(user);
+
+		if (result) {
+			alert(result);
+			return;
+		}
+
+		await loadList();
+	};
+
+	const openSetPw = (email: string, isOpen: boolean) => {
+		userSetPw = userList.find((u) => u.email === email);
+		isEditPw = isOpen;
+	};
+
+	const savePw = async (ul: UserLogin) => {
+		await postUpdatePw(ul);
+		userListDisplay = [];
+		await loadList();
 	};
 
 	loadList();
@@ -55,11 +80,17 @@
 			{editingUserId}
 			{setEditMode}
 			{saveUser}
+			{destroyUser}
+			{openSetPw}
 		/>
 	{/each}
 </div>
 
 <Menu />
+
+{#if isEditPw}
+	<EditPw userIn={userSetPw} {savePw} {openSetPw} />
+{/if}
 
 <style lang="scss">
 	@use "../styles/custom-variables" as c;

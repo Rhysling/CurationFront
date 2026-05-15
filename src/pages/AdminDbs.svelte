@@ -15,7 +15,7 @@
 
 	const loadPdbList = async () => {
 		try {
-			pdbList = (await getBackupList("PicturesDb"))?.data || [];
+			pdbList = (await getBackupList("PicturesDb")) || [];
 			pdbList = ["PicturesDb.json", ...pdbList];
 		} catch (error) {
 			pdbList = ["Error loading list"];
@@ -24,7 +24,7 @@
 
 	const loadUdbList = async () => {
 		try {
-			udbList = (await getBackupList("UsersDb"))?.data || [];
+			udbList = (await getBackupList("UsersDb")) || [];
 			udbList = ["UsersDb.json", ...udbList];
 		} catch (error) {
 			udbList = ["Error loading list"];
@@ -33,7 +33,7 @@
 
 	const downloadAndSave = async (fileName: string) => {
 		try {
-			const fileJson = JSON.stringify((await getFile(fileName))?.data || []);
+			const fileJson = (await getFile(fileName)) || "[]";
 			const fileTextBlob = new Blob([fileJson], {
 				type: "text/plain;charset=utf-8",
 			});

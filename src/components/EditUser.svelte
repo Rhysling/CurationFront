@@ -1,12 +1,16 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import { user } from "../stores/user-store.svelte";
+
 	type EditUserProps = {
 		userIn: UserClientRemote;
 		isListEditMode: boolean;
 		editingUserId: number;
 		setEditMode: (userId: number, isEdit: boolean) => void;
 		saveUser: (user: UserClientRemote) => void;
+		destroyUser: (user: UserClientRemote) => void;
+		openSetPw: (email: string, isOpen: boolean) => void;
 	};
 
 	let {
@@ -15,6 +19,8 @@
 		editingUserId,
 		setEditMode,
 		saveUser,
+		destroyUser,
+		openSetPw,
 	}: EditUserProps = $props();
 
 	// *** State ***
@@ -57,6 +63,18 @@
 		isValidEmail = undefined;
 		isValidFullName = undefined;
 		isEditMode = false;
+	};
+
+	const destroy = () => {
+		let isOk = confirm("Are you sure you want to destroy this user?");
+
+		if (isOk) {
+			destroyUser(userEdited);
+			setEditMode(0, false);
+			isValidEmail = undefined;
+			isValidFullName = undefined;
+			isEditMode = false;
+		}
 	};
 </script>
 
@@ -101,7 +119,7 @@
 	<div>&nbsp;</div>
 	<div>
 		<span>
-			{#if isEditMode}<span>Is Admin</span>
+			{#if isEditMode && userEdited.id !== user.value?.id}<span>Is Admin</span>
 				<input
 					type="checkbox"
 					bind:checked={userEdited.isAdmin}
@@ -111,7 +129,9 @@
 		</span>
 
 		<span>
-			{#if isEditMode}<span>Is Disabled</span>
+			{#if isEditMode && userEdited.id !== user.value?.id}<span
+					>Is Disabled</span
+				>
 				<input
 					type="checkbox"
 					bind:checked={userEdited.isDisabled}
@@ -121,7 +141,8 @@
 		</span>
 
 		<span>
-			{#if isEditMode}<span>Is Deleted</span>
+			{#if isEditMode && userEdited.id !== user.value?.id}<span>Is Deleted</span
+				>
 				<input
 					type="checkbox"
 					bind:checked={userEdited.isDeleted}
@@ -129,7 +150,13 @@
 				/>
 			{:else if userEdited.isDeleted}<span class="warning">Deleted</span>{/if}
 		</span>
+		{#if !userEdited.hasPw && userEdited.id !== 0}
+			<span class="warning">No Pw</span>
+		{/if}
 	</div>
+	{#if isEditMode && userEdited.id !== 0 && userEdited.id !== user.value?.id}
+		<div><button class="small" onclick={destroy}>Destroy</button></div>
+	{/if}
 	<div
 		class="cover"
 		class:visible={isListEditMode && userEdited.id !== editingUserId}
@@ -142,7 +169,13 @@
 			<button onclick={save}>Save</button><br />
 			<button onclick={cancel}>Cancel</button>
 		</div>
-	{:else}<button onclick={edit}>Edit</button>
+	{:else}
+		<div>
+			<button onclick={edit}>Edit</button><br />
+			{#if userEdited.id !== 0}<button
+					onclick={() => openSetPw(userEdited.email, true)}>Set Pw</button
+				>{/if}
+		</div>
 	{/if}
 	<div
 		class="cover"
@@ -169,7 +202,7 @@
 			display: inline-block;
 			margin: 0;
 			padding: 0 1rem 0 0;
-			min-width: 4rem;
+			min-width: 3rem;
 
 			> span {
 				padding: 0 0.25rem 0 0;

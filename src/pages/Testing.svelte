@@ -11,7 +11,7 @@
 
 	const loadSecuredValue = async () => {
 		try {
-			securedValue = (await getSecuredValue())?.data || "Get failed";
+			securedValue = (await getSecuredValue()) || "Get failed";
 		} catch (error) {
 			securedValue = "Error loading secured value";
 		}
@@ -19,7 +19,7 @@
 
 	const loadAdminValue = async () => {
 		try {
-			adminValue = (await getAdminValue())?.data || "Get failed";
+			adminValue = (await getAdminValue()) || "Get failed";
 		} catch (error) {
 			adminValue = "Error loading secured value";
 		}

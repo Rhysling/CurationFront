@@ -1,9 +1,15 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	let { isOpen = $bindable(false), children = null } = $props();
+	let {
+		isOpen = $bindable(false),
+		disableHideModal = false,
+		children = null,
+	} = $props();
 
-	const hideModal = () => (isOpen = false);
+	const hideModal = () => {
+		if (!disableHideModal) isOpen = false;
+	};
 
 	const hideModalKey = (e: KeyboardEvent) => {
 		const code = e.code;
@@ -18,12 +24,14 @@
 	onkeyup={(e) => hideModalKey(e)}
 	style="display:{isOpen ? 'flex' : 'none'}"
 >
-	<span
-		class="close"
-		onclick={hideModal}
-		onkeyup={(e) => hideModalKey(e)}
-		title="close">X</span
-	>
+	{#if !disableHideModal}
+		<span
+			class="close"
+			onclick={hideModal}
+			onkeyup={(e) => hideModalKey(e)}
+			title="close">X</span
+		>
+	{/if}
 	<div
 		class="content"
 		onclick={(e) => e.stopPropagation()}

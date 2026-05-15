@@ -9,7 +9,7 @@
 	let fileName: string | undefined = $derived(pic?.fileName);
 
 	const getPic = async (slug: string) => {
-		pic = (await getPicBySlug(slug))?.data;
+		pic = await getPicBySlug(slug);
 	};
 
 	if (slug) getPic(slug);
