@@ -76,6 +76,7 @@
 	{#each userListDisplay as user (user.id)}
 		<EditUser
 			userIn={user}
+			{userList}
 			{isListEditMode}
 			{editingUserId}
 			{setEditMode}

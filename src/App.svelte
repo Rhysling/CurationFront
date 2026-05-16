@@ -13,6 +13,7 @@
 	import AdminUsers from "./pages/AdminUsers.svelte";
 	import AdminDbs from "./pages/AdminDbs.svelte";
 	import Picture from "./pages/Picture.svelte";
+	import Testing from "./pages/Testing.svelte";
 
 	import { routes, navFromUrl } from "./stores/route-store.svelte";
 	//import { user } from "./stores/user-store.js";
@@ -25,6 +26,7 @@
 		AdminUsers,
 		AdminDbs,
 		Picture,
+		Testing,
 	};
 
 	type PK = keyof typeof pages;

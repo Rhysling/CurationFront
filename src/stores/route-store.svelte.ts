@@ -39,6 +39,13 @@ const baseRoutes: Route = {
 			children: []
 		},
 		{
+			title: "Testing",
+			page: "Testing",
+			path: "/testing",
+			isAdmin: true,
+			children: []
+		},
+		{
 			title: "Picture",
 			page: "Picture",
 			path: "/picture",

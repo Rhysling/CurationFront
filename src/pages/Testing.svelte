@@ -1,10 +1,12 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { getSecuredValue, getAdminValue } from "../js/db-ops";
+	import {
+		getSecuredValue,
+		getAdminValue,
+		getPicPublicList,
+	} from "../js/db-ops";
 	import Menu from "../components/Menu.svelte";
-
-	import NavButton from "../components/NavButton.svelte";
 
 	let securedValue = $state("Not loaded");
 	let adminValue = $state("Not loaded");
@@ -25,14 +27,32 @@
 		}
 	};
 
-	const foo = () => {
-		alert("Foo!");
+	// *** PicList ***
+
+	let picList: PictureItem[] = [];
+	let picListDisplay: PictureItem[] = $state([]);
+	let ix = $state(0);
+	let txt = $state("Foo");
+
+	const loadPicList = async () => {
+		try {
+			picList = (await getPicPublicList()) || [];
+			picListDisplay = picList.slice(0, 10);
+		} catch (error) {
+			console.error("Error loading picture list", error);
+		}
+	};
+
+	const addText = () => {
+		if (ix >= 0 && ix < picListDisplay.length) {
+			picListDisplay[ix].fileName += `- ${txt}`;
+		}
 	};
 </script>
 
 <div class="mix">Testing Here</div>
 <div class="test">
-	<div>Admin value:</div>
+	<div class="title">Admin value:</div>
 	<div>{adminValue}</div>
 	<div>
 		<button onclick={loadAdminValue}>Go</button>
@@ -41,7 +61,7 @@
 </div>
 
 <div class="test">
-	<div>Secured value:</div>
+	<div class="title">Secured value:</div>
 	<div>{securedValue}</div>
 	<div>
 		<button onclick={loadSecuredValue}>Go</button>
@@ -49,95 +69,32 @@
 	</div>
 </div>
 
-<div class="arrows">
-	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<button title="foo" class="" onclick={() => {}} disabled={false}>
-		<svg
-			fill="currentColor"
-			viewBox="0 0 24 24"
-			stroke="currentColor"
-			version="1.1"
-			id="svg-L2"
-			xmlns="http://www.w3.org/2000/svg"
-		>
-			<path
-				d="m 9.4655179,5.3408093 a 1,1 0 0 1 0.7070011,1.707 l -4.9500021,4.9500007 4.9500021,4.95 a 1,1 0 0 1 -1.4140021,1.414 l -5.6569991,-5.657 a 1,1 0 0 1 0,-1.414 L 8.7585169,5.6338093 a 1,1 0 0 1 0.707001,-0.293 z"
-				transform-origin="center"
-				id="path1"
-			/>
-			<path
-				d="m 20.422304,5.3408187 a 1,1 0 0 1 0.707,1.707 l -4.950001,4.9499993 4.950001,4.95 a 1,1 0 0 1 -1.414001,1.414 l -5.656999,-5.657 a 1,1 0 0 1 0,-1.414 l 5.656999,-5.6569993 a 1,1 0 0 1 0.707001,-0.293 z"
-				transform-origin="center"
-				id="path1-8"
-			/>
-		</svg>
-	</button>
-
-	<button title="foo" class="" onclick={() => {}} disabled={false}>
-		<svg
-			fill="currentColor"
-			viewBox="0 0 24 24"
-			stroke="currentColor"
-			version="1.1"
-			id="svg-L1"
-			xmlns="http://www.w3.org/2000/svg"
-		>
-			<path
-				d="m 14.824643,5.3408183 a 1,1 0 0 1 0.707,1.707 l -4.950001,4.9499997 4.950001,4.95 a 1,1 0 0 1 -1.414001,1.414 l -5.6569991,-5.657 a 1,1 0 0 1 0,-1.414 L 14.117642,5.6338183 a 1,1 0 0 1 0.707001,-0.293 z"
-				transform-origin="center"
-				id="path1"
-			/>
-		</svg>
-	</button>
-
-	<button title="foo" class="" onclick={() => {}} disabled={false}>
-		<svg
-			fill="currentColor"
-			viewBox="0 0 24 24"
-			stroke="currentColor"
-			version="1.1"
-			id="svg-R1"
-			xmlns="http://www.w3.org/2000/svg"
-		>
-			<path
-				d="m 14.824643,5.3408183 a 1,1 0 0 1 0.707,1.707 l -4.950001,4.9499997 4.950001,4.95 a 1,1 0 0 1 -1.414001,1.414 l -5.6569991,-5.657 a 1,1 0 0 1 0,-1.414 L 14.117642,5.6338183 a 1,1 0 0 1 0.707001,-0.293 z"
-				transform-origin="center"
-				transform="rotate(180)"
-				id="path1"
-			/>
-		</svg>
-	</button>
-
-	<button title="foo" class="" onclick={() => {}} disabled={false}>
-		<svg
-			fill="currentColor"
-			viewBox="0 0 24 24"
-			stroke="currentColor"
-			version="1.1"
-			id="svg-R2"
-			xmlns="http://www.w3.org/2000/svg"
-		>
-			<path
-				d="m 9.4655179,5.3408093 a 1,1 0 0 1 0.7070011,1.707 l -4.9500021,4.9500007 4.9500021,4.95 a 1,1 0 0 1 -1.4140021,1.414 l -5.6569991,-5.657 a 1,1 0 0 1 0,-1.414 L 8.7585169,5.6338093 a 1,1 0 0 1 0.707001,-0.293 z"
-				transform-origin="center"
-				transform="rotate(180)"
-				id="path1"
-			/>
-			<path
-				d="m 20.422304,5.3408187 a 1,1 0 0 1 0.707,1.707 l -4.950001,4.9499993 4.950001,4.95 a 1,1 0 0 1 -1.414001,1.414 l -5.656999,-5.657 a 1,1 0 0 1 0,-1.414 l 5.656999,-5.6569993 a 1,1 0 0 1 0.707001,-0.293 z"
-				transform-origin="center"
-				transform="rotate(180)"
-				id="path1-8"
-			/>
-		</svg>
-	</button>
+<div class="list-experiment">
+	<div class="title">Pic List</div>
+	<div>
+		{#if picListDisplay.length === 0}
+			<div>No pics loaded</div>
+		{:else}
+			<ul>
+				{#each picListDisplay as pic}
+					<li>{pic.fileName}</li>
+				{/each}
+			</ul>
+		{/if}
+	</div>
+	<div class="buttons">
+		<button onclick={loadPicList}>Load Pics</button> x
+		<input
+			type="number"
+			min="0"
+			max={picListDisplay.length - 1}
+			bind:value={ix}
+		/>
+		<input type="text" bind:value={txt} placeholder="Text to add" />
+		<button onclick={addText}>Add Text</button>
+	</div>
 </div>
-<div class="imports">
-	<span>Imports:</span>
-	<NavButton buttonType="first" onclick={foo} />
-</div>
-<br />
+
 <br />
 <Menu />
 
@@ -153,24 +110,42 @@
 
 	.test {
 		max-width: 600px;
-		margin: 2rem auto;
-	}
+		margin: 1rem auto;
 
-	.arrows {
-		max-width: 600px;
-		margin: 2rem auto;
-
-		button {
-			padding: 0;
-			margin: 1rem;
-			width: 3rem;
-			height: 3rem;
+		.title {
+			font-weight: bold;
 		}
 	}
 
-	.imports {
+	.list-experiment {
 		max-width: 600px;
 		margin: 2rem auto;
+		border: 3px solid c.$main-color;
+		border-radius: 0.5rem;
+		padding: 0.5rem;
+
+		.title {
+			font-size: 1.5rem;
+			font-weight: bold;
+			text-align: center;
+			margin-bottom: 0.5rem;
+		}
+
+		ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+
+			li {
+				padding: 0.25rem 0;
+				border-bottom: 1px solid c.$light-background;
+			}
+		}
+
+		.buttons {
+			text-align: center;
+			margin-top: 1rem;
+		}
 	}
 
 	@media only screen and (width <= c.$bp-small) {

@@ -141,7 +141,7 @@ export const postDestroyUser = async (user: UserClientRemote) => {
 export const getSecuredValue = async () => {
 	try {
 		const response: Response = await fc().get("/api/Test/GetSecuredValue");
-		return response.json() as Promise<string>;
+		return response.text() as Promise<string>;
 	} catch (error) {
 		console.error(error);
 	}
@@ -150,7 +150,7 @@ export const getSecuredValue = async () => {
 export const getAdminValue = async () => {
 	try {
 		const response: Response = await fc().get("/api/Test/GetAdminValue");
-		return response.json() as Promise<string>;
+		return response.text() as Promise<string>;
 	} catch (error) {
 		console.error(error);
 	}

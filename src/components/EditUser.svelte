@@ -5,6 +5,7 @@
 
 	type EditUserProps = {
 		userIn: UserClientRemote;
+		userList: UserClientRemote[];
 		isListEditMode: boolean;
 		editingUserId: number;
 		setEditMode: (userId: number, isEdit: boolean) => void;
@@ -15,6 +16,7 @@
 
 	let {
 		userIn,
+		userList,
 		isListEditMode,
 		editingUserId,
 		setEditMode,
@@ -29,11 +31,31 @@
 	let isEditMode = $state(false);
 	let isValidEmail: ValidationState = $state(undefined);
 	let isValidFullName: ValidationState = $state(undefined);
-	let isValidAll: boolean = $derived(!!isValidEmail && !!isValidFullName);
+	let isValidAll: ValidationState = $derived.by(() => {
+		if (isValidEmail && isValidFullName) return true;
+		if (isValidEmail === false || isValidFullName === false) return false;
+		return undefined;
+	});
 
 	// ** Validations **
-	const validateEmail = () =>
-		(isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEdited.email));
+	const validateEmail = () => {
+		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEdited.email)) {
+			isValidEmail = false;
+			return;
+		}
+		if (
+			userList.some(
+				(u) =>
+					u.email.toLowerCase() === userEdited.email.toLowerCase() &&
+					u.id !== userEdited.id,
+			)
+		) {
+			isValidEmail = false;
+			return;
+		}
+		isValidEmail = true;
+	};
+
 	const validateFullName = () => (isValidFullName = !!userEdited.fullName);
 	const validateAll = () => {
 		validateEmail();
@@ -166,7 +188,7 @@
 <div class="pic-controls">
 	{#if isEditMode}
 		<div>
-			<button onclick={save}>Save</button><br />
+			<button onclick={save} disabled={isValidAll === false}>Save</button><br />
 			<button onclick={cancel}>Cancel</button>
 		</div>
 	{:else}
