@@ -1,47 +1,134 @@
-# Svelte + TS + Vite
+# CurationFront
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+Frontend for the Polson Company picture curation and management application. Built with Svelte 5, TypeScript, and Vite; talks to a .NET backend API at `https://polson.com`.
 
-## Recommended IDE Setup
+## Stack
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+- **Svelte 5** with Runes (`$state`, `$derived`, `$effect`)
+- **TypeScript** (strict mode)
+- **SCSS** for styles
+- **Vite** for bundling and dev server
+- **Vitest** for unit and browser (Puppeteer) tests
+- **Fetch API** (custom wrapper) for HTTP — no Axios
 
-## Need an official Svelte framework?
+## Getting Started
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+All commands run from the repo root (where `package.json` lives).
 
-## Technical considerations
+```bash
+npm install
+npm run dev        # dev server at http://localhost:5050
+```
 
-**Why use this over SvelteKit?**
+Dev API calls proxy to `https://localhost:7212` (the local .NET backend).
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+## Commands
 
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+| Command | Description |
+|---|---|
+| `npm run dev` | Start dev server on port 5050 |
+| `npm run build` | Production build (Vite + cache-bust) |
+| `npm run preview` | Preview the production build locally |
+| `npm run check` | Type-check with `svelte-check` + `tsc` |
+| `npm run test` | Run unit tests (`src/js/`) |
+| `npm run test:run` | Run unit tests once (no watch) |
+| `npm run test:browser` | Run browser/E2E tests (`src/__tests__/`) |
+| `npm run test:browser:run` | Run browser tests once |
+| `npm run test:follow` | Run browser tests with headed Puppeteer |
+| `npm run shots` | Take screenshots via `screenshots.js` |
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+## Architecture
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
+### Routing
 
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+Client-side only — no SvelteKit. [`src/stores/route-store.svelte.ts`](src/stores/route-store.svelte.ts) owns the route tree, syncs with `window.history`, and handles the back button. Pages render conditionally in [`src/App.svelte`](src/App.svelte) by mapping the current route to a component.
 
-**Why include `.vscode/extensions.json`?**
+Routes:
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+| Path | Page | Access |
+|---|---|---|
+| `/` | Home | Public |
+| `/curation` | Curation | Public |
+| `/curation2` | Curation2 | Admin |
+| `/picture` | Picture | Public (hidden from nav) |
+| `/admin-pics` | AdminPics | Admin |
+| `/admin-users` | AdminUsers | Admin |
+| `/admin-dbs` | AdminDbs | Admin |
+| `/testing` | Testing | Admin |
 
-**Why enable `allowJs` in the TS template?**
+Admin routes are stripped from the nav for non-admin users.
 
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
+### Auth / User State
 
-**Why is HMR not preserving my local component state?**
+[`src/stores/user-store.svelte.ts`](src/stores/user-store.svelte.ts) persists the session (`UserClientRemote` — token + `isAdmin`) in `localStorage` via [`src/stores/localstorage-store.svelte.ts`](src/stores/localstorage-store.svelte.ts). A 401 response from the API calls `logOut()`, which clears the store and redirects to `/curation`.
 
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
+### HTTP Client
 
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
+[`src/stores/fetchclient-store.svelte.ts`](src/stores/fetchclient-store.svelte.ts) wraps the browser Fetch API. It is a `$derived` store that rebuilds whenever the auth token changes, injecting a `Bearer` token header automatically. Intercepts handle 401 (log out), 403, and 429.
+
+### API Layer
+
+All API calls live in two files:
+
+- [`src/js/db-ops.ts`](src/js/db-ops.ts) — public + authenticated operations (pictures, users, login, password)
+- [`src/js/db-admin-ops.ts`](src/js/db-admin-ops.ts) — admin-only operations
+
+Endpoints are relative (`/api/...`) combined with the `baseURL` global injected in `index.html`.
+
+### Pages
+
+| File | Description |
+|---|---|
+| `Home.svelte` | Landing page |
+| `Curation.svelte` | Public picture gallery with carousel, modal zoom, sort toggle |
+| `Curation2.svelte` | Alternate gallery view (admin) |
+| `Picture.svelte` | Single picture detail view |
+| `AdminPics.svelte` | Picture CRUD — file upload via drag-and-drop, edit metadata |
+| `AdminUsers.svelte` | User management |
+| `AdminDbs.svelte` | Database admin utilities |
+| `Testing.svelte` | Dev test sandbox |
+
+### Key Components
+
+- **`Carousel.svelte`** — custom carousel supporting snippet-based slide and nav rendering
+- **`Modal.svelte`** — full-screen image zoom overlay
+- **`EditPic.svelte`** — picture metadata editor
+- **`PicDrop.svelte`** — file drop zone (wraps `svelte-file-dropzone`)
+- **`CleanPics.svelte`** — audit and clean orphaned/missing picture files
+- **`EditUser.svelte`** / **`EditPw.svelte`** — user and password editors
+- **`Menu.svelte`** / **`CurationMenu.svelte`** — navigation menus
+
+### State Pattern
+
+Svelte 5 Runes throughout. No writable stores from Svelte 4. Persistent state uses the `localStore` wrapper in [`src/stores/localstorage-store.svelte.ts`](src/stores/localstorage-store.svelte.ts).
+
+## Data Models
+
+Defined in [`src/types/models.d.ts`](src/types/models.d.ts) (auto-generated from the .NET solution):
 
 ```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+type PictureItem = {
+  id: number; fileName: string; seq: number; ts: number;
+  keywords: string[]; description: string | null; link: string | null;
+  isMissing: boolean; isDeleted: boolean;
+}
+
+type UserClientRemote = {
+  id: number; email: string; fullName: string; token: string;
+  isAdmin: boolean; hasPw: boolean; isDisabled: boolean; isDeleted: boolean;
+}
 ```
+
+## Build & Deployment
+
+`npm run build` runs `vite build` then `node bust.js`. The `bust.js` script patches `dist/index.html` to:
+
+1. Set `baseURL` to `https://polson.com`
+2. Set `appIsProduction = true`
+3. Append a timestamp-based version key to asset URLs for cache-busting
+
+**Do not manually edit `dist/index.html`.**
+
+## Tools
+
+`tools/make-ts-models/` contains a .NET CLI tool that generates [`src/types/models.d.ts`](src/types/models.d.ts) from the C# backend models.
