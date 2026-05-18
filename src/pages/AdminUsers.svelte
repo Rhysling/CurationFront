@@ -63,8 +63,10 @@
 
 	const savePw = async (ul: UserLogin) => {
 		await postUpdatePw(ul);
-		userListDisplay = [];
-		await loadList();
+		const ix = userListDisplay.findIndex(
+			(u) => u.email.toLocaleLowerCase() === ul.email.toLowerCase(),
+		);
+		if (ix > 0) userListDisplay[ix].hasPw = true;
 	};
 
 	loadList();

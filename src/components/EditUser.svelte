@@ -172,7 +172,7 @@
 				/>
 			{:else if userEdited.isDeleted}<span class="warning">Deleted</span>{/if}
 		</span>
-		{#if !userEdited.hasPw && userEdited.id !== 0}
+		{#if !userIn.hasPw && userIn.id !== 0}
 			<span class="warning">No Pw</span>
 		{/if}
 	</div>

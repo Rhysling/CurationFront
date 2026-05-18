@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const mockGet = vi.fn();
 
-vi.mock('../stores/httpclient-store.svelte', () => ({
-	getHttpClient: () => ({ get: mockGet } as unknown as any),
+vi.mock('../stores/fetchclient-store.svelte', () => ({
+	getFetchClient: () => ({ get: mockGet } as unknown as any),
 }));
 
 import { getPicPublicList } from './db-ops';
@@ -17,7 +17,7 @@ describe('getPicPublicList', () => {
 		const fakeData: PictureItem[] = [
 			{ id: 1, fileName: 'photo.jpg', seq: 1, ts: 0, keywords: [], description: null, link: null, isMissing: false, isDeleted: false },
 		];
-		mockGet.mockResolvedValue({ status: 200, data: fakeData });
+		mockGet.mockResolvedValue({ json: () => Promise.resolve(fakeData) });
 
 		const result = await getPicPublicList();
 
