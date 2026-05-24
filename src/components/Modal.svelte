@@ -12,8 +12,7 @@
 	};
 
 	const hideModalKey = (e: KeyboardEvent) => {
-		const code = e.code;
-		alert(code);
+		if (e.code === "Escape") hideModal();
 	};
 </script>
 

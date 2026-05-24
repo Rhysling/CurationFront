@@ -50,9 +50,9 @@
 		isListEditMode = isEdit;
 	};
 
-	const savePic = async (picNew: PictureItem) => {
+	const savePic = async (picNew: PictureItem): Promise<boolean> => {
 		const updatedPic = await postPic(picNew);
-		if (!updatedPic) return;
+		if (!updatedPic) return false;
 
 		const ix = picList.findIndex((a) => a.id === updatedPic.id);
 		if (ix >= 0) {
@@ -76,30 +76,37 @@
 				probe.src = imgPath;
 			}, 100);
 		}
+		return true;
 	};
 
-	const savePicWithImg = async (form: FormData) => {
+	const savePicWithImg = async (form: FormData): Promise<boolean> => {
 		const savedPic = await postPicWithImg(form);
-		if (savedPic) {
-			// Preload the image so the <img> tag never shows a broken state
-			const imgPath = `/pics/${savedPic.fileName}`;
-			const probe = new Image();
-			probe.onload = probe.onerror = () => {
-				const ix = picList.findIndex((a) => a.id === savedPic.id);
-				if (ix >= 0) picList[ix] = savedPic;
-				else {
-					emptyPicItem = getEmptyPicItem();
-					picList = [savedPic, ...picList];
-				}
-			};
-			probe.src = imgPath;
-		}
+		if (!savedPic) return false;
+
+		// Preload the image so the <img> tag never shows a broken state
+		const imgPath = `/pics/${savedPic.fileName}`;
+		const probe = new Image();
+		probe.onload = probe.onerror = () => {
+			const ix = picList.findIndex((a) => a.id === savedPic.id);
+			if (ix >= 0) picList[ix] = savedPic;
+			else {
+				emptyPicItem = getEmptyPicItem();
+				picList = [savedPic, ...picList];
+			}
+		};
+		probe.src = imgPath;
+		return true;
 	};
 
-	const destroyPic = async (pic: PictureItem) => {
+	const destroyPic = async (pic: PictureItem): Promise<boolean> => {
 		const id = pic.id;
-		await postDestroyPic(pic);
+		const response = await postDestroyPic(pic);
+		if (!response?.ok) {
+			alert("Failed to destroy picture. Please try again.");
+			return false;
+		}
 		picList = picList.filter((a) => a.id !== id);
+		return true;
 	};
 
 	const refreshPicList = (pics: PictureItem[]) => {
@@ -139,7 +146,7 @@
 	>
 </div>
 <div class="pic-list">
-	{#each picListDisplay as pic, ix (pic.id)}
+	{#each picListDisplay as pic (pic.id)}
 		<EditPic
 			picItem={pic}
 			{picList}

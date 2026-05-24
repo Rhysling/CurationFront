@@ -41,7 +41,9 @@
 			const blobUrl = URL.createObjectURL(fileTextBlob);
 			downloadFile(blobUrl, fileName);
 			setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-		} catch (error) {}
+		} catch (error) {
+			alert("Failed to download file. Please try again.");
+		}
 	};
 
 	function downloadFile(url: string, fileName: string) {

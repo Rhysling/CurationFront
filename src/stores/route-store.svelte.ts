@@ -57,12 +57,12 @@ const baseRoutes: Route = {
 };
 
 
-const filterAdminRoutes = (node: Route) => {
-	if (node.children)
-		node.children = node.children.filter(a => a.isAdmin !== true).map(a => filterAdminRoutes(a));
-
-	return node;
-};
+const filterAdminRoutes = (node: Route): Route => ({
+	...node,
+	children: node.children
+		? node.children.filter(a => a.isAdmin !== true).map(a => filterAdminRoutes(a))
+		: [],
+});
 
 const findRoute = (routeRoot: Route, path: string): Route => {
 	let cr: Route | undefined;
@@ -94,14 +94,11 @@ const findRoute = (routeRoot: Route, path: string): Route => {
 
 export const pageState: PageState = $state({ path: "/", paramObj: {}, isNavFromUrl: false });
 
-let allRoutes = $derived.by(() => {
-	let r = { ...baseRoutes };
-	if (!user.value?.isAdmin)
-		r = filterAdminRoutes(r);
-	return <Route>r;
-});
+let allRoutes = $derived.by(() =>
+	user.value?.isAdmin ? baseRoutes : filterAdminRoutes(baseRoutes)
+);
 
-let currentRoute = $derived.by(() => findRoute(baseRoutes, pageState.path))
+let currentRoute = $derived.by(() => findRoute(allRoutes, pageState.path))
 
 export const routes = {
 	get allRoutes() { return allRoutes },
@@ -137,17 +134,12 @@ const objToParamString = (inp: Record<string, string>) => {
 
 export const navFromUrl = function () {
 	const pathName = window.location.pathname;
-	const r = findRoute(baseRoutes, pathName);
 	const p = paramStringToObj(window.location.search);
 
-	if (r) {
-		pageState.path = pathName;
-		pageState.paramObj = p;
-		pageState.isNavFromUrl = true;
-		document.title = `Polson-${r.title}`;
-	} else {
-		window.location.replace(window.location.origin);
-	}
+	pageState.path = pathName;
+	pageState.paramObj = p;
+	pageState.isNavFromUrl = true;
+	document.title = `Polson-${routes.currentRoute.title}`;
 };
 
 export const navTo = function (e: MouseEvent | null, path: string, params?: Record<string, string>) {

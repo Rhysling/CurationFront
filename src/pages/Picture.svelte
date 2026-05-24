@@ -4,7 +4,7 @@
 	import { getPicBySlug } from "../js/db-ops";
 	import { pageState } from "../stores/route-store.svelte";
 
-	const slug: string | undefined = pageState.paramObj.p;
+	let slug = $derived(pageState.paramObj.p);
 	let pic: PictureItem | undefined = $state();
 	let fileName: string | undefined = $derived(pic?.fileName);
 
@@ -12,7 +12,9 @@
 		pic = await getPicBySlug(slug);
 	};
 
-	if (slug) getPic(slug);
+	$effect(() => {
+		if (slug) getPic(slug);
+	});
 
 	let modalOpen = $state(false);
 	let scale = $state(1);

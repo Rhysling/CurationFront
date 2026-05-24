@@ -19,7 +19,6 @@ type UserClientRemote = {
 	fullName: string;
 	token: string;
 	isAdmin: boolean;
-	hasPw: boolean;
 	isDisabled: boolean;
 	isDeleted: boolean;
 }

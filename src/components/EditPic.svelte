@@ -10,9 +10,9 @@
 		isListEditMode: boolean;
 		editingPicId: number;
 		setEditMode: (picId: number, isEdit: boolean) => void;
-		savePic: (pic: PictureItem) => void;
-		savePicWithImg: (form: FormData) => void;
-		destroyPic: (pic: PictureItem) => void;
+		savePic: (pic: PictureItem) => Promise<boolean>;
+		savePicWithImg: (form: FormData) => Promise<boolean>;
+		destroyPic: (pic: PictureItem) => Promise<boolean>;
 	};
 
 	let {
@@ -121,7 +121,7 @@
 		isEditMode = true;
 	};
 
-	const save = () => {
+	const save = async () => {
 		validateAll();
 		if (isValidAll) {
 			if (pic.description) pic.description = pic.description.trim();
@@ -134,7 +134,8 @@
 			}
 
 			pic.ts = parseInt(<string>(<unknown>pic.ts)) || 0;
-			savePic(pic);
+			const ok = await savePic(pic);
+			if (!ok) return;
 			setEditMode(0, false);
 			isValidSeq = undefined;
 			isValidFileName = undefined;
@@ -143,13 +144,14 @@
 		}
 	};
 
-	const destroy = () => {
+	const destroy = async () => {
 		let isOk = confirm(
 			`Are you sure you want to DESTROY picture Id ${pic.id}? This action cannot be undone.`,
 		);
 
 		if (isOk) {
-			destroyPic(pic);
+			const ok = await destroyPic(pic);
+			if (!ok) return;
 			setEditMode(0, false);
 			isValidSeq = undefined;
 			isValidFileName = undefined;
@@ -176,10 +178,10 @@
 		isEditMode = isEdit;
 	};
 
-	const savePicWithImgDZ = (form: FormData, newPic: PictureItem) => {
-		savePicWithImg(form);
-		//setTimeout(() => (pic.fileName = fileName), 600);
-		pic = newPic;
+	const savePicWithImgDZ = async (form: FormData, newPic: PictureItem): Promise<boolean> => {
+		const ok = await savePicWithImg(form);
+		if (ok) pic = newPic;
+		return ok;
 	};
 </script>
 
@@ -259,7 +261,7 @@
 				bind:value={() => pic.link, (v) => (pic.link = v)}
 				placeholder="Link URL"
 			/>
-		{:else}<span style:font-style={pic.description ? "normal" : "italic"}
+		{:else}<span style:font-style={pic.link ? "normal" : "italic"}
 				>{pic.link || "No Link URL"}</span
 			>
 		{/if}

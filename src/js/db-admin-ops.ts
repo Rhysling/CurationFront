@@ -4,7 +4,7 @@ import { getFetchClient as fc } from "../stores/fetchclient-store.svelte";
 
 export const getBackupList = async (dbName: Db) => {
 	try {
-		const response: Response = await fc().get(`/api/Db/GetBackupList?dbName=${dbName}`);
+		const response: Response = await fc().get(`/api/Db/GetBackupList?${new URLSearchParams({ dbName })}`);
 		return response.json() as Promise<string[]>;
 	} catch (error) {
 		console.error(error);
@@ -13,7 +13,7 @@ export const getBackupList = async (dbName: Db) => {
 
 export const getFile = async (fileName: string) => {
 	try {
-		const response: Response = await fc().get(`/api/Db/GetFile?fileName=${fileName}`);
+		const response: Response = await fc().get(`/api/Db/GetFile?${new URLSearchParams({ fileName })}`);
 		return response.text();
 	} catch (error) {
 		console.error(error);
@@ -22,7 +22,7 @@ export const getFile = async (fileName: string) => {
 
 export const postBackup = async (dbName: Db) => {
 	try {
-		const response: Response = await fc().post(`/api/Db/Backup?dbName=${dbName}`);
+		const response: Response = await fc().post(`/api/Db/Backup?${new URLSearchParams({ dbName })}`);
 		return response.text();
 	}
 	catch (error) {
@@ -32,7 +32,7 @@ export const postBackup = async (dbName: Db) => {
 
 export const postRestore = async (fileName: string) => {
 	try {
-		const response: Response = await fc().post(`/api/Db/Restore?fileName=${fileName}`);
+		const response: Response = await fc().post(`/api/Db/Restore?${new URLSearchParams({ fileName })}`);
 		return response.text();
 	}
 	catch (error) {
@@ -42,7 +42,7 @@ export const postRestore = async (fileName: string) => {
 
 export const postDelete = async (fileName: string) => {
 	try {
-		const response: Response = await fc().post(`/api/Db/Delete?fileName=${fileName}`);
+		const response: Response = await fc().post(`/api/Db/Delete?${new URLSearchParams({ fileName })}`);
 		return response.text();
 	}
 	catch (error) {

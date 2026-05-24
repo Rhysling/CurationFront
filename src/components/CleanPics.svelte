@@ -18,12 +18,12 @@
 	let orphanCount: number = $derived(auditList.orphans.length);
 
 	const checkPics = async () => {
-		auditList = (await getAuditList()) || { missing: [], orphans: [] };
+		auditList = (await getAuditList())?.data || { missing: [], orphans: [] };
 		isChecked = true;
 	};
 
 	const cleanPics = async () => {
-		let pl = (await postCleanPics()) || [];
+		let pl = (await postCleanPics())?.data || [];
 		let missing = pl.filter((a) => a.isMissing == true);
 		let orphans = pl.filter((a) => !a.seq);
 		auditList = { missing, orphans };

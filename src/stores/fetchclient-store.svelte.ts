@@ -56,7 +56,7 @@ const intercepts: FetchIntercepts = {
 		logOut();
 	},
 	403: async (response) => {
-		console.warn("Permission denied:", await response.json());
+		console.warn("Permission denied:", await response.clone().json());
 	},
 	429: async (response) => {
 		const retryAfter = response.headers.get("Retry-After");

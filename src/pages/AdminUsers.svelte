@@ -15,14 +15,15 @@
 	let userList: UserClientRemote[] = $state([]);
 	let isListEditMode = $state(false);
 	let editingUserId = $state(0);
-	let userListDisplay: UserClientRemote[] = $state([]);
 	let isEditPw = $state(false);
 	let userSetPw: UserClientRemote | undefined = $state(undefined);
 
 	const loadList = async () => {
 		try {
-			userList = ((await getUserList()) || []).sort((a, b) => a.id - b.id);
-			userListDisplay = [getEmptyUser(), ...userList];
+			userList = [
+				getEmptyUser(),
+				...((await getUserList()) || []).sort((a, b) => a.id - b.id),
+			];
 		} catch (error) {
 			console.error(error);
 		}
@@ -41,7 +42,6 @@
 			return;
 		}
 
-		userListDisplay = [];
 		await loadList();
 	};
 
@@ -61,12 +61,14 @@
 		isEditPw = isOpen;
 	};
 
-	const savePw = async (ul: UserLogin) => {
-		await postUpdatePw(ul);
-		const ix = userListDisplay.findIndex(
+	const savePw = async (ul: UserLogin): Promise<boolean> => {
+		const ok = await postUpdatePw(ul);
+		if (!ok) return false;
+		const ix = userList.findIndex(
 			(u) => u.email.toLocaleLowerCase() === ul.email.toLowerCase(),
 		);
-		if (ix > 0) userListDisplay[ix].hasPw = true;
+		if (ix >= 0) userList[ix].hasPw = true;
+		return true;
 	};
 
 	loadList();
@@ -75,7 +77,7 @@
 <div class="title">Admin Users</div>
 
 <div class="user-list">
-	{#each userListDisplay as user (user.id)}
+	{#each userList as user (user.id)}
 		<EditUser
 			userIn={user}
 			{userList}

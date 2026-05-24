@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { AxiosInstance } from 'axios';
 
 const mockGet = vi.fn();
 
-vi.mock('../stores/fetchclient-store.svelte', () => ({
-	getFetchClient: () => ({ get: mockGet } as unknown as any),
+vi.mock('../stores/httpclient-store.svelte', () => ({
+	getHttpClient: () => ({ get: mockGet } as unknown as AxiosInstance),
 }));
 
 import { getPicPublicList } from './db-ops';
@@ -17,11 +18,11 @@ describe('getPicPublicList', () => {
 		const fakeData: PictureItem[] = [
 			{ id: 1, fileName: 'photo.jpg', seq: 1, ts: 0, keywords: [], description: null, link: null, isMissing: false, isDeleted: false },
 		];
-		mockGet.mockResolvedValue({ json: () => Promise.resolve(fakeData) });
+		mockGet.mockResolvedValue({ status: 200, data: fakeData });
 
 		const result = await getPicPublicList();
 
 		expect(mockGet).toHaveBeenCalledWith('/api/Pictures/GetPublicList');
-		expect(result).toEqual(fakeData);
+		expect(result?.data).toEqual(fakeData);
 	});
 });

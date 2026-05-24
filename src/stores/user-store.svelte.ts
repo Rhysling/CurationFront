@@ -1,5 +1,4 @@
 import { localStore } from './localstorage-store.svelte';
-import { navTo } from './route-store.svelte';
 
 const getEmptyUser = () => {
 	const u: UserClientRemote = {
@@ -8,7 +7,6 @@ const getEmptyUser = () => {
 		fullName: "",
 		token: "",
 		isAdmin: false,
-		hasPw: false,
 		isDisabled: false,
 		isDeleted: false,
 	};
@@ -32,6 +30,6 @@ export const user = {
 	},
 };
 
-export const logOut = () => { user.value = { ...getEmptyUser() }; navTo(null, "/curation") };
+export const logOut = () => user.value = { ...getEmptyUser() };
 export const getIsLoggedIn = () => isLoggedIn;
 export const getName = () => userName;

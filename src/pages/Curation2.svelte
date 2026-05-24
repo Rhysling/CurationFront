@@ -15,7 +15,7 @@
 
 	const loadPicList = async () => {
 		try {
-			picList = (await getPicAdminList()) || [];
+			picList = (await getPicAdminList())?.data || [];
 
 			if (pageState.paramObj["newest"]) orderByTs(picList);
 			else if (userSettings.value.isNewestFirst) orderByTs(picList);

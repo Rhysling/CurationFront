@@ -16,7 +16,7 @@
 		pic: PictureItem;
 		isValidAll: ValidationState;
 		validateAll: () => void;
-		savePicWithImgDZ: (form: FormData, newPic: PictureItem) => void;
+		savePicWithImgDZ: (form: FormData, newPic: PictureItem) => Promise<boolean>;
 		setItemEditMode: (picId: number, isEdit: boolean) => void;
 	};
 
@@ -28,7 +28,7 @@
 		setItemEditMode,
 	}: PicDropProps = $props();
 
-	const handlePicDropped = (e: CustomEvent) => {
+	const handlePicDropped = async (e: CustomEvent) => {
 		const {
 			acceptedFiles,
 			fileRejections,
@@ -54,8 +54,8 @@
 		const formData = new FormData();
 		formData.append("file", acceptedFiles[0] as any);
 		formData.append("picItemJSON", JSON.stringify(picLocal));
-		savePicWithImgDZ(formData, picLocal);
-		setItemEditMode(picLocal.id, false);
+		const ok = await savePicWithImgDZ(formData, picLocal);
+		if (ok) setItemEditMode(picLocal.id, false);
 	};
 
 	const stopProp = (e: Event) => e.stopPropagation();

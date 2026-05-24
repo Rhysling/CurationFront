@@ -1,28 +1,20 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { user } from "../stores/user-store.svelte";
-
 	type EditUserProps = {
 		userIn: UserClientRemote;
-		userList: UserClientRemote[];
 		isListEditMode: boolean;
 		editingUserId: number;
 		setEditMode: (userId: number, isEdit: boolean) => void;
 		saveUser: (user: UserClientRemote) => void;
-		destroyUser: (user: UserClientRemote) => void;
-		openSetPw: (email: string, isOpen: boolean) => void;
 	};
 
 	let {
 		userIn,
-		userList,
 		isListEditMode,
 		editingUserId,
 		setEditMode,
 		saveUser,
-		destroyUser,
-		openSetPw,
 	}: EditUserProps = $props();
 
 	// *** State ***
@@ -31,31 +23,11 @@
 	let isEditMode = $state(false);
 	let isValidEmail: ValidationState = $state(undefined);
 	let isValidFullName: ValidationState = $state(undefined);
-	let isValidAll: ValidationState = $derived.by(() => {
-		if (isValidEmail && isValidFullName) return true;
-		if (isValidEmail === false || isValidFullName === false) return false;
-		return undefined;
-	});
+	let isValidAll: boolean = $derived(!!isValidEmail && !!isValidFullName);
 
 	// ** Validations **
-	const validateEmail = () => {
-		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEdited.email)) {
-			isValidEmail = false;
-			return;
-		}
-		if (
-			userList.some(
-				(u) =>
-					u.email.toLowerCase() === userEdited.email.toLowerCase() &&
-					u.id !== userEdited.id,
-			)
-		) {
-			isValidEmail = false;
-			return;
-		}
-		isValidEmail = true;
-	};
-
+	const validateEmail = () =>
+		(isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEdited.email));
 	const validateFullName = () => (isValidFullName = !!userEdited.fullName);
 	const validateAll = () => {
 		validateEmail();
@@ -85,18 +57,6 @@
 		isValidEmail = undefined;
 		isValidFullName = undefined;
 		isEditMode = false;
-	};
-
-	const destroy = () => {
-		let isOk = confirm("Are you sure you want to destroy this user?");
-
-		if (isOk) {
-			destroyUser(userEdited);
-			setEditMode(0, false);
-			isValidEmail = undefined;
-			isValidFullName = undefined;
-			isEditMode = false;
-		}
 	};
 </script>
 
@@ -141,7 +101,7 @@
 	<div>&nbsp;</div>
 	<div>
 		<span>
-			{#if isEditMode && userEdited.id !== user.value?.id}<span>Is Admin</span>
+			{#if isEditMode}<span>Is Admin</span>
 				<input
 					type="checkbox"
 					bind:checked={userEdited.isAdmin}
@@ -151,9 +111,7 @@
 		</span>
 
 		<span>
-			{#if isEditMode && userEdited.id !== user.value?.id}<span
-					>Is Disabled</span
-				>
+			{#if isEditMode}<span>Is Disabled</span>
 				<input
 					type="checkbox"
 					bind:checked={userEdited.isDisabled}
@@ -163,8 +121,7 @@
 		</span>
 
 		<span>
-			{#if isEditMode && userEdited.id !== user.value?.id}<span>Is Deleted</span
-				>
+			{#if isEditMode}<span>Is Deleted</span>
 				<input
 					type="checkbox"
 					bind:checked={userEdited.isDeleted}
@@ -172,13 +129,7 @@
 				/>
 			{:else if userEdited.isDeleted}<span class="warning">Deleted</span>{/if}
 		</span>
-		{#if !userIn.hasPw && userIn.id !== 0}
-			<span class="warning">No Pw</span>
-		{/if}
 	</div>
-	{#if isEditMode && userEdited.id !== 0 && userEdited.id !== user.value?.id}
-		<div><button class="small" onclick={destroy}>Destroy</button></div>
-	{/if}
 	<div
 		class="cover"
 		class:visible={isListEditMode && userEdited.id !== editingUserId}
@@ -188,16 +139,10 @@
 <div class="pic-controls">
 	{#if isEditMode}
 		<div>
-			<button onclick={save} disabled={isValidAll === false}>Save</button><br />
+			<button onclick={save}>Save</button><br />
 			<button onclick={cancel}>Cancel</button>
 		</div>
-	{:else}
-		<div>
-			<button onclick={edit}>Edit</button><br />
-			{#if userEdited.id !== 0}<button
-					onclick={() => openSetPw(userEdited.email, true)}>Set Pw</button
-				>{/if}
-		</div>
+	{:else}<button onclick={edit}>Edit</button>
 	{/if}
 	<div
 		class="cover"
@@ -224,7 +169,7 @@
 			display: inline-block;
 			margin: 0;
 			padding: 0 1rem 0 0;
-			min-width: 3rem;
+			min-width: 4rem;
 
 			> span {
 				padding: 0 0.25rem 0 0;

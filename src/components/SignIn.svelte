@@ -3,7 +3,7 @@
 <script lang="ts">
 	import Modal from "./Modal.svelte";
 	import { user, getIsLoggedIn, logOut } from "../stores/user-store.svelte";
-	import { getFetchClient as fc } from "../stores/fetchclient-store.svelte";
+	import { postLogin } from "../js/db-ops";
 
 	let { isOpen = $bindable(false) } = $props();
 
@@ -15,11 +15,6 @@
 	let isValidEmail: boolean | null = $state(null); // null / true / false
 	let emailValidationMessage = $state("");
 	let submitErrorMessage = $state("");
-
-	let showLogin = () => {
-		isOpen = true;
-		setTimeout(() => document.getElementById("login-email")?.focus(), 200);
-	};
 
 	let resetUserLogin = () => {
 		isValidEmail = null;
@@ -55,7 +50,7 @@
 			emailValidationMessage = "Email address doesn't look right.";
 	};
 
-	const signInOut = function () {
+	const signInOut = async function () {
 		if (getIsLoggedIn()) {
 			signOut();
 			isOpen = false;
@@ -66,27 +61,15 @@
 
 		if (!isValidEmail) return;
 
-		fc()
-			.post("/api/Users/Login", userLogin)
-			.then(
-				(response: Response) => response.json() as Promise<UserClientRemote>,
-			)
-			.then((userData) => {
-				user.value = userData;
-				resetUserLogin();
-				isOpen = false;
-			})
-			.catch(function (error) {
-				if (error?.response?.status) {
-					let s = +error.response.status;
-					submitErrorMessage =
-						s >= 400 && s < 500
-							? "Email/password incorrect."
-							: "Something went wrong.";
-				} else {
-					submitErrorMessage = "Something went wrong.";
-				}
-			});
+		const userData = await postLogin(userLogin);
+
+		if (userData) {
+			user.value = userData;
+			resetUserLogin();
+			isOpen = false;
+		} else {
+			submitErrorMessage = "Email or password incorrect.";
+		}
 	};
 
 	let cancel = function () {

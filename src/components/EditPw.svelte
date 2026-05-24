@@ -5,7 +5,7 @@
 
 	type EditPwProps = {
 		userIn: UserClientRemote | undefined;
-		savePw: (ul: UserLogin) => Promise<void>;
+		savePw: (ul: UserLogin) => Promise<boolean>;
 		openSetPw: (email: string, isOpen: boolean) => void;
 	};
 
@@ -33,7 +33,11 @@
 	const save = async () => {
 		validatePw();
 		if (isValidPw) {
-			await savePw(userLogin);
+			const ok = await savePw(userLogin);
+			if (!ok) {
+				submitErrorMessage = "Failed to update password. Please try again.";
+				return;
+			}
 			isValidPw = undefined;
 			openSetPw(userLogin.email, false);
 		}

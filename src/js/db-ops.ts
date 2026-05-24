@@ -13,7 +13,7 @@ export const getPicPublicList = async () => {
 
 export const getPicBySlug = async (slug: string) => {
 	try {
-		const response: Response = await fc().get(`/api/Pictures/GetBySlug?slug=${slug}`);
+		const response: Response = await fc().get(`/api/Pictures/GetBySlug?${new URLSearchParams({ slug })}`);
 		return response.json() as Promise<PictureItem>;
 	} catch (error) {
 		console.error(error);
@@ -102,23 +102,34 @@ export const postSaveUser = async (user: UserClientRemote) => {
 	}
 };
 
-export const postLogin = async (userLogin: UserLogin) => {
+declare var baseURL: string;
+
+export const postLogin = async (userLogin: UserLogin): Promise<UserClientRemote | null> => {
 	try {
-		const response: Response = await fc().post("/api/Login", userLogin);
-		return response.json() as Promise<UserClientRemote | undefined>;
+		// Use bare fetch — the global client intercepts 401 with logOut(), which must
+		// not fire during a login attempt (wrong credentials legitimately return 401).
+		const response = await globalThis.fetch(`${baseURL}/api/Login`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(userLogin),
+		});
+		if (!response.ok) return null;
+		return response.json() as Promise<UserClientRemote>;
 	}
 	catch (error) {
 		console.error(error);
+		return null;
 	}
 };
 
-export const postUpdatePw = async (userLogin: UserLogin) => {
+export const postUpdatePw = async (userLogin: UserLogin): Promise<boolean> => {
 	try {
 		const response: Response = await fc().post("/api/Users/UpdatePassword", userLogin);
-		//return response.json() as Promise<UserClientRemote | undefined>;
+		return response.ok;
 	}
 	catch (error) {
 		console.error(error);
+		return false;
 	}
 };
 

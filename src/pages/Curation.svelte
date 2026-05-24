@@ -36,11 +36,11 @@
 		if (p && picList.length) {
 			const ix = picList.findIndex((pic) => pic.fileName.startsWith(p));
 			if (ix >= 0) {
-				setTimeout(() => {
+				const timer = setTimeout(() => {
 					carousel?.goTo(ix);
 					pageState.isNavFromUrl = false;
 				}, 100);
-				return;
+				return () => clearTimeout(timer);
 			}
 		}
 		// Don't clear isNavFromUrl while waiting for picList to load with a pending p param

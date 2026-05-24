@@ -33,14 +33,6 @@
 
 	let CurrentPage = $derived.by(() => pages[routes.currentRoute.page as PK]);
 
-	$effect(() => {
-		window.scroll({
-			top: 0,
-			left: 0,
-			behavior: "smooth",
-		});
-	});
-
 	onMount(() => {
 		navFromUrl();
 	});
