@@ -108,7 +108,7 @@ export const postLogin = async (userLogin: UserLogin): Promise<UserClientRemote 
 	try {
 		// Use bare fetch — the global client intercepts 401 with logOut(), which must
 		// not fire during a login attempt (wrong credentials legitimately return 401).
-		const response = await globalThis.fetch(`${baseURL}/api/Login`, {
+		const response = await globalThis.fetch(`${baseURL}/api/Users/Login`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(userLogin),
