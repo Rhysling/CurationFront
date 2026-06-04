@@ -2,9 +2,9 @@ import { getFetchClient as fc } from "../stores/fetchclient-store.svelte";
 
 // Dbs ***
 
-export const getBackupList = async (dbName: Db) => {
+export const getBackupList = async () => {
 	try {
-		const response: Response = await fc().get(`/api/Db/GetBackupList?${new URLSearchParams({ dbName })}`);
+		const response: Response = await fc().get(`/api/Db/GetBackupList`);
 		return response.json() as Promise<string[]>;
 	} catch (error) {
 		console.error(error);
@@ -14,15 +14,15 @@ export const getBackupList = async (dbName: Db) => {
 export const getFile = async (fileName: string) => {
 	try {
 		const response: Response = await fc().get(`/api/Db/GetFile?${new URLSearchParams({ fileName })}`);
-		return response.text();
+		return response.blob();
 	} catch (error) {
 		console.error(error);
 	}
 };
 
-export const postBackup = async (dbName: Db) => {
+export const postBackup = async () => {
 	try {
-		const response: Response = await fc().post(`/api/Db/Backup?${new URLSearchParams({ dbName })}`);
+		const response: Response = await fc().post(`/api/Db/Backup`);
 		return response.text();
 	}
 	catch (error) {

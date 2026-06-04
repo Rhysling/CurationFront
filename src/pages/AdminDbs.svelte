@@ -10,35 +10,21 @@
 	} from "../js/db-admin-ops";
 	import Menu from "../components/Menu.svelte";
 
-	let pdbList: string[] = $state([]);
-	let udbList: string[] = $state([]);
+	let dbList: string[] = $state([]);
 
-	const loadPdbList = async () => {
+	const loadDbList = async () => {
 		try {
-			pdbList = (await getBackupList("PicturesDb")) || [];
-			pdbList = ["PicturesDb.json", ...pdbList];
+			dbList = (await getBackupList()) || [];
 		} catch (error) {
-			pdbList = ["Error loading list"];
-		}
-	};
-
-	const loadUdbList = async () => {
-		try {
-			udbList = (await getBackupList("UsersDb")) || [];
-			udbList = ["UsersDb.json", ...udbList];
-		} catch (error) {
-			udbList = ["Error loading list"];
+			dbList = ["Error loading list"];
 		}
 	};
 
 	const downloadAndSave = async (fileName: string) => {
 		try {
-			const fileJson = (await getFile(fileName)) || "[]";
-			const fileTextBlob = new Blob([fileJson], {
-				type: "text/plain;charset=utf-8",
-			});
-
-			const blobUrl = URL.createObjectURL(fileTextBlob);
+			const fileBlob = await getFile(fileName);
+			if (!fileBlob) throw new Error("File not found");
+			const blobUrl = URL.createObjectURL(fileBlob);
 			downloadFile(blobUrl, fileName);
 			setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
 		} catch (error) {
@@ -59,18 +45,17 @@
 		document.body.removeChild(link);
 	}
 
-	loadPdbList();
-	loadUdbList();
+	loadDbList();
 </script>
 
 <div class="title">Admin Databases</div>
 
 <div class="list">
-	<div class="list-title">PicturesDb Backup List</div>
+	<div class="list-title">Database Backup List</div>
 	<div>&nbsp;</div>
 	<div>&nbsp;</div>
 	<div>&nbsp;</div>
-	{#each pdbList as item (item)}
+	{#each dbList as item (item)}
 		<div>{item}</div>
 		<div>
 			<a
@@ -88,9 +73,9 @@
 					onclick={async (e: Event) => {
 						e.preventDefault();
 						if (confirm(`Restore ${item}?`)) {
-							await postBackup("PicturesDb");
+							await postBackup();
 							await postRestore(item);
-							await loadPdbList();
+							await loadDbList();
 						}
 					}}>Restore</a
 				>
@@ -103,7 +88,7 @@
 						e.preventDefault();
 						if (confirm(`Delete ${item}?`)) {
 							await postDelete(item);
-							await loadPdbList();
+							await loadDbList();
 						}
 					}}>Delete</a
 				>
@@ -113,67 +98,9 @@
 	<div>
 		<button
 			onclick={async () => {
-				await postBackup("PicturesDb");
-				await loadPdbList();
-			}}>Backup PicturesDb</button
-		>
-	</div>
-	<div>&nbsp;</div>
-	<div>&nbsp;</div>
-	<div>&nbsp;</div>
-</div>
-
-<div class="list">
-	<div class="list-title">UsersDb Backup List</div>
-	<div>&nbsp;</div>
-	<div>&nbsp;</div>
-	<div>&nbsp;</div>
-	{#each udbList as item (item)}
-		<div>{item}</div>
-		<div>
-			<a
-				href="/"
-				onclick={async (e: Event) => {
-					e.preventDefault();
-					downloadAndSave(item);
-				}}>Download</a
-			>
-		</div>
-		<div>
-			{#if item.indexOf("_") > 0}
-				<a
-					href="/"
-					onclick={async (e: Event) => {
-						e.preventDefault();
-						if (confirm(`Restore ${item}?`)) {
-							await postBackup("UsersDb");
-							await postRestore(item);
-							await loadUdbList();
-						}
-					}}>Restore</a
-				>
-			{/if}
-		</div>
-		<div>
-			{#if item.indexOf("_") > 0}<a
-					href="/"
-					onclick={async (e: Event) => {
-						e.preventDefault();
-						if (confirm(`Delete ${item}?`)) {
-							await postDelete(item);
-							await loadUdbList();
-						}
-					}}>Delete</a
-				>
-			{/if}
-		</div>
-	{/each}
-	<div>
-		<button
-			onclick={async () => {
-				await postBackup("UsersDb");
-				await loadUdbList();
-			}}>Backup UsersDb</button
+				await postBackup();
+				await loadDbList();
+			}}>Backup Db</button
 		>
 	</div>
 	<div>&nbsp;</div>

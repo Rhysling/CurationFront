@@ -72,6 +72,7 @@
 		validateAll();
 		if (isValidAll) {
 			saveUser(userEdited);
+			userEdited = { ...userIn };
 			setEditMode(0, false);
 			isValidEmail = undefined;
 			isValidFullName = undefined;
@@ -107,20 +108,6 @@
 	<div style:font-style={userEdited.id === 0 ? "italic" : "normal"}>
 		{userEdited.id === 0 ? "New" : ""}
 	</div>
-	<div>Email:</div>
-	<div>
-		{#if isEditMode}<input
-				type="text"
-				class:info={isValidEmail === undefined}
-				class:success={isValidEmail === true}
-				class:error={isValidEmail === false}
-				onblur={validateEmail}
-				bind:value={userEdited.email}
-				placeholder="Email"
-			/>
-		{:else}{userIn.email}
-		{/if}
-	</div>
 	<div>Full Name:</div>
 	<div>
 		{#if isEditMode}<input
@@ -136,6 +123,20 @@
 				placeholder="Full Name"
 			/>
 		{:else}{userIn.fullName}
+		{/if}
+	</div>
+	<div>Email:</div>
+	<div>
+		{#if isEditMode}<input
+				type="text"
+				class:info={isValidEmail === undefined}
+				class:success={isValidEmail === true}
+				class:error={isValidEmail === false}
+				onblur={validateEmail}
+				bind:value={userEdited.email}
+				placeholder="Email"
+			/>
+		{:else}{userIn.email}
 		{/if}
 	</div>
 	<div>&nbsp;</div>

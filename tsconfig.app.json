@@ -25,5 +25,8 @@
 		"src/**/*.ts",
 		"src/**/*.js",
 		"src/**/*.svelte"
+	],
+	"exclude": [
+		"src/__tests__/**"
 	]
 }
