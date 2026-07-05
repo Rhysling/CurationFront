@@ -34,7 +34,7 @@ $color-info-bg: color.adjust($color-info, $lightness: 50%);
 $gray-light: $body-text;
 $gray-lighter: color.adjust($dark-text, $lightness: 70%);
 
-$bp-small: 600px;
+$bp-small: 700px;
 
 $link-color: $main-color;
 $link-visited-color: $main-color;

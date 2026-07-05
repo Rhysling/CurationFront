@@ -178,7 +178,10 @@
 		isEditMode = isEdit;
 	};
 
-	const savePicWithImgDZ = async (form: FormData, newPic: PictureItem): Promise<boolean> => {
+	const savePicWithImgDZ = async (
+		form: FormData,
+		newPic: PictureItem,
+	): Promise<boolean> => {
 		const ok = await savePicWithImg(form);
 		if (ok) pic = newPic;
 		return ok;
@@ -270,6 +273,7 @@
 		{#if isEditMode}<input type="text" class="plain" bind:value={pic.ts} />
 			<button
 				class="small"
+				style="margin:0 0.25rem 0.5rem;"
 				onclick={() => (pic.ts = Math.floor(new Date().getTime() / 1000))}
 				>Now</button
 			>
@@ -329,11 +333,12 @@
 
 	.pic-img {
 		position: relative;
-		height: 150px;
-		width: 150px;
-		background-size: cover;
-		background-repeat: no-repeat; /* Prevents the image from repeating if it's smaller than the element */
-		background-position: center center; /* Centers the image within the element */
+		display: block;
+		width: 100%;
+		max-width: 150px;
+		aspect-ratio: 1 / 1;
+		object-fit: cover;
+		object-position: center center;
 	}
 
 	.pic-info {
@@ -341,20 +346,32 @@
 		padding: 0.5rem;
 		line-height: 1.8rem;
 		background-color: c.$light-background;
+		min-width: 0;
+		overflow-wrap: anywhere;
 
 		span {
 			display: inline-block;
 			margin: 0;
 			padding: 0 0.25rem 0 0;
 			min-width: 4rem;
+			max-width: 100%;
+			overflow-wrap: anywhere;
 		}
 
 		input {
 			// outline: 1px solid c.$color-info;
 			// background-color: c.$color-info-bg;
 			font-size: 0.9rem;
-			width: min(300px, 80%);
+			width: min(300px, 70%);
 			padding: 0.2rem 0.4rem;
+
+			@media only screen and (width <= c.$bp-small) {
+				font-size: 0.8rem;
+			}
+		}
+
+		@media only screen and (width <= c.$bp-small) {
+			line-height: 1.2rem;
 		}
 	}
 
@@ -364,7 +381,13 @@
 		align-items: center;
 
 		button {
-			margin: 0.3rem 0 0.3rem 0.6rem;
+			margin: 0.3rem 0.6rem;
+
+			@media only screen and (width <= c.$bp-small) {
+				display: block;
+				font-size: 0.85rem;
+				padding: 0.25rem 0.5rem;
+			}
 		}
 	}
 
@@ -397,8 +420,5 @@
 			color: c.$color-warning;
 			margin: 0 1rem 0 0;
 		}
-	}
-
-	@media only screen and (width <= c.$bp-small) {
 	}
 </style>

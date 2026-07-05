@@ -199,19 +199,18 @@
 
 	.pic-list {
 		display: grid;
-		grid-template-columns: 150px 3fr 1fr;
+		grid-template-columns: 150px minmax(0, 3fr) minmax(0, 1fr);
 		gap: 0.5rem 0;
-		max-width: 800px;
+		max-width: min(800px, 96vw);
 		margin: 0.5rem auto;
 		max-height: 67vh;
 		overflow-y: scroll;
 
 		@media only screen and (width <= c.$bp-small) {
-			grid-template-columns: 150px 1fr auto;
+			grid-template-columns: minmax(0, min(150px, 1fr)) minmax(0, 2fr) auto;
 			margin: 0.25rem auto;
+			scrollbar-width: thin;
+			width: 98vw;
 		}
-	}
-
-	@media only screen and (width <= c.$bp-small) {
 	}
 </style>

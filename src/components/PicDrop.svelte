@@ -78,8 +78,8 @@
 	.dz-frame {
 		display: flex;
 		box-sizing: border-box;
-		height: 150px;
-		width: 150px;
+		max-width: 150px;
+		height: auto;
 		border: 2px solid c.$main-color;
 		margin: 0;
 	}
