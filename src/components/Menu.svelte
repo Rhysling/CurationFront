@@ -30,9 +30,11 @@
 
 		button {
 			margin-bottom: 0.5rem;
-		}
-	}
 
-	@media only screen and (width <= c.$bp-small) {
+			@media only screen and (width <= c.$bp-small) {
+				font-size: 0.8rem;
+				padding: 0.3rem 0.5rem;
+			}
+		}
 	}
 </style>

@@ -81,116 +81,118 @@
 	};
 </script>
 
-<div class="title">Curated Pictures</div>
+<div class="page-content">
+	<div class="title">Curated Pictures</div>
 
-<div class="sort">
-	{#if !userSettings.value.isNewestFirst}
-		<span>Displayed in Curation Order</span>
-		<span class="dot">&#8226;</span>
-		<a
-			href="/"
-			onclick={(e) => {
-				e.preventDefault();
-				orderByTs();
-			}}>Show Newest First</a
+	<div class="sort">
+		{#if !userSettings.value.isNewestFirst}
+			<span>Displayed in Curation Order</span>
+			<span class="dot">&#8226;</span>
+			<a
+				href="/"
+				onclick={(e) => {
+					e.preventDefault();
+					orderByTs();
+				}}>Show Newest First</a
+			>
+		{:else}
+			<span>Displayed Newest First</span>
+			<span class="dot">&#8226;</span>
+			<a
+				href="/"
+				onclick={(e) => {
+					e.preventDefault();
+					orderBySeq();
+				}}>Show in Curation Order</a
+			>
+		{/if}
+	</div>
+
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<div class="car">
+		<Carousel
+			bind:this={carousel}
+			slides={picList}
+			containerClass={"carousel-container"}
 		>
-	{:else}
-		<span>Displayed Newest First</span>
-		<span class="dot">&#8226;</span>
-		<a
-			href="/"
-			onclick={(e) => {
-				e.preventDefault();
-				orderBySeq();
-			}}>Show in Curation Order</a
-		>
+			{#snippet slide({ slide })}
+				<img
+					class="carousel-img"
+					style:max-height={slide.description || slide.link ? "62vh" : "67vh"}
+					src={"./pics/" + slide.fileName}
+					alt={slide.description}
+					loading="lazy"
+					onclick={(e) => {
+						e.stopImmediatePropagation();
+						enlarge(e);
+					}}
+				/>
+				{#if slide.link}
+					<div class="slide-description">
+						<a href={slide.link} target="_blank">{slide.description || "Link"}</a>
+					</div>
+				{:else}
+					<div class="slide-description">{slide.description}</div>
+				{/if}
+			{/snippet}
+
+			<!--//canScrollPrev: boolean, prev: () => void, canScrollNext: boolean, next: () => void, nextA11y: any, prevA11y: any-->
+			{#snippet prev(x)}
+				<button
+					title="Previous"
+					class={`prev ${!x.canScrollPrev ? "opacity-50 cursor-not-allowed" : ""}`}
+					onclick={x.prev}
+					disabled={!x.canScrollPrev}
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="currentColor"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							d="M9.343 18.657a1 1 0 0 1-.707-1.707l4.95-4.95-4.95-4.95a1 1 0 0 1 1.414-1.414l5.657 5.657a1 1 0 0 1 0 1.414l-5.657 5.657a1 1 0 0 1-.707.293z"
+							transform="rotate(180)"
+							transform-origin="center"
+						/>
+					</svg>
+				</button>
+			{/snippet}
+			{#snippet next(x)}
+				<button
+					title="Next"
+					class={`next ${!x.canScrollNext ? "opacity-50 !cursor-not-allowed" : ""}`}
+					onclick={x.next}
+					disabled={!x.canScrollNext}
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="currentColor"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							d="M9.343 18.657a1 1 0 0 1-.707-1.707l4.95-4.95-4.95-4.95a1 1 0 0 1 1.414-1.414l5.657 5.657a1 1 0 0 1 0 1.414l-5.657 5.657a1 1 0 0 1-.707.293z"
+						/>
+					</svg>
+				</button>
+			{/snippet}
+		</Carousel>
+	</div>
+
+	<CurationMenu
+		gotoSlideIx={carousel?.goTo}
+		prev={carousel?.prev}
+		next={carousel?.next}
+		{ixSlide}
+		{slideCount}
+		{currentPic}
+	/>
+	{#if user.value.isAdmin}
+		<Menu />
 	{/if}
 </div>
-
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<div class="car">
-	<Carousel
-		bind:this={carousel}
-		slides={picList}
-		containerClass={"carousel-container"}
-	>
-		{#snippet slide({ slide })}
-			<img
-				class="carousel-img"
-				style:max-height={slide.description || slide.link ? "62vh" : "67vh"}
-				src={"./pics/" + slide.fileName}
-				alt={slide.description}
-				loading="lazy"
-				onclick={(e) => {
-					e.stopImmediatePropagation();
-					enlarge(e);
-				}}
-			/>
-			{#if slide.link}
-				<div class="slide-description">
-					<a href={slide.link} target="_blank">{slide.description || "Link"}</a>
-				</div>
-			{:else}
-				<div class="slide-description">{slide.description}</div>
-			{/if}
-		{/snippet}
-
-		<!--//canScrollPrev: boolean, prev: () => void, canScrollNext: boolean, next: () => void, nextA11y: any, prevA11y: any-->
-		{#snippet prev(x)}
-			<button
-				title="Previous"
-				class={`prev ${!x.canScrollPrev ? "opacity-50 cursor-not-allowed" : ""}`}
-				onclick={x.prev}
-				disabled={!x.canScrollPrev}
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="currentColor"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-				>
-					<path
-						d="M9.343 18.657a1 1 0 0 1-.707-1.707l4.95-4.95-4.95-4.95a1 1 0 0 1 1.414-1.414l5.657 5.657a1 1 0 0 1 0 1.414l-5.657 5.657a1 1 0 0 1-.707.293z"
-						transform="rotate(180)"
-						transform-origin="center"
-					/>
-				</svg>
-			</button>
-		{/snippet}
-		{#snippet next(x)}
-			<button
-				title="Next"
-				class={`next ${!x.canScrollNext ? "opacity-50 !cursor-not-allowed" : ""}`}
-				onclick={x.next}
-				disabled={!x.canScrollNext}
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="currentColor"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-				>
-					<path
-						d="M9.343 18.657a1 1 0 0 1-.707-1.707l4.95-4.95-4.95-4.95a1 1 0 0 1 1.414-1.414l5.657 5.657a1 1 0 0 1 0 1.414l-5.657 5.657a1 1 0 0 1-.707.293z"
-					/>
-				</svg>
-			</button>
-		{/snippet}
-	</Carousel>
-</div>
-
-<CurationMenu
-	gotoSlideIx={carousel?.goTo}
-	prev={carousel?.prev}
-	next={carousel?.next}
-	{ixSlide}
-	{slideCount}
-	{currentPic}
-/>
-{#if user.value.isAdmin}
-	<Menu />
-{/if}
 
 <Modal bind:isOpen={isOpenModal}>
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -218,16 +220,22 @@
 	:global(.carousel-container) {
 		border: 3px solid c.$main-color;
 		border-radius: 0.5rem;
-		height: 70vh;
+		width: 100%;
+		height: 100%;
+		min-height: 0;
 		padding: 0.3rem 0.3rem 0;
 	}
 
-	// :global(.carousel-class) {
-	// 	max-height: 70vh;
-	// }
+	.page-content {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		min-height: 0;
+	}
 
 	.sort {
 		text-align: center;
+		flex: none;
 
 		span {
 			font-weight: bold;
@@ -256,9 +264,14 @@
 	}
 
 	.car {
+		width: 100%;
 		max-width: min(600px, 90vw);
 		margin: 0 auto;
 		position: relative;
+		flex: 1 1 auto;
+		min-height: 0;
+		display: flex;
+		overflow: hidden;
 	}
 
 	.prev {
@@ -331,6 +344,7 @@
 		font-weight: bold;
 		text-align: center;
 		margin: 1rem auto 0.5rem;
+		flex: none;
 	}
 
 	@media only screen and (width <= c.$bp-small) {

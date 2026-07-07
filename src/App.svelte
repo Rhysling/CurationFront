@@ -39,7 +39,7 @@
 </script>
 
 <main>
-	<div>
+	<div class="page">
 		<CurrentPage />
 	</div>
 	<Footer />
@@ -49,9 +49,14 @@
 	@use "./styles/custom-variables" as c;
 
 	main {
-		min-height: 99.9vh;
+		height: 99.9vh;
 		display: grid;
 		grid-template-rows: 1fr auto;
+	}
+
+	.page {
+		min-height: 0;
+		overflow: hidden;
 	}
 
 	@media only screen and (width <= c.$bp-small) {

@@ -55,11 +55,14 @@
 		border-radius: 0.5rem;
 		max-width: 800px;
 		margin: 0.5rem auto;
-		padding: 0.25rem 0;
+		padding: 0.25rem 0 0;
 
+		button {
+			margin-bottom: 0.25rem;
+		}
 		span {
 			display: inline-block;
-			margin: 0 1rem;
+			margin: 0 1rem 0.25rem;
 		}
 
 		img {
@@ -74,6 +77,11 @@
 
 		@media only screen and (width <= c.$bp-small) {
 			margin: 0.25rem auto;
+
+			button {
+				font-size: 0.8rem;
+				padding: 0.3rem 0.5rem;
+			}
 		}
 	}
 

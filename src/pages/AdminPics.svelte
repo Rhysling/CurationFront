@@ -116,64 +116,76 @@
 	loadPicList();
 </script>
 
-<div class="title">Admin Pictures</div>
+<div class="page-content">
+	<div class="title">Admin Pictures</div>
 
-<CleanPics {isListEditMode} {refreshPicList} />
-<div class="sort">
-	{#if !userSettings.value.isNewestFirst}
-		<span>Displayed in Curation Order</span>
+	<CleanPics {isListEditMode} {refreshPicList} />
+	<div class="sort">
+		{#if !userSettings.value.isNewestFirst}
+			<span>Displayed in Curation Order</span>
+			<span class="dot">&#8226;</span>
+			<a
+				href="/"
+				onclick={(e) => {
+					e.preventDefault();
+					orderByTs(picList);
+				}}>Show Newest First</a
+			>
+		{:else}
+			<span>Displayed Newest First</span>
+			<span class="dot">&#8226;</span>
+			<a
+				href="/"
+				onclick={(e) => {
+					e.preventDefault();
+					orderBySeq(picList);
+				}}>Show in Curation Order</a
+			>
+		{/if}
 		<span class="dot">&#8226;</span>
-		<a
-			href="/"
-			onclick={(e) => {
-				e.preventDefault();
-				orderByTs(picList);
-			}}>Show Newest First</a
+		<span
+			>Hide Deleted: <input type="checkbox" bind:checked={hideDeleted} /></span
 		>
-	{:else}
-		<span>Displayed Newest First</span>
-		<span class="dot">&#8226;</span>
-		<a
-			href="/"
-			onclick={(e) => {
-				e.preventDefault();
-				orderBySeq(picList);
-			}}>Show in Curation Order</a
-		>
-	{/if}
-	<span class="dot">&#8226;</span>
-	<span>Hide Deleted: <input type="checkbox" bind:checked={hideDeleted} /></span
-	>
-</div>
-<div class="pic-list">
-	{#each picListDisplay as pic (pic.id)}
-		<EditPic
-			picItem={pic}
-			{picList}
-			{isListEditMode}
-			{editingPicId}
-			{setEditMode}
-			{savePic}
-			{savePicWithImg}
-			{destroyPic}
-		/>
-	{/each}
-</div>
+	</div>
+	<div class="pic-list">
+		{#each picListDisplay as pic (pic.id)}
+			<EditPic
+				picItem={pic}
+				{picList}
+				{isListEditMode}
+				{editingPicId}
+				{setEditMode}
+				{savePic}
+				{savePicWithImg}
+				{destroyPic}
+			/>
+		{/each}
+	</div>
 
-<Menu />
+	<Menu />
+</div>
 
 <style lang="scss">
 	@use "../styles/custom-variables" as c;
+
+	.page-content {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		min-height: 0;
+	}
 
 	.title {
 		font-size: 2rem;
 		font-weight: bold;
 		text-align: center;
 		margin: 1rem auto;
+		flex: none;
 	}
 
 	.sort {
 		text-align: center;
+		flex: none;
 
 		span {
 			font-weight: bold;
@@ -200,11 +212,14 @@
 	.pic-list {
 		display: grid;
 		grid-template-columns: 150px minmax(0, 3fr) minmax(0, 1fr);
+		align-content: start;
 		gap: 0.5rem 0;
 		max-width: min(800px, 96vw);
 		margin: 0.5rem auto;
-		max-height: 67vh;
-		overflow-y: scroll;
+		width: 100%;
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow-y: auto;
 
 		@media only screen and (width <= c.$bp-small) {
 			grid-template-columns: minmax(0, min(150px, 1fr)) minmax(0, 2fr) auto;
