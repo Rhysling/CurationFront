@@ -271,7 +271,6 @@
 		flex: 1 1 auto;
 		min-height: 0;
 		display: flex;
-		overflow: hidden;
 	}
 
 	.prev {
@@ -316,6 +315,9 @@
 		width: auto;
 		height: auto;
 		margin: 0 auto;
+		flex: 0 1 auto;
+		min-height: 0;
+		object-fit: contain;
 	}
 
 	.big-picture {
@@ -337,6 +339,7 @@
 		margin: 0.5rem auto 1rem;
 		font-size: 1.2rem;
 		color: c.$body-text;
+		flex: none;
 	}
 
 	.title {

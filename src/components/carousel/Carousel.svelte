@@ -142,6 +142,8 @@
 	.c2-root {
 		position: relative;
 		container-type: inline-size;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.c2-stage {
@@ -150,6 +152,11 @@
 		cursor: grab;
 		touch-action: pan-y;
 		user-select: none;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+		min-height: 0;
 	}
 
 	.c2-stage:active {
@@ -158,6 +165,10 @@
 
 	.c2-slide {
 		width: 100%;
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+		min-height: 0;
 		will-change: transform;
 	}
 

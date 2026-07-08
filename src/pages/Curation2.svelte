@@ -41,70 +41,84 @@
 	loadPicList();
 </script>
 
-<div class="title">Curated Pictures</div>
-<Menu />
-<div class="sort">
-	{#if !userSettings.value.isNewestFirst}
-		<span>Displayed in Curation Order</span>
-		<span class="dot">&#8226;</span>
-		<a
-			href="/"
-			onclick={(e) => {
-				e.preventDefault();
-				orderByTs(picList);
-			}}>Show Newest First</a
-		>
-	{:else}
-		<span>Displayed Newest First</span>
-		<span class="dot">&#8226;</span>
-		<a
-			href="/"
-			onclick={(e) => {
-				e.preventDefault();
-				orderBySeq(picList);
-			}}>Show in Curation Order</a
-		>
-	{/if}
-</div>
-
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<div class="carousel-area">
-	{#each picList as p (p.id)}
-		<div class="pic" id={"c2id-" + p.id}>
-			<a href="/curation?p={p.fileName.split('.')[0]}">
-				<img
-					class="carousel-img"
-					src={"./pics/" + p.fileName}
-					alt={p.description}
-				/></a
+<div class="page-content">
+	<div class="title">Curated Pictures</div>
+	<Menu />
+	<div class="sort">
+		{#if !userSettings.value.isNewestFirst}
+			<span>Displayed in Curation Order</span>
+			<span class="dot">&#8226;</span>
+			<a
+				href="/"
+				onclick={(e) => {
+					e.preventDefault();
+					orderByTs(picList);
+				}}>Show Newest First</a
 			>
-			<div class="subtitle" class:deleted={p.isDeleted}>
-				{#if p.description}
-					{p.description}<br />
-				{/if}
-				{p.id}-{p.seq}-<a href="/" onclick={(e) => navToEdit(e, p)}>Edit</a><br
-				/>{p.ts.toLocaleString()}
-			</div>
+		{:else}
+			<span>Displayed Newest First</span>
+			<span class="dot">&#8226;</span>
+			<a
+				href="/"
+				onclick={(e) => {
+					e.preventDefault();
+					orderBySeq(picList);
+				}}>Show in Curation Order</a
+			>
+		{/if}
+	</div>
+
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<div class="carousel-frame">
+		<div class="carousel-area">
+			{#each picList as p (p.id)}
+				<div class="pic" id={"c2id-" + p.id}>
+					<a href="/curation?p={p.fileName.split('.')[0]}">
+						<img
+							class="carousel-img"
+							src={"./pics/" + p.fileName}
+							alt={p.description}
+						/></a
+					>
+					<div class="subtitle" class:deleted={p.isDeleted}>
+						{#if p.description}
+							{p.description}<br />
+						{/if}
+						{p.id}-{p.seq}-<a href="/" onclick={(e) => navToEdit(e, p)}>Edit</a><br
+						/>{p.ts.toLocaleString()}
+					</div>
+				</div>
+			{/each}
 		</div>
-	{/each}
+	</div>
+
+	<Menu />
+
+	<!-- <div {@attach dragAttachment} class="pic"></div> -->
 </div>
-
-<Menu />
-
-<!-- <div {@attach dragAttachment} class="pic"></div> -->
 
 <style lang="scss">
 	@use "../styles/custom-variables" as c;
+
+	.page-content {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		min-height: 0;
+	}
+
 	.title {
 		font-size: 2rem;
 		font-weight: bold;
 		text-align: center;
 		margin: 1rem auto;
+		flex: none;
 	}
 
 	.sort {
 		text-align: center;
+		flex: none;
 
 		span {
 			font-weight: bold;
@@ -132,16 +146,28 @@
 		}
 	}
 
-	.carousel-area {
+	.carousel-frame {
 		border: 3px solid c.$main-color;
 		border-radius: 1rem;
+		width: 100%;
 		max-width: min(800px, 90vw);
 		margin: 1rem auto;
-		padding: 1rem;
 		position: relative;
+		display: flex;
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	.carousel-area {
+		width: 100%;
+		padding: 1rem;
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+		align-content: start;
 		gap: 0.2rem;
+		overflow-y: auto;
+		scrollbar-gutter: stable;
 	}
 
 	.pic {
