@@ -13,19 +13,10 @@
 	};
 
 	let yr = new Date().getFullYear() - 2000;
-
-	let scrollToTop = (e: Event) => {
-		e.preventDefault();
-		window.scroll({
-			top: 0,
-			left: 0,
-			behavior: "smooth",
-		});
-	};
 </script>
 
 <footer>
-	<a href="/" onclick={scrollToTop}>Top</a> | &copy;2001-{yr} Polson Company |
+	&copy;2001-{yr} Polson Company |
 	<a href="/" onclick={login}>{displayName}</a>
 </footer>
 
