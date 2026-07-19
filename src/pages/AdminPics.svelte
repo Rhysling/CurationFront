@@ -80,7 +80,13 @@
 	};
 
 	const savePicWithImg = async (form: FormData): Promise<boolean> => {
-		const savedPic = await postPicWithImg(form);
+		let savedPic: PictureItem | undefined;
+		try {
+			savedPic = await postPicWithImg(form);
+		} catch (e: any) {
+			alert(`Failed to save picture. Message: ${e.message || "none"}`);
+		}
+
 		if (!savedPic) return false;
 
 		// Preload the image so the <img> tag never shows a broken state

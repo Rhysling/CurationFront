@@ -23,6 +23,15 @@
 		currentPic: PictureItem | null;
 	} = $props();
 
+	const getRandomIx = () => {
+		if (slideCount <= 1) return ixSlide;
+		let ix;
+		do {
+			ix = Math.floor(Math.random() * slideCount);
+		} while (ix === ixSlide);
+		return ix;
+	};
+
 	let currentSlug = $derived.by(() => {
 		if (!currentPic || !currentPic.fileName) return "";
 		let ixp = currentPic.fileName.lastIndexOf(".");
@@ -54,7 +63,21 @@
 		onclick={() => gotoSlideIx(0)}
 	/>
 	<NavButton buttonType="prev" disabled={isFirst} onclick={() => prev()} />
-	<a href="/picture?p={currentSlug}">enlarge</a>
+	<a
+		class="button"
+		style="font-size:1.7rem;"
+		href="/picture?p={currentSlug}"
+		title="Enlarge"
+		aria-label="Enlarge">++</a
+	>
+	<button
+		style="font-size:1.2rem;"
+		title="Random"
+		aria-label="Random"
+		onclick={() => gotoSlideIx(getRandomIx())}
+	>
+		??
+	</button>
 	<NavButton buttonType="next" disabled={isLast} onclick={() => next()} />
 	<NavButton
 		buttonType="last"
@@ -74,8 +97,16 @@
 		margin: 0.25rem auto;
 		text-align: center;
 
-		a {
-			margin: 0 1rem;
+		a,
+		button {
+			height: 2rem;
+			width: 3rem;
+			padding: 0;
+
+			&:hover {
+				text-decoration: none;
+				color: white;
+			}
 		}
 	}
 

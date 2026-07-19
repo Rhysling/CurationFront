@@ -14,19 +14,13 @@
 
 	type PicDropProps = {
 		pic: PictureItem;
-		isValidAll: ValidationState;
-		validateAll: () => void;
+		validateAll: () => boolean;
 		savePicWithImgDZ: (form: FormData, newPic: PictureItem) => Promise<boolean>;
 		setItemEditMode: (picId: number, isEdit: boolean) => void;
 	};
 
-	let {
-		pic,
-		isValidAll,
-		validateAll,
-		savePicWithImgDZ,
-		setItemEditMode,
-	}: PicDropProps = $props();
+	let { pic, validateAll, savePicWithImgDZ, setItemEditMode }: PicDropProps =
+		$props();
 
 	const handlePicDropped = async (e: CustomEvent) => {
 		const {
@@ -45,12 +39,11 @@
 			return;
 		}
 
-		validateAll();
-		if (!isValidAll) return;
+		if (!validateAll()) return;
 
 		let picLocal = { ...pic };
 
-		picLocal.fileName = acceptedFiles[0].name;
+		picLocal.fileName = acceptedFiles[0].name.replace(/[^a-zA-Z0-9\-.]/g, "-");
 		const formData = new FormData();
 		formData.append("file", acceptedFiles[0] as any);
 		formData.append("picItemJSON", JSON.stringify(picLocal));

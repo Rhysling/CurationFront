@@ -50,18 +50,21 @@
 	});
 
 	// ** Validations **
-	const validateSeq = () => (isValidSeq = !isNaN(pic.seq));
+	const validateSeq = () => {
+		isValidSeq = !isNaN(pic.seq);
+		return isValidSeq;
+	};
 	const validateFileName = () => {
 		// If both old and new file names are empty, consider it valid (for new pics without an image)
 		if (!picItem.fileName && !pic.fileName) {
 			isValidFileName = true;
-			return;
+			return true;
 		}
 
 		const rx = /[^A-Za-z0-9\-_\.]/;
 		if (rx.test(pic.fileName)) {
 			isValidFileName = false;
-			return;
+			return false;
 		}
 
 		const fn = pic.fileName.toLowerCase();
@@ -74,7 +77,7 @@
 			)
 		) {
 			isValidFileName = false;
-			return;
+			return false;
 		}
 
 		// No duplicate file names allowed (except if it's the same pic being edited)
@@ -88,31 +91,34 @@
 			)
 		) {
 			isValidFileName = false;
-			return;
+			return false;
 		}
 
 		isValidFileName = true;
+		return true;
 	};
 
 	const validateLink = () => {
 		if (!pic.link) {
 			isValidLink = true;
-			return;
+			return true;
 		}
 
 		const rx = /^https?:\/\/\w+/;
 		if (!rx.test(pic.link)) {
 			isValidLink = false;
-			return;
+			return false;
 		}
 
 		isValidLink = true;
+		return true;
 	};
 
 	const validateAll = () => {
-		validateSeq();
-		validateFileName();
-		validateLink();
+		const vs = validateSeq();
+		const vf = validateFileName();
+		const vl = validateLink();
+		return vs && vf && vl;
 	};
 
 	// ** Edit / Save / Destroy / Cancel **
@@ -122,8 +128,7 @@
 	};
 
 	const save = async () => {
-		validateAll();
-		if (isValidAll) {
+		if (validateAll()) {
 			if (pic.description) pic.description = pic.description.trim();
 			// Clean Link
 			if (pic.link) {
@@ -190,13 +195,7 @@
 
 <div style="background-color:white;position:relative;" id="pcid-{pic.id}">
 	{#if isListEditMode && pic.id === editingPicId}
-		<PicDrop
-			{pic}
-			{isValidAll}
-			{validateAll}
-			{savePicWithImgDZ}
-			{setItemEditMode}
-		/>
+		<PicDrop {pic} {validateAll} {savePicWithImgDZ} {setItemEditMode} />
 	{:else}
 		<img
 			id={"pic-" + pic.id}
