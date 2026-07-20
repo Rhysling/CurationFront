@@ -43,7 +43,10 @@
 
 		let picLocal = { ...pic };
 
-		picLocal.fileName = acceptedFiles[0].name.replace(/[^a-zA-Z0-9\-.]/g, "-");
+		picLocal.fileName = acceptedFiles[0].name.replace(
+			/[^a-zA-Z0-9_\-\.]/g,
+			"-",
+		);
 		const formData = new FormData();
 		formData.append("file", acceptedFiles[0] as any);
 		formData.append("picItemJSON", JSON.stringify(picLocal));

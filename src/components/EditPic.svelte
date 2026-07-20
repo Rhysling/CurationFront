@@ -61,7 +61,7 @@
 			return true;
 		}
 
-		const rx = /[^A-Za-z0-9\-_\.]/;
+		const rx = /[^A-Za-z0-9_\-\.]/;
 		if (rx.test(pic.fileName)) {
 			isValidFileName = false;
 			return false;
