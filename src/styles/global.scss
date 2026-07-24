@@ -31,9 +31,13 @@ html,
 body {
 	position: relative;
 	width: 100%;
+	max-width: 100%;
 	height: 100%;
 	font-size: 16px;
 	box-sizing: border-box;
+	overflow-x: hidden; // guard against horizontal scroll from stray wide content
+	-webkit-text-size-adjust: 100%; // stop iOS Safari from auto-inflating text
+	text-size-adjust: 100%;
 }
 
 *,
@@ -142,7 +146,8 @@ input {
 }
 
 #app {
-	min-height: 99vh;
+	min-height: 99vh; // fallback for browsers without dvh
+	min-height: 99dvh; // tracks the visible viewport on iOS Safari
 	display: grid;
 	grid-template-rows: 1fr;
 }

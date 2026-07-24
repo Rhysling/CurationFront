@@ -3,7 +3,8 @@
 
 a.button,
 button {
-	display: inline-block;
+	display: inline-grid;
+	place-items: center;
 	margin: 0 1rem;
 	padding: 0.5rem 1rem;
 	background-color: c.$main-color;

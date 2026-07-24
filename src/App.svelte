@@ -49,7 +49,8 @@
 	@use "./styles/custom-variables" as c;
 
 	main {
-		height: 99.9vh;
+		height: 99.9vh; // fallback for browsers without dvh
+		height: 99.9dvh; // tracks the visible viewport on iOS Safari
 		display: grid;
 		grid-template-rows: 1fr auto;
 	}

@@ -34,6 +34,6 @@
 		"svelte-file-dropzone": "^2.0.9"
 	},
 	"allowScripts": {
-		"@parcel/watcher@2.5.6": true
+		"@parcel/watcher@2.6.0": true
 	}
 }

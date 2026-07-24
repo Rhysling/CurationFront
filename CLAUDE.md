@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-All commands run from `src/`:
+All commands run from the repo root (where `package.json` lives):
 
 - `npm run dev` — start dev server on port 5050
 - `npm run build` — production build (`vite build` → `node bust.js` for cache-busting)
