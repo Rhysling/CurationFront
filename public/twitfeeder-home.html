@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>TwitFeeder-Home</title>
+
+	<style>
+		/* ---------- Reset / base ---------- */
+		html,
+		body {
+			position: relative;
+			font-size: 16px;
+			box-sizing: border-box;
+		}
+
+		*,
+		*:before,
+		*:after {
+			box-sizing: inherit;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			line-height: 1.7em;
+			color: #555;
+			font-family: "Open Sans", Helvetica, Arial, sans-serif;
+			display: block;
+		}
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			display: block;
+			color: #2d3e50;
+			font-weight: 400;
+		}
+
+		img {
+			display: inline-block;
+			max-width: 100%;
+			height: auto;
+		}
+
+		a {
+			color: #1f8dd6;
+			text-decoration: underline;
+		}
+
+		a:visited {
+			color: #1f8dd6;
+		}
+
+		a:hover {
+			color: #156193;
+			text-decoration: underline;
+		}
+
+		@media (max-width: 600px) {
+			body {
+				font-size: 13px;
+			}
+		}
+
+
+
+		/* ---------- Main ---------- */
+		main {
+			display: flex;
+			flex-flow: column nowrap;
+			background-color: #fff;
+			padding: 0;
+			margin: 0 auto;
+			min-height: 100vh;
+		}
+
+		/* ---------- Top menu ---------- */
+		.ap-menu {
+			width: 100%;
+		}
+
+		.ap-menu-main {
+			display: flex;
+			flex-flow: row nowrap;
+			align-items: baseline;
+			background: #2d3e50;
+		}
+
+		.ap-menu-main>div,
+		.ap-menu-main a {
+			padding: .5rem .75rem;
+		}
+
+		.ap-menu-main .ap-menu-logo {
+			display: none;
+		}
+
+		.ap-menu a {
+			color: #87c5ee;
+			display: block;
+			text-decoration: none;
+			white-space: nowrap;
+		}
+
+		.ap-menu a.selected {
+			color: #f6fbfe;
+			font-weight: 700;
+			cursor: default;
+		}
+
+		.ap-menu a:hover,
+		.ap-menu a:focus {
+			background: none;
+			border: none;
+			color: #e0f0fb;
+			text-decoration: none;
+		}
+
+		.ap-menu-heading {
+			color: #fff;
+			font-weight: 400;
+			font-size: 120%;
+			text-transform: uppercase;
+		}
+
+		.ap-menu-sep {
+			flex: 1 1 auto;
+		}
+
+		@media screen and (max-width: 600px) {
+			.ap-menu {
+				position: static;
+			}
+
+			.ap-menu-heading {
+				display: none;
+			}
+
+			.ap-menu-main {
+				align-items: center;
+			}
+
+			.ap-menu-main .ap-menu-logo {
+				display: block;
+			}
+
+			.ap-menu-main .ap-menu-logo img {
+				max-width: 25px;
+				margin-top: .3rem;
+			}
+
+			.ap-menu-main>div,
+			.ap-menu-main a {
+				padding: .25rem .5rem;
+			}
+		}
+
+		/* ---------- splash banner ---------- */
+
+		.splash-container {
+			background: #1f8dd6;
+		}
+
+		.splash {
+			width: min(600px, 92.5%);
+			margin: 3rem auto;
+		}
+
+		.splash-logo {
+			background-color: #fff;
+			border: 3px solid #ffffff;
+			padding: 1em 1.6em;
+			border-radius: 5px;
+		}
+
+		.splash-logo img {
+			display: block;
+			max-width: 200px;
+			margin: 0 auto;
+		}
+
+		.splash-subhead {
+			color: #fff;
+			letter-spacing: .05em;
+			opacity: .8;
+			text-align: center;
+			margin: 1rem auto 0;
+			text-transform: uppercase;
+		}
+
+		@media screen and (max-width: 600px) {
+			.splash-container {
+				position: static;
+				height: unset;
+			}
+
+			.splash {
+				width: 100%;
+				height: unset;
+				margin: 0;
+				padding: 0 1rem;
+				line-height: 1em;
+			}
+
+			.splash-logo {
+				display: none;
+			}
+
+			.splash-subhead {
+				margin: 1rem auto;
+			}
+		}
+
+		/* ---------- Content container ---------- */
+		.container {
+			display: flex;
+			align-content: center;
+			justify-content: center;
+			background-color: #fff;
+			border-top: 2px solid #2d3e50;
+			flex: 1;
+		}
+
+
+		@media screen and (max-width: 600px) {
+			.container {
+				margin-top: 0;
+			}
+		}
+
+		.content {
+			display: block;
+			padding: 1rem;
+			background-color: #fff;
+			width: min(600px, 90%);
+		}
+
+		@media screen and (max-width: 600px) {
+			.content {
+				padding: 1rem 0;
+			}
+		}
+
+		.content h1 {
+			font-size: 2rem;
+			color: #333;
+			text-align: center;
+			margin: 1.5rem auto;
+		}
+
+		.content p {
+			font-size: 1rem;
+			color: #555;
+			text-align: center;
+			margin: 1rem auto;
+		}
+
+		/* ---------- Footer ---------- */
+		footer {
+			line-height: 1.2em;
+			padding: .5rem 0;
+			font-size: .9rem;
+			color: #aaa;
+			background-color: #2d3e50;
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		footer a {
+			color: #87c5ee;
+			text-decoration: none;
+			font-size: .9rem;
+		}
+
+		footer a:visited {
+			color: #87c5ee;
+		}
+
+		footer a:hover,
+		footer a:focus {
+			background: none;
+			border: none;
+			color: #e0f0fb;
+			text-decoration: none;
+		}
+
+		@media screen and (max-width: 600px) {
+			footer {
+				font-size: .8rem;
+			}
+
+			footer a {
+				font-size: .8rem;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<main>
+		<div class="ap-menu">
+			<div class="ap-menu-main">
+				<div class="ap-menu-heading"><a href="#" class="selected">Twit Feeder</a></div>
+				<a class="ap-menu-logo selected" href="#">
+					<img src="/assets/img/logo-twitfeeder-400x400.png" alt="TwitFeeder"
+						title="Twitter and other feeds sent to your RSS reader">
+				</a>
+				<div class="ap-menu-sep">&nbsp;</div>
+				<a href="#">Sign In/Sign Up</a>
+			</div>
+		</div>
+		<div class="splash-container">
+			<div class="splash">
+				<div class="splash-logo">
+					<img src="/assets/img/logo-twitfeeder-400x400.png" alt="TwitFeeder"
+						title="Twitter and other feeds sent to your RSS reader">
+				</div>
+				<p class="splash-subhead">Twitter and other feeds in your RSS reader</p>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="content">
+				<h1>CLOSED</h1>
+
+				<p>The TwitFeeder service is closed. It was fun while it lasted.</p>
+
+				<p>For something else interesting, check out <a href="https://polson.com/curation?newest=true">our curated list
+						of funny stuff</a>.</p>
+			</div>
+		</div>
+		<footer>
+			&copy;2001-26 <a href="https://polson.com">Polson Company</a> | <a href="#">Terms of Service</a> &bull; <a
+				href="#">Privacy Policy</a>
+		</footer>
+	</main>
+</body>
+
+</html>
