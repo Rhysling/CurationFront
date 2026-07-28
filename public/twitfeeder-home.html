@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 	<title>TwitFeeder-Home</title>
 
 	<style>
@@ -80,6 +80,7 @@
 			padding: 0;
 			margin: 0 auto;
 			min-height: 100vh;
+			min-height: 100dvh;
 		}
 
 		/* ---------- Top menu ---------- */
@@ -260,13 +261,14 @@
 			font-size: 1rem;
 			color: #555;
 			text-align: center;
+			text-wrap: balance;
 			margin: 1rem auto;
 		}
 
 		/* ---------- Footer ---------- */
 		footer {
 			line-height: 1.2em;
-			padding: .5rem 0;
+			padding: .5rem 0 calc(.5rem + env(safe-area-inset-bottom));
 			font-size: .9rem;
 			color: #aaa;
 			background-color: #2d3e50;
