@@ -47,6 +47,15 @@ export const postCleanPics = async () => {
 	}
 };
 
+export const postResequencePics = async () => {
+	try {
+		const response: Response = await fc().post("/api/Pictures/ResequencePics");
+		return response.json() as Promise<PictureItem[]>;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 export const postPic = async (picItem: PictureItem) => {
 	try {
 		const response: Response = await fc().post("/api/Pictures/Save", picItem);

@@ -116,7 +116,9 @@
 	};
 
 	const refreshPicList = (pics: PictureItem[]) => {
-		picList = pics.sort((a, b) => a.seq - b.seq);
+		if (userSettings.value.isNewestFirst) orderByTs(pics);
+		else orderBySeq(pics);
+		picList = pics;
 	};
 
 	loadPicList();

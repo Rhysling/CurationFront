@@ -1,7 +1,11 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
-	import { getAuditList, postCleanPics } from "../js/db-ops";
+	import {
+		getAuditList,
+		postCleanPics,
+		postResequencePics,
+	} from "../js/db-ops";
 
 	let {
 		isListEditMode,
@@ -23,22 +27,27 @@
 	};
 
 	const cleanPics = async () => {
-		let pl = (await postCleanPics()) || [];
-		let missing = pl.filter((a) => a.isMissing == true);
-		let orphans = pl.filter((a) => !a.seq);
+		const pl = (await postCleanPics()) || [];
+		const missing = pl.filter((a) => a.isMissing == true);
+		const orphans = pl.filter((a) => !a.seq);
 		auditList = { missing, orphans };
 		refreshPicList(pl);
 		isChecked = true;
+	};
+
+	const resequencePics = async () => {
+		const pl = (await postResequencePics()) || [];
+		refreshPicList(pl);
 	};
 </script>
 
 <div class="clean-bar">
 	<div>
 		<button onclick={checkPics} disabled={isListEditMode}>Check Pics</button>
-		<span>Missing = {isChecked ? missingCount : "??"}</span>
-		<span>Orphans = {isChecked ? orphanCount : "??"}</span> --
-		<button onclick={cleanPics} disabled={isListEditMode}>Clean Pic List</button
-		>
+		<span>Missing={isChecked ? missingCount : "??"}</span>
+		<span>Orphans={isChecked ? orphanCount : "??"}</span> --
+		<button onclick={cleanPics} disabled={isListEditMode}>Clean List</button>
+		<button onclick={resequencePics}>Resequence</button>
 	</div>
 	{#if orphanCount > 0}
 		{#each auditList.orphans as pic}

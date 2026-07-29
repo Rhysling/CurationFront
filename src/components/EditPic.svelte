@@ -33,6 +33,14 @@
 	let isValidSeq: ValidationState = $state(undefined);
 	let isValidFileName: ValidationState = $state(undefined);
 	let isValidLink: ValidationState = $state(undefined);
+	// Re-sync the local copy when the parent replaces the list (e.g. resequence),
+	// but never while this row is being edited.
+	$effect(() => {
+		const src = { ...picItem };
+		if (isEditMode) return;
+		pic = src;
+	});
+
 	let isValidAll: ValidationState = $derived.by(() => {
 		if (
 			isValidSeq === undefined &&
