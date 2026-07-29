@@ -31,6 +31,13 @@ export const getEmptyUser = (): UserClientRemote => ({
 	isDeleted: false,
 });
 
+// The "p" query-string param is a file name minus its extension. Matching must be
+// exact — a prefix match makes "cuisine" resolve to "cuisine-popularity.png".
+export const getSlug = (fileName: string): string => {
+	const ixp = fileName.lastIndexOf(".");
+	return ixp > 0 ? fileName.substring(0, ixp) : "";
+};
+
 export const orderBySeq = (list: PictureItem[]): void => {
 	list.sort((a, b) => a.seq - b.seq);
 	setIsNewestFirst(false);
