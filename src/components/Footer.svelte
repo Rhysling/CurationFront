@@ -2,10 +2,13 @@
 
 <script lang="ts">
 	import { getName } from "../stores/user-store.svelte";
+	import { getBaseURL } from "../js/utils";
 	import SignIn from "./SignIn.svelte";
 
 	let isOpenModal = $state(false);
 	let displayName = $derived(getName() || "Sign In");
+
+	let rssUrl = `${getBaseURL()}/api/Pictures/Rss`;
 
 	let login = (e: Event) => {
 		e && e.preventDefault();
@@ -17,7 +20,8 @@
 
 <footer>
 	&copy;2001-{yr} Polson Company |
-	<a href="/" onclick={login}>{displayName}</a>
+	<a href={rssUrl} target="_blank" rel="noopener noreferrer">RSS</a>
+	| <a href="/" onclick={login}>{displayName}</a>
 </footer>
 
 <SignIn bind:isOpen={isOpenModal} />

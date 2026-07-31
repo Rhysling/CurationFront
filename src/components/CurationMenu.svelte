@@ -5,6 +5,7 @@
 		updateQueryStringParam,
 		pageState,
 	} from "../stores/route-store.svelte";
+	import { getSlug } from "../js/utils";
 	import NavButton from "./NavButton.svelte";
 
 	let {
@@ -32,12 +33,9 @@
 		return ix;
 	};
 
-	let currentSlug = $derived.by(() => {
-		if (!currentPic || !currentPic.fileName) return "";
-		let ixp = currentPic.fileName.lastIndexOf(".");
-		if (ixp > 0) return currentPic.fileName.substring(0, ixp);
-		return "";
-	});
+	let currentSlug = $derived.by(() =>
+		currentPic?.fileName ? getSlug(currentPic.fileName) : "",
+	);
 
 	let isFirst = $derived(ixSlide == 0);
 	let isLast = $derived(ixSlide == slideCount - 1);
@@ -49,10 +47,7 @@
 		if (pageState.isNavFromUrl) return;
 		if (!currentPic) return;
 
-		const fn = currentPic.fileName;
-		const ixp = fn.lastIndexOf(".");
-		const slug = ixp > 0 ? fn.substring(0, ixp) : "";
-		updateQueryStringParam("p", slug);
+		updateQueryStringParam("p", getSlug(currentPic.fileName));
 	});
 </script>
 

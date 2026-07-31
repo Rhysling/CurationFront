@@ -8,6 +8,7 @@
 	import { onMount } from "svelte";
 
 	import {
+		getSlug,
 		orderBySeq as applyOrderBySeq,
 		orderByTs as applyOrderByTs,
 	} from "../js/utils";
@@ -33,15 +34,20 @@
 
 	$effect(() => {
 		const p = pageState.paramObj.p;
-		if (p && picList.length) {
-			const ix = picList.findIndex((pic) => pic.fileName.startsWith(p));
-			if (ix >= 0) {
-				const timer = setTimeout(() => {
-					carousel?.goTo(ix);
-					pageState.isNavFromUrl = false;
-				}, 100);
-				return () => clearTimeout(timer);
-			}
+		const ix =
+			p && picList.length
+				? picList.findIndex((pic) => getSlug(pic.fileName) === p)
+				: -1;
+
+		// CurationMenu writes `p` for the slide we are already on, so most runs of this
+		// effect are echoes of our own navigation. Only move for a genuine mismatch —
+		// a fresh URL, the back button, or a re-sort.
+		if (ix >= 0 && ix !== carousel?.getCurrentSlide()) {
+			const timer = setTimeout(() => {
+				carousel?.goTo(ix);
+				pageState.isNavFromUrl = false;
+			}, 100);
+			return () => clearTimeout(timer);
 		}
 		// Don't clear isNavFromUrl while waiting for picList to load with a pending p param
 		if (!p || picList.length > 0) {
