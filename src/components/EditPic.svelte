@@ -135,6 +135,11 @@
 		isEditMode = true;
 	};
 
+	const setIsRss = async () => {
+		pic.isRss = true;
+		await savePic(pic);
+	};
+
 	const save = async () => {
 		if (validateAll()) {
 			if (pic.description) pic.description = pic.description.trim();
@@ -327,7 +332,11 @@
 			<button onclick={save} disabled={isValidAll === false}>Save</button>
 			<button onclick={cancel} class="secondary">Cancel</button>
 		</div>
-	{:else}<button onclick={edit}>Edit</button>
+	{:else}<div>
+			<button onclick={edit}>Edit</button>
+			{#if !pic.isRss && pic.id !== 0}<button onclick={setIsRss}>RSS</button
+				>{/if}
+		</div>
 	{/if}
 	<div
 		class="cover"

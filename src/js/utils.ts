@@ -18,6 +18,7 @@ export const getEmptyPicItem = (): PictureItem => ({
 	link: "",
 	isMissing: false,
 	isDeleted: false,
+	isRss: false,
 });
 
 export const getEmptyUser = (): UserClientRemote => ({

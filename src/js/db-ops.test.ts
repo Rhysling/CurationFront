@@ -15,7 +15,7 @@ describe('getPicPublicList', () => {
 
 	it('calls the correct endpoint and returns the response', async () => {
 		const fakeData: PictureItem[] = [
-			{ id: 1, fileName: 'photo.jpg', seq: 1, ts: 0, keywords: [], description: null, link: null, isMissing: false, isDeleted: false },
+			{ id: 1, fileName: 'photo.jpg', seq: 1, ts: 0, keywords: [], description: null, link: null, isMissing: false, isDeleted: false, isRss: false },
 		];
 		mockGet.mockResolvedValue({ json: () => Promise.resolve(fakeData) });
 

@@ -39,4 +39,5 @@ type PictureItem = {
 	link: INullable<string>;
 	isMissing: boolean;
 	isDeleted: boolean;
+	isRss: boolean;
 }
