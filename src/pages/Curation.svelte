@@ -135,10 +135,13 @@
 					}}
 				/>
 				{#if slide.link}
-					<div class="slide-description">
-						<a href={slide.link} target="_blank">{slide.description || "Link"}</a>
+					<div class="slide-title">
+						<a href={slide.link} target="_blank">{slide.title || "Link"}</a>
 					</div>
 				{:else}
+					<div class="slide-title">{slide.title}</div>
+				{/if}
+				{#if slide.description && slide.title != slide.description}
 					<div class="slide-description">{slide.description}</div>
 				{/if}
 			{/snippet}
@@ -340,10 +343,21 @@
 		object-fit: contain;
 	}
 
+	.slide-title {
+		text-align: center;
+		margin: 0.5rem auto 0;
+		font-size: 1.2rem;
+		text-wrap: balance;
+		color: c.$body-text;
+		flex: none;
+	}
+
 	.slide-description {
 		text-align: center;
 		margin: 0.5rem auto 1rem;
-		font-size: 1.2rem;
+		font-size: 1rem;
+		font-style: italic;
+		text-wrap: balance;
 		color: c.$body-text;
 		flex: none;
 	}

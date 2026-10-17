@@ -82,11 +82,14 @@
 						/></a
 					>
 					<div class="subtitle" class:deleted={p.isDeleted}>
+						{#if p.title}
+							{p.title}<br />
+						{/if}
 						{#if p.description}
 							{p.description}<br />
 						{/if}
-						{p.id}-{p.seq}-<a href="/" onclick={(e) => navToEdit(e, p)}>Edit</a><br
-						/>{p.ts.toLocaleString()}
+						{p.id}-{p.seq}-<a href="/" onclick={(e) => navToEdit(e, p)}>Edit</a
+						><br />{p.ts.toLocaleString()}
 					</div>
 				</div>
 			{/each}

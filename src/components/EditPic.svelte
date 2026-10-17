@@ -258,11 +258,23 @@
 		{#if isEditMode}<input
 				type="text"
 				class="plain"
-				bind:value={() => pic.description, (v) => (pic.description = v)}
+				bind:value={() => pic.title, (v) => (pic.title = v)}
 				placeholder="Title"
 			/>
+		{:else}<span style:font-style={pic.title ? "normal" : "italic"}
+				>{pic.title || "No Title"}</span
+			>
+		{/if}
+	</div>
+	<div>
+		{#if isEditMode}<input
+				type="text"
+				class="plain"
+				bind:value={() => pic.description, (v) => (pic.description = v)}
+				placeholder="Description"
+			/>
 		{:else}<span style:font-style={pic.description ? "normal" : "italic"}
-				>{pic.description || "No Title"}</span
+				>{pic.description || "No Description"}</span
 			>
 		{/if}
 	</div>
