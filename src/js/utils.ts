@@ -23,16 +23,7 @@ export const getEmptyPicItem = (): PictureItem => ({
 	isRss: false,
 });
 
-export const getEmptyUser = (): UserClientRemote => ({
-	id: 0,
-	email: "",
-	fullName: "",
-	token: "",
-	isAdmin: false,
-	hasPw: false,
-	isDisabled: false,
-	isDeleted: false,
-});
+export { getEmptyUser } from "../stores/user-store.svelte";
 
 // The "p" query-string param is a file name minus its extension. Matching must be
 // exact — a prefix match makes "cuisine" resolve to "cuisine-popularity.png".

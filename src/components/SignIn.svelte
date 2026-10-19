@@ -41,10 +41,8 @@
 			return;
 		}
 
-		isValidEmail =
-			/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(
-				userLogin.email,
-			);
+		// Same check as EditUser — no cap on domain-ending length (e.g. .travel, .company).
+		isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userLogin.email);
 
 		if (!isValidEmail)
 			emailValidationMessage = "Email address doesn't look right.";

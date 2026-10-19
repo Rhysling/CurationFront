@@ -11,31 +11,27 @@
 		if (!disableHideModal) isOpen = false;
 	};
 
-	const hideModalKey = (e: KeyboardEvent) => {
-		if (e.code === "Escape") hideModal();
+	// Listen on the window so Escape works wherever focus is, not only inside the modal.
+	const onWindowKeydown = (e: KeyboardEvent) => {
+		if (isOpen && e.key === "Escape") hideModal();
 	};
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
+<svelte:window onkeydown={onWindowKeydown} />
+
+<!-- Escape is handled on the window, so these click targets need no key handlers. -->
+<!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events -->
 <div
 	class="modal"
 	onclick={hideModal}
-	onkeyup={(e) => hideModalKey(e)}
 	style="display:{isOpen ? 'flex' : 'none'}"
 >
 	{#if !disableHideModal}
-		<span
-			class="close"
-			onclick={hideModal}
-			onkeyup={(e) => hideModalKey(e)}
-			title="close">X</span
-		>
+		<!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events -->
+		<span class="close" onclick={hideModal} title="close">X</span>
 	{/if}
-	<div
-		class="content"
-		onclick={(e) => e.stopPropagation()}
-		onkeyup={(e) => e.stopPropagation()}
-	>
+	<!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events -->
+	<div class="content" onclick={(e) => e.stopPropagation()}>
 		{#if children}
 			{@render children()}
 		{:else}

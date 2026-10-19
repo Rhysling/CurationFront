@@ -1,6 +1,8 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import { fly } from "svelte/transition";
+	import { cubicOut } from "svelte/easing";
 	import {
 		updateQueryStringParam,
 		pageState,
@@ -30,8 +32,13 @@
 		keywordsList?: string[];
 	} = $props();
 
-	//let keyword = $state("");
 	let keywordInput = $state("");
+	let showKeywordSearch = $state(false);
+
+	// Show the active keyword in the input, including one that arrives from ?keyword= on load.
+	$effect(() => {
+		keywordInput = keyword;
+	});
 
 	// Keyword autocomplete
 	const MAX_SUGGESTIONS = 6;
@@ -55,6 +62,7 @@
 		showSuggestions = false;
 		ixSuggestion = -1;
 		if (kw.trim()) setKeyword(kw.trim());
+		showKeywordSearch = false;
 	};
 
 	const onKeywordKeydown = (e: KeyboardEvent) => {
@@ -124,112 +132,137 @@
 		>
 	</div>
 {/if}
-<div class="c-menu">
-	<div class="kw-wrap">
-		<input
-			type="text"
-			class="info"
-			placeholder="Search by keyword"
-			autocomplete="off"
-			enterkeyhint="search"
-			role="combobox"
-			aria-autocomplete="list"
-			aria-controls="kw-suggestions"
-			aria-expanded={showSuggestions && suggestions.length > 0}
-			aria-activedescendant={ixSuggestion >= 0
-				? `kw-suggestion-${ixSuggestion}`
-				: undefined}
-			bind:value={keywordInput}
-			oninput={() => {
-				showSuggestions = true;
-				ixSuggestion = -1;
-			}}
-			onkeydown={onKeywordKeydown}
-			onblur={() => (showSuggestions = false)}
-		/>
-		{#if showSuggestions && suggestions.length > 0}
-			<ul id="kw-suggestions" class="suggestions" role="listbox">
-				{#each suggestions as kw, ix (kw)}
-					<li
-						id="kw-suggestion-{ix}"
-						role="option"
-						aria-selected={ix === ixSuggestion}
-						class:active={ix === ixSuggestion}
-						onmousedown={(e) => {
-							// mousedown + preventDefault fires before the input's blur
-							e.preventDefault();
-							applyKeyword(kw);
-						}}
-						onmouseenter={() => (ixSuggestion = ix)}
-					>
-						{kw}
-					</li>
-				{/each}
-			</ul>
-		{/if}
-	</div>
-	<button
-		style="font-size:1.2rem;margin:0;"
-		title="Clear Keyword"
-		aria-label="Clear Keyword"
-		onclick={() => {
-			keywordInput = "";
-			setKeyword("");
-		}}
-		class="secondary"
-	>
-		X
-	</button>
-</div>
-<div class="c-menu">
-	<NavButton
-		buttonType="first"
-		disabled={isFirst}
-		onclick={() => gotoSlideIx(0)}
-	/>
-	<NavButton buttonType="prev" disabled={isFirst} onclick={() => prev()} />
-	<a
-		class="button"
-		style="font-size:1.7rem;"
-		href="/picture?p={currentSlug}"
-		title="Enlarge"
-		aria-label="Enlarge">++</a
-	>
-	<button
-		style="margin:0;"
-		title="Keyword Search"
-		aria-label="Keyword Search"
-		onclick={() => {}}
-	>
-		<svg
-			fill="currentColor"
-			width="20px"
-			height="20px"
-			viewBox="0 0 20 20"
-			xmlns="http://www.w3.org/2000/svg"
-			><path
-				d="M17.545 15.467l-3.779-3.779a6.15 6.15 0 0 0 .898-3.21c0-3.417-2.961-6.377-6.378-6.377A6.185 6.185 0 0 0 2.1 8.287c0 3.416 2.961 6.377 6.377 6.377a6.15 6.15 0 0 0 3.115-.844l3.799 3.801a.953.953 0 0 0 1.346 0l.943-.943c.371-.371.236-.84-.135-1.211zM4.004 8.287a4.282 4.282 0 0 1 4.282-4.283c2.366 0 4.474 2.107 4.474 4.474a4.284 4.284 0 0 1-4.283 4.283c-2.366-.001-4.473-2.109-4.473-4.474z"
-			/></svg
+
+<div class="stack">
+	{#if showKeywordSearch}
+		<div
+			class="c-menu"
+			in:fly={{ y: 20, duration: 200, easing: cubicOut }}
+			out:fly={{ y: -20, duration: 200 }}
 		>
-	</button>
-	<button
-		style="font-size:1.2rem;"
-		title="Random"
-		aria-label="Random"
-		onclick={() => gotoSlideIx(getRandomIx())}
-	>
-		??
-	</button>
-	<NavButton buttonType="next" disabled={isLast} onclick={() => next()} />
-	<NavButton
-		buttonType="last"
-		disabled={isLast}
-		onclick={() => gotoSlideIx(slideCount - 1)}
-	/>
+			<div class="kw-wrap">
+				<input
+					type="text"
+					class="info"
+					placeholder="Search by keyword"
+					autocomplete="off"
+					enterkeyhint="search"
+					role="combobox"
+					aria-autocomplete="list"
+					aria-controls="kw-suggestions"
+					aria-expanded={showSuggestions && suggestions.length > 0}
+					aria-activedescendant={ixSuggestion >= 0
+						? `kw-suggestion-${ixSuggestion}`
+						: undefined}
+					bind:value={keywordInput}
+					oninput={() => {
+						showSuggestions = true;
+						ixSuggestion = -1;
+					}}
+					onkeydown={onKeywordKeydown}
+					onblur={() => (showSuggestions = false)}
+				/>
+				{#if showSuggestions && suggestions.length > 0}
+					<ul id="kw-suggestions" class="suggestions" role="listbox">
+						{#each suggestions as kw, ix (kw)}
+							<li
+								id="kw-suggestion-{ix}"
+								role="option"
+								aria-selected={ix === ixSuggestion}
+								class:active={ix === ixSuggestion}
+								onmousedown={(e) => {
+									// mousedown + preventDefault fires before the input's blur
+									e.preventDefault();
+									applyKeyword(kw);
+								}}
+								onmouseenter={() => (ixSuggestion = ix)}
+							>
+								{kw}
+							</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+			<button
+				style="font-size:1.2rem;margin:0;"
+				title="Clear Keyword"
+				aria-label="Clear Keyword"
+				onclick={() => {
+					keywordInput = "";
+					setKeyword("");
+				}}
+				class="secondary"
+				disabled={!keywordInput.trim()}
+			>
+				X
+			</button>
+		</div>
+	{:else}
+		<div
+			class="c-menu"
+			in:fly={{ y: 20, duration: 200, easing: cubicOut }}
+			out:fly={{ y: -20, duration: 200 }}
+		>
+			<NavButton
+				buttonType="first"
+				disabled={isFirst}
+				onclick={() => gotoSlideIx(0)}
+			/>
+			<NavButton buttonType="prev" disabled={isFirst} onclick={() => prev()} />
+			<a
+				class="button"
+				style="font-size:1.7rem;"
+				href="/picture?p={currentSlug}"
+				title="Enlarge"
+				aria-label="Enlarge">++</a
+			>
+			<button
+				style="margin:0;"
+				title="Keyword Search"
+				aria-label="Keyword Search"
+				onclick={() => {
+					showKeywordSearch = true;
+					keywordInput = "";
+				}}
+			>
+				<svg
+					fill="currentColor"
+					width="20px"
+					height="20px"
+					viewBox="0 0 20 20"
+					xmlns="http://www.w3.org/2000/svg"
+					><path
+						d="M17.545 15.467l-3.779-3.779a6.15 6.15 0 0 0 .898-3.21c0-3.417-2.961-6.377-6.378-6.377A6.185 6.185 0 0 0 2.1 8.287c0 3.416 2.961 6.377 6.377 6.377a6.15 6.15 0 0 0 3.115-.844l3.799 3.801a.953.953 0 0 0 1.346 0l.943-.943c.371-.371.236-.84-.135-1.211zM4.004 8.287a4.282 4.282 0 0 1 4.282-4.283c2.366 0 4.474 2.107 4.474 4.474a4.284 4.284 0 0 1-4.283 4.283c-2.366-.001-4.473-2.109-4.473-4.474z"
+					/></svg
+				>
+			</button>
+			<button
+				style="font-size:1.2rem;"
+				title="Random"
+				aria-label="Random"
+				onclick={() => gotoSlideIx(getRandomIx())}
+			>
+				??
+			</button>
+			<NavButton buttonType="next" disabled={isLast} onclick={() => next()} />
+			<NavButton
+				buttonType="last"
+				disabled={isLast}
+				onclick={() => gotoSlideIx(slideCount - 1)}
+			/>
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
 	@use "../styles/custom-variables" as c;
+
+	.stack {
+		display: grid;
+	}
+	.stack > :global(*) {
+		grid-area: 1 / 1;
+	}
 
 	.keyword {
 		font-size: 0.8rem;

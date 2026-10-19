@@ -36,6 +36,7 @@ button {
 
 	&:disabled,
 	&.success:disabled,
+	&.secondary:disabled,
 	&.narrow:disabled {
 		color: color.adjust(c.$body-text, $lightness: 50%);
 		background-color: c.$gray-lighter;

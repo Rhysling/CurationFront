@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import { getPicAdminList } from "../js/db-ops";
-	import { orderBySeq, orderByTs } from "../js/utils";
+	import { getSlug, orderBySeq, orderByTs } from "../js/utils";
 	import { userSettings } from "../stores/user-settings-store.svelte";
 	import {
 		navTo,
@@ -74,7 +74,7 @@
 		<div class="carousel-area">
 			{#each picList as p (p.id)}
 				<div class="pic" id={"c2id-" + p.id}>
-					<a href="/curation?p={p.fileName.split('.')[0]}">
+					<a href="/curation?p={encodeURIComponent(getSlug(p.fileName))}">
 						<img
 							class="carousel-img"
 							src={"./pics/" + p.fileName}

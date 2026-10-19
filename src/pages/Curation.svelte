@@ -173,7 +173,9 @@
 				/>
 				{#if slide.link}
 					<div class="slide-title">
-						<a href={slide.link} target="_blank">{slide.title || "Link"}</a>
+						<a href={slide.link} target="_blank" rel="noopener noreferrer"
+							>{slide.title || "Link"}</a
+						>
 					</div>
 				{:else}
 					<div class="slide-title">{slide.title}</div>
@@ -225,6 +227,9 @@
 				</button>
 			{/snippet}
 		</Carousel>
+		{#if keyword && picList.length === 0 && picListMaster.length > 0}
+			<div class="no-match">No pictures match "{keyword}".</div>
+		{/if}
 	</div>
 
 	<CurationMenu
@@ -381,6 +386,15 @@
 		max-width: 90vw;
 		max-height: 90vh;
 		object-fit: contain;
+	}
+
+	.no-match {
+		margin: auto;
+		padding: 2rem 1rem;
+		font-size: 1.2rem;
+		font-style: italic;
+		text-align: center;
+		color: c.$body-text;
 	}
 
 	.slide-title {

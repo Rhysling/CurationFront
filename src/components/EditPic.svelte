@@ -59,7 +59,8 @@
 
 	// ** Validations **
 	const validateSeq = () => {
-		isValidSeq = !isNaN(pic.seq);
+		// The number input binds null when empty or unparseable.
+		isValidSeq = Number.isInteger(pic.seq);
 		return isValidSeq;
 	};
 	const validateFileName = () => {
@@ -236,7 +237,8 @@
 			>Id: {pic.id === 0 ? "New" : pic.id}</span
 		>
 		{#if isEditMode}<input
-				type="text"
+				type="number"
+				step="1"
 				class:info={isValidSeq === undefined}
 				class:success={isValidSeq === true}
 				class:error={isValidSeq === false}

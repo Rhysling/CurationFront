@@ -1,20 +1,18 @@
 import { localStore } from './localstorage-store.svelte';
 import { navTo } from './route-store.svelte';
 
-const getEmptyUser = () => {
-	const u: UserClientRemote = {
-		id: 0,
-		email: "",
-		fullName: "",
-		token: "",
-		isAdmin: false,
-		hasPw: false,
-		isDisabled: false,
-		isDeleted: false,
-	};
-
-	return { ...u };
-};
+// Defined here rather than in utils.ts because this module calls it at load time;
+// importing it from utils would risk a circular-import TDZ error (utils → route-store → user-store).
+export const getEmptyUser = (): UserClientRemote => ({
+	id: 0,
+	email: "",
+	fullName: "",
+	token: "",
+	isAdmin: false,
+	hasPw: false,
+	isDisabled: false,
+	isDeleted: false,
+});
 
 const uStore = localStore<UserClientRemote>("user", null);
 
