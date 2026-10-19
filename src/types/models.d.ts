@@ -37,6 +37,7 @@ type PictureItem = {
 	title: INullable<string>;
 	description: INullable<string>;
 	keywords: string[];
+	keywordsAll: INullable<string[]>;
 	link: INullable<string>;
 	isMissing: boolean;
 	isDeleted: boolean;

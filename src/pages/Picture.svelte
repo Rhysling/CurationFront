@@ -305,6 +305,9 @@
 		object-fit: contain;
 		cursor: grab;
 		user-select: none;
+		// Svelte 5 touchmove handlers are passive, so preventDefault() can't stop
+		// the page from panning while dragging — this does.
+		touch-action: none;
 		transition: transform 0.2s ease;
 
 		&.dragging {

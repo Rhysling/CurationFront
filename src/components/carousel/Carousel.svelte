@@ -88,6 +88,10 @@
 	};
 
 	const onKeydown = (e: KeyboardEvent) => {
+		// Leave arrow keys alone while the user is typing in a form field.
+		const target = e.target as HTMLElement | null;
+		if (target?.closest("input, textarea, select, [contenteditable]")) return;
+
 		if (e.key === "ArrowRight") {
 			e.preventDefault();
 			next();

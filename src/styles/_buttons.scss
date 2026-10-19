@@ -13,9 +13,12 @@ button {
 	border-radius: 4px;
 	font-weight: bold;
 	text-decoration: none;
+	cursor: pointer;
 
 	&:hover {
+		color: #fff;
 		background-color: c.$link-hover-color;
+		text-decoration: none;
 	}
 
 	&:visited {
@@ -32,10 +35,11 @@ button {
 	}
 
 	&:disabled,
+	&.success:disabled,
 	&.narrow:disabled {
-		color: c.$gray-light;
+		color: color.adjust(c.$body-text, $lightness: 50%);
 		background-color: c.$gray-lighter;
-		outline: 1px solid color.adjust(c.$dark-background, $lightness: 10%);
+		outline: 1px solid color.adjust(c.$body-text, $lightness: 30%);
 		cursor: default;
 	}
 
@@ -47,6 +51,16 @@ button {
 		color: c.$body-background;
 		background-color: c.$main-lighter;
 		border: 1px solid color.adjust(c.$dark-background, $lightness: 25%);
+	}
+
+	&.success {
+		color: c.$color-success;
+		background-color: c.$color-success-bg;
+		border: 1px solid color.adjust(c.$color-success, $lightness: 25%);
+
+		&:hover {
+			background-color: color.adjust(c.$color-success-bg, $lightness: -10%);
+		}
 	}
 
 	&.narrow {

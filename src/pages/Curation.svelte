@@ -4,32 +4,67 @@
 	import { getPicPublicList } from "../js/db-ops";
 	import { user } from "../stores/user-store.svelte";
 	import { userSettings } from "../stores/user-settings-store.svelte";
-	import { pageState } from "../stores/route-store.svelte";
+	import {
+		pageState,
+		updateQueryStringParam,
+	} from "../stores/route-store.svelte";
 	import { onMount } from "svelte";
 
 	import {
 		getSlug,
 		orderBySeq as applyOrderBySeq,
 		orderByTs as applyOrderByTs,
+		mapKeywordsAll,
+		getKeywordsList,
 	} from "../js/utils";
 	import Carousel from "../components/carousel/Carousel.svelte";
 	import Modal from "../components/Modal.svelte";
 	import Menu from "../components/Menu.svelte";
 	import CurationMenu from "../components/CurationMenu.svelte";
 
+	let picListMaster = $state([] as PictureItem[]);
 	let picList = $state([] as PictureItem[]);
+	let keyword = $state("");
 	let isOpenModal = $state(false);
 	let slideCount = $derived(picList.length);
+	let keywordsList = $derived(getKeywordsList(picListMaster));
 
 	const loadPicList = async () => {
 		try {
-			picList = (await getPicPublicList()) || [];
+			picListMaster = (await getPicPublicList()) || [];
+			picListMaster = picListMaster.map(mapKeywordsAll);
+
+			if (pageState.paramObj["keyword"])
+				keyword = pageState.paramObj["keyword"].trim().toLowerCase();
+
+			if (keyword) {
+				picList = picListMaster.filter((pic) =>
+					pic.keywordsAll?.includes(keyword),
+				);
+			} else {
+				picList = picListMaster;
+			}
+
 			if (pageState.paramObj["newest"]) orderByTs();
 			else if (userSettings.value.isNewestFirst) orderByTs();
 			else orderBySeq();
 		} catch (error) {
 			console.error(error);
 		}
+	};
+
+	const setKeyword = (kw: string) => {
+		// keywordsAll is all lowercase, so match case-insensitively.
+		keyword = kw.trim().toLowerCase();
+		updateQueryStringParam("keyword", keyword || undefined);
+		if (keyword) {
+			picList = picListMaster.filter((pic) =>
+				pic.keywordsAll?.includes(keyword),
+			);
+		} else {
+			picList = picListMaster;
+		}
+		carousel?.goTo(0);
 	};
 
 	$effect(() => {
@@ -73,10 +108,12 @@
 	let ixSlide: number = $derived((carousel && carousel.getCurrentSlide()) || 0);
 
 	const orderBySeq = () => {
+		applyOrderBySeq(picListMaster);
 		applyOrderBySeq(picList);
 		carousel?.goTo(0);
 	};
 	const orderByTs = () => {
+		applyOrderByTs(picListMaster);
 		applyOrderByTs(picList);
 		carousel?.goTo(0);
 	};
@@ -197,6 +234,9 @@
 		{ixSlide}
 		{slideCount}
 		{currentPic}
+		{keyword}
+		{setKeyword}
+		{keywordsList}
 	/>
 	{#if user.value.isAdmin}
 		<Menu />

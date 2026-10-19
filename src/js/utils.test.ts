@@ -18,11 +18,14 @@ describe('getEmptyPicItem', () => {
 			fileName: '',
 			seq: 999,
 			ts: 0,
+			title: '',
 			keywords: [],
+			keywordsAll: undefined,
 			description: '',
 			link: '',
 			isMissing: false,
 			isDeleted: false,
+			isRss: false,
 		});
 	});
 });

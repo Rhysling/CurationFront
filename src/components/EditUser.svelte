@@ -9,7 +9,7 @@
 		isListEditMode: boolean;
 		editingUserId: number;
 		setEditMode: (userId: number, isEdit: boolean) => void;
-		saveUser: (user: UserClientRemote) => void;
+		saveUser: (user: UserClientRemote) => Promise<boolean>;
 		destroyUser: (user: UserClientRemote) => void;
 		openSetPw: (email: string, isOpen: boolean) => void;
 	};
@@ -31,6 +31,13 @@
 	let isEditMode = $state(false);
 	let isValidEmail: ValidationState = $state(undefined);
 	let isValidFullName: ValidationState = $state(undefined);
+	// Re-sync the local copy when the parent reloads the list (e.g. after a save),
+	// but never while this row is being edited.
+	$effect(() => {
+		const src = { ...userIn };
+		if (isEditMode) return;
+		userEdited = src;
+	});
 	let isValidAll: ValidationState = $derived.by(() => {
 		if (isValidEmail && isValidFullName) return true;
 		if (isValidEmail === false || isValidFullName === false) return false;
@@ -68,16 +75,18 @@
 		isEditMode = true;
 	};
 
-	const save = () => {
+	const save = async () => {
 		validateAll();
-		if (isValidAll) {
-			saveUser(userEdited);
-			userEdited = { ...userIn };
-			setEditMode(0, false);
-			isValidEmail = undefined;
-			isValidFullName = undefined;
-			isEditMode = false;
-		}
+		if (!isValidAll) return;
+
+		// Stay in edit mode on failure so the user's changes aren't lost.
+		const ok = await saveUser(userEdited);
+		if (!ok) return;
+
+		setEditMode(0, false);
+		isValidEmail = undefined;
+		isValidFullName = undefined;
+		isEditMode = false;
 	};
 
 	const cancel = () => {

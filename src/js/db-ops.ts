@@ -1,11 +1,18 @@
 import { getFetchClient as fc } from "../stores/fetchclient-store.svelte";
 
+// Throws on a non-2xx status so an error body is never mistaken for data.
+// Callers must `await` the body inside their try so parse failures are caught too.
+export const ensureOk = (response: Response): Response => {
+	if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+	return response;
+};
+
 // Pictures ***
 
 export const getPicPublicList = async () => {
 	try {
 		const response: Response = await fc().get("/api/Pictures/GetPublicList");
-		return response.json() as Promise<PictureItem[]>;
+		return (await ensureOk(response).json()) as PictureItem[];
 	} catch (error) {
 		console.error(error);
 	}
@@ -14,7 +21,7 @@ export const getPicPublicList = async () => {
 export const getPicBySlug = async (slug: string) => {
 	try {
 		const response: Response = await fc().get(`/api/Pictures/GetBySlug?${new URLSearchParams({ slug })}`);
-		return response.json() as Promise<PictureItem>;
+		return (await ensureOk(response).json()) as PictureItem;
 	} catch (error) {
 		console.error(error);
 	}
@@ -23,7 +30,7 @@ export const getPicBySlug = async (slug: string) => {
 export const getPicAdminList = async () => {
 	try {
 		const response: Response = await fc().get("/api/Pictures/GetAll");
-		return response.json() as Promise<PictureItem[]>;
+		return (await ensureOk(response).json()) as PictureItem[];
 	} catch (error) {
 		console.error(error);
 	}
@@ -32,7 +39,7 @@ export const getPicAdminList = async () => {
 export const getAuditList = async () => {
 	try {
 		const response: Response = await fc().get("/api/Pictures/GetAuditList");
-		return response.json() as Promise<AuditList>;
+		return (await ensureOk(response).json()) as AuditList;
 	} catch (error) {
 		console.error(error);
 	}
@@ -41,7 +48,7 @@ export const getAuditList = async () => {
 export const postCleanPics = async () => {
 	try {
 		const response: Response = await fc().post("/api/Pictures/CleanPics");
-		return response.json() as Promise<PictureItem[]>;
+		return (await ensureOk(response).json()) as PictureItem[];
 	} catch (error) {
 		console.error(error);
 	}
@@ -50,7 +57,7 @@ export const postCleanPics = async () => {
 export const postResequencePics = async () => {
 	try {
 		const response: Response = await fc().post("/api/Pictures/ResequencePics");
-		return response.json() as Promise<PictureItem[]>;
+		return (await ensureOk(response).json()) as PictureItem[];
 	} catch (error) {
 		console.error(error);
 	}
@@ -59,7 +66,7 @@ export const postResequencePics = async () => {
 export const postPic = async (picItem: PictureItem) => {
 	try {
 		const response: Response = await fc().post("/api/Pictures/Save", picItem);
-		return response.json() as Promise<PictureItem | undefined>;
+		return (await ensureOk(response).json()) as PictureItem | undefined;
 	}
 	catch (error) {
 		console.error(error);
@@ -69,7 +76,7 @@ export const postPic = async (picItem: PictureItem) => {
 export const postPicWithImg = async (picWithImg: FormData) => {
 	try {
 		const response: Response = await fc().postFormData("/api/Pictures/SaveWithImg", picWithImg);
-		return response.json() as Promise<PictureItem | undefined>;
+		return (await ensureOk(response).json()) as PictureItem | undefined;
 	}
 	catch (error) {
 		console.error(error);
@@ -91,20 +98,21 @@ export const postDestroyPic = async (picItem: PictureItem) => {
 export const getUserList = async () => {
 	try {
 		const response: Response = await fc().get("/api/Users/GetAll");
-		return response.json() as Promise<UserClientRemote[]>;
+		return (await ensureOk(response).json()) as UserClientRemote[];
 	} catch (error) {
 		console.error(error);
 	}
 };
 
+// Returns the saved user, a validation message (400), or undefined on any other failure.
 export const postSaveUser = async (user: UserClientRemote) => {
 	try {
 		const response: Response = await fc().post("/api/Users/Save", user);
 
 		if (response.status === 400)
-			return response.text();
+			return await response.text();
 
-		return response.json() as Promise<UserClientRemote | undefined>;
+		return (await ensureOk(response).json()) as UserClientRemote | undefined;
 	}
 	catch (error) {
 		console.error(error);
@@ -123,7 +131,7 @@ export const postLogin = async (userLogin: UserLogin): Promise<UserClientRemote 
 			body: JSON.stringify(userLogin),
 		});
 		if (!response.ok) return null;
-		return response.json() as Promise<UserClientRemote>;
+		return (await response.json()) as UserClientRemote;
 	}
 	catch (error) {
 		console.error(error);
@@ -142,6 +150,7 @@ export const postUpdatePw = async (userLogin: UserLogin): Promise<boolean> => {
 	}
 };
 
+// Returns "" on success, otherwise an error message to show.
 export const postDestroyUser = async (user: UserClientRemote) => {
 	try {
 		const response: Response = await fc().post("/api/Users/Destroy", user);
@@ -149,10 +158,12 @@ export const postDestroyUser = async (user: UserClientRemote) => {
 		if (response.status === 400)
 			return await response.text();
 
+		ensureOk(response);
 		return "";
 	}
 	catch (error) {
 		console.error(error);
+		return "Failed to destroy user. Please try again.";
 	}
 };
 
@@ -161,7 +172,7 @@ export const postDestroyUser = async (user: UserClientRemote) => {
 export const getSecuredValue = async () => {
 	try {
 		const response: Response = await fc().get("/api/Test/GetSecuredValue");
-		return response.text() as Promise<string>;
+		return await ensureOk(response).text();
 	} catch (error) {
 		console.error(error);
 	}
@@ -170,7 +181,7 @@ export const getSecuredValue = async () => {
 export const getAdminValue = async () => {
 	try {
 		const response: Response = await fc().get("/api/Test/GetAdminValue");
-		return response.text() as Promise<string>;
+		return await ensureOk(response).text();
 	} catch (error) {
 		console.error(error);
 	}

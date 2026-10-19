@@ -34,15 +34,21 @@
 		isListEditMode = isEdit;
 	};
 
-	const saveUser = async (user: UserClientRemote) => {
+	const saveUser = async (user: UserClientRemote): Promise<boolean> => {
 		const result = await postSaveUser(user);
 
 		if (typeof result === "string") {
 			alert(result);
-			return;
+			return false;
+		}
+
+		if (!result) {
+			alert("Failed to save user. Please try again.");
+			return false;
 		}
 
 		await loadList();
+		return true;
 	};
 
 	const destroyUser = async (user: UserClientRemote) => {

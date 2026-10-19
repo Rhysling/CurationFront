@@ -16,6 +16,7 @@ export const getEmptyPicItem = (): PictureItem => ({
 	title: "",
 	description: "",
 	keywords: [],
+	keywordsAll: undefined,
 	link: "",
 	isMissing: false,
 	isDeleted: false,
@@ -50,4 +51,30 @@ export const orderByTs = (list: PictureItem[]): void => {
 	list.sort((a, b) => b.ts - a.ts);
 	setIsNewestFirst(true);
 	updateQueryStringParam("newest", "true");
+};
+
+// Extract keywords
+const getKeywordsFromFileName = (fileName: string): string[] => {
+	return getSlug(fileName.toLowerCase()).split("-");
+};
+
+const getKeywordsFromTitle = (title: string): string[] => {
+	return title.toLowerCase().replace(/[\[\].,!#*]/g, "").split(" ").filter((kw) => kw.length > 0);
+};
+
+export const mapKeywordsAll = (pi: PictureItem): PictureItem => {
+	pi.keywordsAll = [
+		...pi.keywords.map((kw) => kw.trim().toLowerCase()),
+		...getKeywordsFromFileName(pi.fileName),
+		...getKeywordsFromTitle(pi.title || ""),
+	].filter((kw) => kw.length > 0);
+	return pi;
+};
+
+export const getKeywordsList = (pil: PictureItem[]): string[] => {
+	const kwSet = new Set<string>();
+	pil.forEach((pi) => {
+		if (pi.keywordsAll) pi.keywordsAll.forEach((kw) => kwSet.add(kw));
+	});
+	return Array.from(kwSet).sort((a, b) => a.localeCompare(b));
 };

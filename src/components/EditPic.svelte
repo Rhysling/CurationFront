@@ -151,6 +151,11 @@
 				}
 			}
 
+			// Cleaned here, not in the input's setter, so typing a trailing comma still works.
+			pic.keywords = pic.keywords
+				.map((kw) => kw.trim().toLowerCase())
+				.filter((kw) => kw.length > 0);
+
 			pic.ts = parseInt(<string>(<unknown>pic.ts)) || 0;
 			const ok = await savePic(pic);
 			if (!ok) return;

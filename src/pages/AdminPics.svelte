@@ -52,7 +52,10 @@
 
 	const savePic = async (picNew: PictureItem): Promise<boolean> => {
 		const updatedPic = await postPic(picNew);
-		if (!updatedPic) return false;
+		if (!updatedPic) {
+			alert("Failed to save picture. Please try again.");
+			return false;
+		}
 
 		const ix = picList.findIndex((a) => a.id === updatedPic.id);
 		if (ix >= 0) {
@@ -80,14 +83,11 @@
 	};
 
 	const savePicWithImg = async (form: FormData): Promise<boolean> => {
-		let savedPic: PictureItem | undefined;
-		try {
-			savedPic = await postPicWithImg(form);
-		} catch (e: any) {
-			alert(`Failed to save picture. Message: ${e.message || "none"}`);
+		const savedPic = await postPicWithImg(form);
+		if (!savedPic) {
+			alert("Failed to save picture. Please try again.");
+			return false;
 		}
-
-		if (!savedPic) return false;
 
 		// Preload the image so the <img> tag never shows a broken state
 		const imgPath = `/pics/${savedPic.fileName}`;

@@ -14,8 +14,9 @@
 		"verbatimModuleSyntax": true,
 		"moduleDetection": "force",
 		"composite": true,
-		/* "noEmit": false, */
+		/* Keep emitted declarations out of the repo root — a stray vite.config.js there would shadow vite.config.ts */
 		"emitDeclarationOnly": true,
+		"declarationDir": "./node_modules/.tmp/tsconfig.node",
 		/* Linting */
 		"strict": true,
 		"noUnusedLocals": true,

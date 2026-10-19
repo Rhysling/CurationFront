@@ -27,7 +27,11 @@
 	};
 
 	const cleanPics = async () => {
-		const pl = (await postCleanPics()) || [];
+		const pl = await postCleanPics();
+		if (!pl) {
+			alert("Failed to clean the picture list. Please try again.");
+			return;
+		}
 		const missing = pl.filter((a) => a.isMissing == true);
 		const orphans = pl.filter((a) => !a.seq);
 		auditList = { missing, orphans };
@@ -36,7 +40,11 @@
 	};
 
 	const resequencePics = async () => {
-		const pl = (await postResequencePics()) || [];
+		const pl = await postResequencePics();
+		if (!pl) {
+			alert("Failed to resequence pictures. Please try again.");
+			return;
+		}
 		refreshPicList(pl);
 	};
 </script>
