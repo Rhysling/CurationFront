@@ -50,7 +50,7 @@ const getKeywordsFromFileName = (fileName: string): string[] => {
 };
 
 const getKeywordsFromTitle = (title: string): string[] => {
-	return title.toLowerCase().replace(/[\[\].,!#*]/g, "").split(" ").filter((kw) => kw.length > 0);
+	return title.toLowerCase().replace(/[\[\].,!#*?]/g, "").split(" ").filter((kw) => kw.length > 0);
 };
 
 export const mapKeywordsAll = (pi: PictureItem): PictureItem => {

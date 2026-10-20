@@ -41,7 +41,7 @@
 	});
 
 	// Keyword autocomplete
-	const MAX_SUGGESTIONS = 6;
+	const MAX_SUGGESTIONS = 9;
 	let showSuggestions = $state(false);
 	let ixSuggestion = $state(-1);
 
