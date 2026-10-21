@@ -50,7 +50,7 @@ const getKeywordsFromFileName = (fileName: string): string[] => {
 };
 
 const getKeywordsFromTitle = (title: string): string[] => {
-	return title.toLowerCase().replace(/[\[\].,!#*?]/g, "").split(" ").filter((kw) => kw.length > 0);
+	return title.toLowerCase().replace(/[\[\]~.,!#'*?]/g, "").split(" ").filter((kw) => kw.length > 0);
 };
 
 export const mapKeywordsAll = (pi: PictureItem): PictureItem => {
@@ -58,7 +58,8 @@ export const mapKeywordsAll = (pi: PictureItem): PictureItem => {
 		...pi.keywords.map((kw) => kw.trim().toLowerCase()),
 		...getKeywordsFromFileName(pi.fileName),
 		...getKeywordsFromTitle(pi.title || ""),
-	].filter((kw) => kw.length > 0);
+	].filter((kw) => kw.length > 0)
+		.filter((kw) => !"&--_%".includes(kw));
 	return pi;
 };
 

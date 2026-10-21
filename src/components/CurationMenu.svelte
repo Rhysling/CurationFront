@@ -34,6 +34,7 @@
 
 	let keywordInput = $state("");
 	let showKeywordSearch = $state(false);
+	let keywordInputEl: HTMLInputElement | null = $state(null);
 
 	// Show the active keyword in the input, including one that arrives from ?keyword= on load.
 	$effect(() => {
@@ -93,6 +94,9 @@
 				break;
 		}
 	};
+
+	// Focus the input when the search menu is shown.
+	$effect(() => keywordInputEl?.focus());
 
 	const getRandomIx = () => {
 		if (slideCount <= 1) return ixSlide;
@@ -161,6 +165,7 @@
 					}}
 					onkeydown={onKeywordKeydown}
 					onblur={() => (showSuggestions = false)}
+					bind:this={keywordInputEl}
 				/>
 				{#if showSuggestions && suggestions.length > 0}
 					<ul id="kw-suggestions" class="suggestions" role="listbox">
@@ -185,14 +190,12 @@
 			</div>
 			<button
 				style="font-size:1.2rem;margin:0;"
-				title="Clear Keyword"
-				aria-label="Clear Keyword"
+				title="Close Keyword Search"
+				aria-label="Close Keyword Search"
 				onclick={() => {
 					keywordInput = "";
-					setKeyword("");
+					showKeywordSearch = false;
 				}}
-				class="secondary"
-				disabled={!keywordInput.trim()}
 			>
 				X
 			</button>
