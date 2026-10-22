@@ -7,8 +7,10 @@
 		updateQueryStringParam,
 		pageState,
 	} from "../stores/route-store.svelte";
+	import { user } from "../stores/user-store.svelte";
 	import { getSlug } from "../js/utils";
 	import NavButton from "./NavButton.svelte";
+	import EditPicWrapper from "./EditPicWrapper.svelte";
 
 	let {
 		gotoSlideIx,
@@ -20,6 +22,7 @@
 		keyword,
 		setKeyword,
 		keywordsList = [],
+		updatePicItem,
 	}: {
 		gotoSlideIx: (ix: number) => void;
 		prev: () => void;
@@ -30,16 +33,14 @@
 		keyword: string;
 		setKeyword: (kw: string) => void;
 		keywordsList?: string[];
+		updatePicItem: (pi: PictureItem) => void;
 	} = $props();
 
 	let keywordInput = $state("");
 	let showKeywordSearch = $state(false);
 	let keywordInputEl: HTMLInputElement | null = $state(null);
-
-	// Show the active keyword in the input, including one that arrives from ?keyword= on load.
-	$effect(() => {
-		keywordInput = keyword;
-	});
+	let showEditPicBar = $state(true);
+	let isOpenEditPic = $state(false);
 
 	// Keyword autocomplete
 	const MAX_SUGGESTIONS = 9;
@@ -95,9 +96,6 @@
 		}
 	};
 
-	// Focus the input when the search menu is shown.
-	$effect(() => keywordInputEl?.focus());
-
 	const getRandomIx = () => {
 		if (slideCount <= 1) return ixSlide;
 		let ix;
@@ -137,12 +135,48 @@
 	</div>
 {/if}
 
+{#if showEditPicBar && user.value.isAdmin}
+	<div class="edit-pic-bar">
+		{#if currentPic}
+			{currentSlug}: {currentPic.keywords.join(",") || "(no keywords)"}
+		{:else}
+			(no picture)
+		{/if}
+		-
+		<a
+			href="/"
+			onclick={(e) => {
+				e.preventDefault();
+				if (currentPic) isOpenEditPic = true;
+			}}>Edit</a
+		>
+		-
+		<a
+			href="/"
+			onclick={(e) => {
+				e.preventDefault();
+				showEditPicBar = false;
+			}}>Close</a
+		>
+	</div>
+{/if}
+
+<!-- Mounted only while open: EditPicWrapper copies picItem once at creation. -->
+{#if isOpenEditPic && currentPic}
+	<EditPicWrapper
+		bind:isOpen={isOpenEditPic}
+		picItem={currentPic}
+		{updatePicItem}
+	/>
+{/if}
+
 <div class="stack">
 	{#if showKeywordSearch}
 		<div
 			class="c-menu"
 			in:fly={{ y: 20, duration: 200, easing: cubicOut }}
 			out:fly={{ y: -20, duration: 200 }}
+			onintroend={() => keywordInputEl?.focus()}
 		>
 			<div class="kw-wrap">
 				<input
@@ -271,11 +305,20 @@
 		font-size: 0.8rem;
 		font-weight: bold;
 		text-align: center;
+		line-height: 1.5rem;
 		margin: 0.25rem auto 0;
 
 		span {
 			font-weight: bold;
 		}
+	}
+
+	.edit-pic-bar {
+		font-size: 0.8rem;
+		font-weight: bold;
+		text-align: center;
+		line-height: 1rem;
+		margin: 0.25rem auto 0;
 	}
 
 	.c-menu {

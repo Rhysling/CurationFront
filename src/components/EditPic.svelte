@@ -8,6 +8,7 @@
 		picItem: PictureItem;
 		picList: PictureItem[];
 		isListEditMode: boolean;
+		isEditOnly?: boolean;
 		editingPicId: number;
 		setEditMode: (picId: number, isEdit: boolean) => void;
 		savePic: (pic: PictureItem) => Promise<boolean>;
@@ -19,6 +20,7 @@
 		picItem,
 		picList,
 		isListEditMode,
+		isEditOnly = false,
 		editingPicId,
 		setEditMode,
 		savePic,
@@ -29,7 +31,8 @@
 	// *** State ***
 	//svelte-ignore state_referenced_locally
 	let pic: PictureItem = $state({ ...picItem });
-	let isEditMode = $state(false);
+	//svelte-ignore state_referenced_locally
+	let isEditMode = $state(isEditOnly);
 	let isValidSeq: ValidationState = $state(undefined);
 	let isValidFileName: ValidationState = $state(undefined);
 	let isValidLink: ValidationState = $state(undefined);
@@ -164,7 +167,7 @@
 			isValidSeq = undefined;
 			isValidFileName = undefined;
 			isValidLink = undefined;
-			isEditMode = false;
+			isEditMode = isEditOnly;
 		}
 	};
 
@@ -180,7 +183,7 @@
 			isValidSeq = undefined;
 			isValidFileName = undefined;
 			isValidLink = undefined;
-			isEditMode = false;
+			isEditMode = isEditOnly;
 		}
 	};
 
@@ -190,7 +193,7 @@
 		isValidSeq = undefined;
 		isValidFileName = undefined;
 		isValidLink = undefined;
-		isEditMode = false;
+		isEditMode = isEditOnly;
 	};
 
 	// ** PicDrop functions **

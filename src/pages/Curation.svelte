@@ -118,6 +118,24 @@
 		carousel?.goTo(0);
 	};
 
+	// picList may be the same array as picListMaster, so replace in each by id.
+	const updatePicItem = (savedPic: PictureItem) => {
+		// Remove a destroyed pic from the list.
+		if (savedPic.fileName === "" && savedPic.isDeleted) {
+			picListMaster = picListMaster.filter((p) => p.id !== savedPic.id);
+			picList = picList.filter((p) => p.id !== savedPic.id);
+			// goTo clamps, so this keeps the index in range when the last slide was removed.
+			carousel?.goTo(carousel.getCurrentSlide());
+			return;
+		}
+
+		const pic = mapKeywordsAll(savedPic);
+		for (const list of [picListMaster, picList]) {
+			const ix = list.findIndex((p) => p.id === pic.id);
+			if (ix >= 0) list[ix] = pic;
+		}
+	};
+
 	const enlarge = (e: Event) => {
 		e.preventDefault();
 		isOpenModal = true;
@@ -242,6 +260,7 @@
 		{keyword}
 		{setKeyword}
 		{keywordsList}
+		{updatePicItem}
 	/>
 	{#if user.value.isAdmin}
 		<Menu />
