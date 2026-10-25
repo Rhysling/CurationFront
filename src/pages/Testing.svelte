@@ -6,7 +6,8 @@
 		getAdminValue,
 		getPicPublicList,
 	} from "../js/db-ops";
-	import { mapKeywordsAll, getKeywordsList } from "../js/utils";
+	import { getKeywordsSummary } from "../js/keyword-ops";
+	import type { KeywordSummary } from "../js/keyword-ops";
 	import Menu from "../components/Menu.svelte";
 
 	let securedValue = $state("Not loaded");
@@ -24,26 +25,50 @@
 		try {
 			adminValue = (await getAdminValue()) || "Get failed";
 		} catch (error) {
-			adminValue = "Error loading secured value";
+			adminValue = "Error loading admin value";
 		}
 	};
 
 	// *** Keyword List ***
 
 	let picList: PictureItem[] = [];
-	let keywordList: string[] = $state([]);
+	let keywordSummaryList: KeywordSummary[] = $state([]);
 
-	const loadKeywords = async () => {
+	const loadKeywordSummary = async () => {
 		try {
-			picList = ((await getPicPublicList()) || []).map(mapKeywordsAll);
-			keywordList = getKeywordsList(picList);
+			picList = (await getPicPublicList()) || [];
+			keywordSummaryList = getKeywordsSummary(picList);
 		} catch (error) {
 			console.error("Error loading picture list", error);
 		}
 	};
 
 	const clearKeywords = () => {
-		keywordList = [];
+		keywordSummaryList = [];
+	};
+
+	// getKeywordsSummary returns the list already in ascending keyword order
+	let keywordAscending = true;
+
+	// Toggles between ascending and descending
+	const sortByKeyword = () => {
+		keywordAscending = !keywordAscending;
+		const dir = keywordAscending ? 1 : -1;
+		keywordSummaryList = [...keywordSummaryList].sort(
+			(a, b) => dir * a.keyword.localeCompare(b.keyword),
+		);
+	};
+
+	let anyCountDescending = false;
+
+	// Toggles between descending and ascending; ties sort by keyword
+	const sortByAnyCount = () => {
+		anyCountDescending = !anyCountDescending;
+		const dir = anyCountDescending ? -1 : 1;
+		keywordSummaryList = [...keywordSummaryList].sort(
+			(a, b) =>
+				dir * (a.anyCount - b.anyCount) || a.keyword.localeCompare(b.keyword),
+		);
 	};
 </script>
 
@@ -70,17 +95,43 @@
 	<div class="keyword-list">
 		<div class="top-bar">
 			<span>Keyword List</span>
-			<button onclick={loadKeywords}>Load</button>
+			<button onclick={loadKeywordSummary}>Load</button>
 			<button onclick={clearKeywords}>Clear</button>
 		</div>
 
-		{#if keywordList.length === 0}
+		{#if keywordSummaryList.length === 0}
 			<div>No pics loaded</div>
 		{:else}
 			<div class="keyword-grid">
-				{#each keywordList as kw, ix}
-					<div style="text-align: right;">{ix}</div>
-					<div>{kw}</div>
+				<div class="right header">Ix</div>
+				<div class="header">
+					<a
+						href="/"
+						onclick={(e) => {
+							e.preventDefault();
+							sortByKeyword();
+						}}>Keyword</a
+					>
+				</div>
+				<div class="right header">FN<br />Count</div>
+				<div class="right header">Title<br />Count</div>
+				<div class="right header">KW<br />Count</div>
+				<div class="right header">
+					<a
+						href="/"
+						onclick={(e) => {
+							e.preventDefault();
+							sortByAnyCount();
+						}}>Any<br />Count</a
+					>
+				</div>
+				{#each keywordSummaryList as kws, ix}
+					<div class="right">{ix}</div>
+					<div>{kws.keyword}</div>
+					<div class="right">{kws.fileNameCount}</div>
+					<div class="right">{kws.titleCount}</div>
+					<div class="right">{kws.kwMatchCount}</div>
+					<div class="right">{kws.anyCount}</div>
 				{/each}
 			</div>
 		{/if}
@@ -135,8 +186,27 @@
 
 		.keyword-grid {
 			display: grid;
-			grid-template-columns: 1fr 4fr;
+			grid-template-columns: 0.5fr 4fr 1fr 1fr 1fr 1fr;
 			gap: 0.5rem;
+			max-height: 65vh;
+			overflow: auto;
+
+			> div {
+				padding: 0 0.2rem 0 0;
+			}
+
+			.header {
+				font-weight: bold;
+				line-height: 1rem;
+				position: sticky;
+				top: 0;
+				z-index: 1;
+				background: white;
+			}
+
+			.right {
+				text-align: right;
+			}
 		}
 	}
 

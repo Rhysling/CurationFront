@@ -20,6 +20,34 @@
 		}
 	};
 
+	// The post* functions return undefined on failure; a successful body may be "".
+	const backupDb = async (): Promise<boolean> => {
+		const result = await postBackup();
+		if (result === undefined) {
+			alert("Failed to back up the database. Please try again.");
+			return false;
+		}
+		await loadDbList();
+		return true;
+	};
+
+	const restoreDb = async (fileName: string) => {
+		// Never restore without a fresh backup to fall back on.
+		if (!(await backupDb())) return;
+
+		const result = await postRestore(fileName);
+		if (result === undefined)
+			alert(`Failed to restore ${fileName}. Please try again.`);
+		await loadDbList();
+	};
+
+	const deleteDb = async (fileName: string) => {
+		const result = await postDelete(fileName);
+		if (result === undefined)
+			alert(`Failed to delete ${fileName}. Please try again.`);
+		await loadDbList();
+	};
+
 	const downloadAndSave = async (fileName: string) => {
 		try {
 			const fileBlob = await getFile(fileName);
@@ -48,71 +76,67 @@
 	loadDbList();
 </script>
 
-<div class="title">Admin Databases</div>
+<div class="admin-dbs-page">
+	<div class="title">Admin Databases</div>
 
-<div class="list">
-	<div class="list-title">Database Backup List</div>
-	<div>&nbsp;</div>
-	<div>&nbsp;</div>
-	<div>&nbsp;</div>
-	{#each dbList as item (item)}
-		<div>{item}</div>
-		<div>
-			<a
-				href="/"
-				onclick={async (e: Event) => {
-					e.preventDefault();
-					downloadAndSave(item);
-				}}>Download</a
-			>
-		</div>
-		<div>
-			{#if item.indexOf("_") > 0}
+	<div class="list">
+		<div class="list-title">Database Backup List</div>
+		<div>&nbsp;</div>
+		<div>&nbsp;</div>
+		<div>&nbsp;</div>
+		{#each dbList as item (item)}
+			<div>{item}</div>
+			<div>
 				<a
 					href="/"
 					onclick={async (e: Event) => {
 						e.preventDefault();
-						if (confirm(`Restore ${item}?`)) {
-							await postBackup();
-							await postRestore(item);
-							await loadDbList();
-						}
-					}}>Restore</a
+						downloadAndSave(item);
+					}}>Download</a
 				>
-			{/if}
-		</div>
+			</div>
+			<div>
+				{#if item.indexOf("_") > 0}
+					<a
+						href="/"
+						onclick={async (e: Event) => {
+							e.preventDefault();
+							if (confirm(`Restore ${item}?`)) await restoreDb(item);
+						}}>Restore</a
+					>
+				{/if}
+			</div>
+			<div>
+				{#if item.indexOf("_") > 0}<a
+						href="/"
+						onclick={async (e: Event) => {
+							e.preventDefault();
+							if (confirm(`Delete ${item}?`)) await deleteDb(item);
+						}}>Delete</a
+					>
+				{/if}
+			</div>
+		{/each}
 		<div>
-			{#if item.indexOf("_") > 0}<a
-					href="/"
-					onclick={async (e: Event) => {
-						e.preventDefault();
-						if (confirm(`Delete ${item}?`)) {
-							await postDelete(item);
-							await loadDbList();
-						}
-					}}>Delete</a
-				>
-			{/if}
+			<button onclick={backupDb}>Backup Db</button>
 		</div>
-	{/each}
-	<div>
-		<button
-			onclick={async () => {
-				await postBackup();
-				await loadDbList();
-			}}>Backup Db</button
-		>
+		<div>&nbsp;</div>
+		<div>&nbsp;</div>
+		<div>&nbsp;</div>
 	</div>
-	<div>&nbsp;</div>
-	<div>&nbsp;</div>
-	<div>&nbsp;</div>
-</div>
 
-<div>&nbsp;</div>
-<Menu />
+	<div>&nbsp;</div>
+	<Menu />
+</div>
 
 <style lang="scss">
 	@use "../styles/custom-variables" as c;
+
+	// App's .page clips to the viewport; this page scrolls within it instead
+	.admin-dbs-page {
+		height: 100%;
+		overflow-y: auto;
+	}
 
 	.title {
 		font-size: 2rem;

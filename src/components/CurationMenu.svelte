@@ -6,6 +6,7 @@
 	import {
 		updateQueryStringParam,
 		pageState,
+		navTo,
 	} from "../stores/route-store.svelte";
 	import { user } from "../stores/user-store.svelte";
 	import { getSlug } from "../js/utils";
@@ -22,6 +23,7 @@
 		keyword,
 		setKeyword,
 		keywordsList = [],
+		picList,
 		updatePicItem,
 	}: {
 		gotoSlideIx: (ix: number) => void;
@@ -33,6 +35,7 @@
 		keyword: string;
 		setKeyword: (kw: string) => void;
 		keywordsList?: string[];
+		picList: PictureItem[];
 		updatePicItem: (pi: PictureItem) => void;
 	} = $props();
 
@@ -166,6 +169,7 @@
 	<EditPicWrapper
 		bind:isOpen={isOpenEditPic}
 		picItem={currentPic}
+		{picList}
 		{updatePicItem}
 	/>
 {/if}
@@ -250,6 +254,11 @@
 				class="button"
 				style="font-size:1.7rem;"
 				href="/picture?p={currentSlug}"
+				onclick={(e) => {
+					// Leave modified clicks (new tab/window) to the browser.
+					if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+					navTo(e, "/picture", { p: currentSlug });
+				}}
 				title="Enlarge"
 				aria-label="Enlarge">++</a
 			>

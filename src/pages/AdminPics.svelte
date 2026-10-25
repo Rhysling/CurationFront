@@ -58,7 +58,11 @@
 		}
 
 		const ix = picList.findIndex((a) => a.id === updatedPic.id);
-		if (ix >= 0) {
+		if (ix < 0) {
+			// A new pic saved without an image: add it and reset the "New" row.
+			emptyPicItem = getEmptyPicItem();
+			picList = [updatedPic, ...picList];
+		} else {
 			picList[ix] = updatedPic;
 
 			// Preload the image so the <img> tag never shows a broken state

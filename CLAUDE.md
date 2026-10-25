@@ -55,3 +55,9 @@ Run a single unit test file: `npx vitest --run src/js/utils.test.ts`
 - **Vite config:** only `vite.config.ts` should exist. Vite loads `vite.config.js` before `.ts`, so a stray emitted `.js` would silently override it for dev/build. `tsconfig.node.json` sends its declaration output to `node_modules/.tmp/` for this reason.
 - **Svelte 5 touch events:** `ontouchstart`/`ontouchmove` handlers are passive, so `preventDefault()` is ignored — use CSS `touch-action` instead.
 - **Build:** `bust.js` patches `dist/index.html` after `vite build`: it sets `baseURL` to production, `appIsProduction = true`, and `appVersionKey` to a timestamp. Running `vite build` alone leaves a dev-configured `dist/`. Do not manually edit `dist/index.html`. `bust.js` uses Windows paths.
+
+## Known issues to ignore
+
+Don't report or fix these in reviews:
+
+- **Soft-deleted pics stay in the Curation carousel:** `updatePicItem` in `Curation.svelte` removes a pic only when it was destroyed (`fileName === ""` and `isDeleted`). A pic flagged "Is Deleted" from the edit bar stays visible until reload. This is intentional.

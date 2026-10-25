@@ -82,7 +82,7 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		min-width: 400px;
+		min-width: min(400px, 90vw);
 		min-height: 200px;
 		max-width: 90vw;
 		max-height: 90vh;

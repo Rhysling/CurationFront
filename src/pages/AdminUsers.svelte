@@ -71,7 +71,7 @@
 		const ok = await postUpdatePw(ul);
 		if (!ok) return false;
 		const ix = userList.findIndex(
-			(u) => u.email.toLocaleLowerCase() === ul.email.toLowerCase(),
+			(u) => u.email.toLocaleLowerCase() === ul.email.toLocaleLowerCase(),
 		);
 		if (ix >= 0) userList[ix].hasPw = true;
 		return true;
@@ -80,24 +80,26 @@
 	loadList();
 </script>
 
-<div class="title">Admin Users</div>
+<div class="admin-users-page">
+	<div class="title">Admin Users</div>
 
-<div class="user-list">
-	{#each userList as user (user.id)}
-		<EditUser
-			userIn={user}
-			{userList}
-			{isListEditMode}
-			{editingUserId}
-			{setEditMode}
-			{saveUser}
-			{destroyUser}
-			{openSetPw}
-		/>
-	{/each}
+	<div class="user-list">
+		{#each userList as user (user.id)}
+			<EditUser
+				userIn={user}
+				{userList}
+				{isListEditMode}
+				{editingUserId}
+				{setEditMode}
+				{saveUser}
+				{destroyUser}
+				{openSetPw}
+			/>
+		{/each}
+	</div>
+
+	<Menu />
 </div>
-
-<Menu />
 
 {#if isEditPw}
 	<EditPw userIn={userSetPw} {savePw} {openSetPw} />
@@ -105,6 +107,12 @@
 
 <style lang="scss">
 	@use "../styles/custom-variables" as c;
+
+	// App's .page clips to the viewport; this page scrolls within it instead
+	.admin-users-page {
+		height: 100%;
+		overflow-y: auto;
+	}
 
 	.title {
 		font-size: 2rem;

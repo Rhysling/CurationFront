@@ -18,16 +18,16 @@ type FetchIntercepts = Record<number, (response: Response) => Promise<void>>;
 
 function createFetcher(defaultHeaders: FetchHeaders = {}, intercepts: FetchIntercepts = {}) {
 
-	const fetcher = async (path: string, method: FetchMethod, options: FetchOptions = {}, isFormData = false) => {
+	const fetcher = async (path: string, method: FetchMethod, options: FetchOptions = {}) => {
 		const url = `${baseURL}${path}`;
 
+		// Only JSON bodies get a Content-Type. On a bodyless GET it would force a CORS
+		// preflight, and FormData needs the browser to set it with the proper boundary.
 		const headers: FetchHeaders = {
-			"Content-Type": "application/json",
+			...(typeof options.body === "string" ? { "Content-Type": "application/json" } : {}),
 			...defaultHeaders,
 			...options.headers,
 		};
-
-		if (isFormData) delete headers["Content-Type"]; // Let browser set it with proper boundary
 
 		const response = await globalThis.fetch(url, { method, ...options, headers });
 
@@ -43,7 +43,7 @@ function createFetcher(defaultHeaders: FetchHeaders = {}, intercepts: FetchInter
 		return fetcher(path, "POST", { ...options, ...body });
 	};
 	fetcher.postFormData = (path: string, value: FormData, options: FetchOptions = {}) => {
-		return fetcher(path, "POST", { ...options, body: value }, true);
+		return fetcher(path, "POST", { ...options, body: value });
 	};
 	// fetcher.put = (path: string, options: Omit<FetchOptions, "body"> = {}) => fetcher(path, "PUT", options);
 	// fetcher.delete = (path: string, options: Omit<FetchOptions, "body"> = {}) => fetcher(path, "DELETE", options);
@@ -56,7 +56,8 @@ const intercepts: FetchIntercepts = {
 		logOut();
 	},
 	403: async (response) => {
-		console.warn("Permission denied:", await response.clone().json());
+		// .text(), not .json(): a 403 body is often empty or plain text.
+		console.warn("Permission denied:", await response.clone().text());
 	},
 	429: async (response) => {
 		const retryAfter = response.headers.get("Retry-After");

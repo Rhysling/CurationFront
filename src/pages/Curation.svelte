@@ -14,9 +14,8 @@
 		getSlug,
 		orderBySeq as applyOrderBySeq,
 		orderByTs as applyOrderByTs,
-		mapKeywordsAll,
-		getKeywordsList,
 	} from "../js/utils";
+	import { mapKeywordsAll, getKeywordsList } from "../js/keyword-ops";
 	import Carousel from "../components/carousel/Carousel.svelte";
 	import Modal from "../components/Modal.svelte";
 	import Menu from "../components/Menu.svelte";
@@ -207,7 +206,7 @@
 			{#snippet prev(x)}
 				<button
 					title="Previous"
-					class={`prev ${!x.canScrollPrev ? "opacity-50 cursor-not-allowed" : ""}`}
+					class={"prev"}
 					onclick={x.prev}
 					disabled={!x.canScrollPrev}
 				>
@@ -260,6 +259,7 @@
 		{keyword}
 		{setKeyword}
 		{keywordsList}
+		picList={picListMaster}
 		{updatePicItem}
 	/>
 	{#if user.value.isAdmin}
@@ -395,7 +395,7 @@
 
 	.big-picture {
 		width: 90vw;
-		height: 90vw;
+		height: 90vh;
 	}
 
 	.modal-img {

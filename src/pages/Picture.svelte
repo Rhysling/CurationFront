@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import { getPicBySlug } from "../js/db-ops";
-	import { pageState } from "../stores/route-store.svelte";
+	import { pageState, navTo } from "../stores/route-store.svelte";
 
 	let slug = $derived(pageState.paramObj.p);
 	let pic: PictureItem | undefined = $state();
@@ -114,19 +114,34 @@
 </div>
 
 {#if pic?.link}
-	<div class="description">
+	<div class="title">
 		<a href={pic.link} target="_blank" rel="noopener noreferrer"
-			>{pic.description || "Link"}</a
+			>{pic.title || "Link"}</a
 		>
 	</div>
-{:else if pic?.description}
+{:else if pic?.title}
+	<div class="title">
+		{pic.title}
+	</div>
+{/if}
+
+{#if pic?.description && pic.description !== pic.title}
 	<div class="description">
 		{pic.description}
 	</div>
 {/if}
 
 <div class="to-curation">
-	<a href={fileName ? "/curation?p=" + slug : "/curation"}>Go to Curation</a>
+	<a
+		href={fileName ? "/curation?p=" + slug : "/curation"}
+		onclick={(e) => {
+			// Leave modified clicks (new tab/window) to the browser.
+			if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+			navTo(e, "/curation", fileName && slug ? { p: slug } : undefined);
+			// Like a URL load: stops CurationMenu overwriting p before Curation jumps to it.
+			pageState.isNavFromUrl = true;
+		}}>Go to Curation</a
+	>
 </div>
 
 {#if modalOpen && fileName}
@@ -212,7 +227,7 @@
 		background-color: white;
 		max-width: min(800px, 92vw);
 		max-height: 80vh;
-		margin: 1.5rem auto;
+		margin: 1.5rem auto 1rem;
 		padding: 1rem;
 
 		.zoom-btn {
@@ -232,10 +247,20 @@
 		}
 	}
 
+	.title {
+		text-align: center;
+		font-size: 1.2rem;
+		font-weight: bold;
+		margin: 0;
+	}
+
 	.description {
 		text-align: center;
-		font-size: 2rem;
-		font-weight: bold;
+		font-size: 1rem;
+		font-style: italic;
+		text-wrap: balance;
+		margin: 0.5rem 1rem 0;
+		padding: 0 2rem;
 	}
 
 	.not-found {
@@ -245,7 +270,7 @@
 
 	.to-curation {
 		text-align: center;
-		margin: 1rem auto;
+		margin: 0.5rem 1rem 0;
 	}
 
 	.modal-overlay {

@@ -8,9 +8,11 @@
 	let {
 		isOpen = $bindable(true),
 		picItem,
+		picList,
 		updatePicItem,
 	}: {
 		picItem: PictureItem;
+		picList: PictureItem[];
 		isOpen: boolean;
 		updatePicItem: (pi: PictureItem) => void;
 	} = $props();
@@ -62,7 +64,7 @@
 	<div class="wrap">
 		<EditPic
 			{picItem}
-			picList={[]}
+			{picList}
 			isListEditMode={true}
 			isEditOnly={true}
 			editingPicId={picItem.id}
@@ -88,7 +90,7 @@
 		border-radius: 0.5rem;
 		//background-color: rgb(from c.$main-color r g b / 0.5);
 		//background-color: hsla(from c.$main-color calc(h + 240) s l / 0.5);
-		background-color: rgb(from #fff r g b / 0.5);
+		background-color: rgb(from #fff r g b / 0.8);
 
 		> :global(.pic-info) {
 			border: 2px solid c.$main-color;

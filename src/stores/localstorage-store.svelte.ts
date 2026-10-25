@@ -16,9 +16,18 @@ export const localStore = <T extends JsonValue | null>(key: string, initial: T |
 	};
 
 
+	// Runs at module load, so a malformed stored value must not throw.
 	const retrieveItem = (): T | null => {
-		const v = localStorage.getItem(key);
-		return v ? toObj(v) as T : null;
+		if (!isLocalStorage) return null;
+
+		try {
+			const v = localStorage.getItem(key);
+			return v ? toObj(v) as T : null;
+		} catch (error) {
+			console.error(`Discarding unreadable localStorage "${key}"`, error);
+			localStorage.removeItem(key);
+			return null;
+		}
 	}
 
 	if (initial) {

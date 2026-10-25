@@ -30,6 +30,14 @@
 		navTo(e, "/admin-pics", { pid: pic.id.toString() });
 	};
 
+	const navToCuration = (e: MouseEvent, pic: PictureItem) => {
+		// Leave modified clicks (new tab/window) to the browser.
+		if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+		navTo(e, "/curation", { p: getSlug(pic.fileName) });
+		// Like a URL load: stops CurationMenu overwriting p before Curation jumps to it.
+		pageState.isNavFromUrl = true;
+	};
+
 	$effect(() => {
 		if (!picList.length) return;
 		const pid = pageState.paramObj["pid"];
@@ -74,7 +82,10 @@
 		<div class="carousel-area">
 			{#each picList as p (p.id)}
 				<div class="pic" id={"c2id-" + p.id}>
-					<a href="/curation?p={encodeURIComponent(getSlug(p.fileName))}">
+					<a
+						href="/curation?p={encodeURIComponent(getSlug(p.fileName))}"
+						onclick={(e) => navToCuration(e, p)}
+					>
 						<img
 							class="carousel-img"
 							src={"./pics/" + p.fileName}

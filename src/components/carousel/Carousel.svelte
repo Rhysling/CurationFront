@@ -4,7 +4,6 @@
 
 	let {
 		slides = [],
-		key = undefined,
 		containerClass = "",
 		slideClass = "",
 		slide: slideSnippet,
@@ -21,33 +20,41 @@
 	let dragStartX = 0;
 	let dragging = false;
 
+	// Clamped so a shrunken `slides` never renders an out-of-range slide, even
+	// before the effect below (or a caller's goTo) corrects currentIndex.
+	const ix = $derived(Math.max(0, Math.min(currentIndex, slides.length - 1)));
+
+	// Keep currentIndex in range too, so the carousel doesn't jump back to an old
+	// index if `slides` later grows again.
+	$effect(() => {
+		if (currentIndex !== ix) currentIndex = ix;
+	});
+
 	export const next = () => {
-		if (currentIndex < slides.length - 1) {
+		if (ix < slides.length - 1) {
 			direction = 1;
-			currentIndex++;
+			currentIndex = ix + 1;
 		}
 	};
 
 	export const prev = () => {
-		if (currentIndex > 0) {
+		if (ix > 0) {
 			direction = -1;
-			currentIndex--;
+			currentIndex = ix - 1;
 		}
 	};
 
 	export const goTo = (index: number) => {
 		const clamped = Math.max(0, Math.min(slides.length - 1, index));
-		direction = clamped >= currentIndex ? 1 : -1;
+		direction = clamped >= ix ? 1 : -1;
 		currentIndex = clamped;
 	};
 
-	export const getCurrentSlide = () => currentIndex;
+	export const getCurrentSlide = () => ix;
 
-	const canScrollNext = $derived(currentIndex < slides.length - 1);
-	const canScrollPrev = $derived(currentIndex > 0);
-	const dots = $derived(
-		slides.map((_, i) => ({ active: i === currentIndex, index: i })),
-	);
+	const canScrollNext = $derived(ix < slides.length - 1);
+	const canScrollPrev = $derived(ix > 0);
+	const dots = $derived(slides.map((_, i) => ({ active: i === ix, index: i })));
 
 	// Entering slide: translate in from off-screen, stays in normal flow to provide height.
 	function slideIn(node: HTMLElement, { dir }: { dir: number }) {
@@ -117,19 +124,19 @@
 				dragging = false;
 			}}
 			role="region"
-			aria-label="Slide {currentIndex + 1} of {slides.length}"
+			aria-label="Slide {ix + 1} of {slides.length}"
 		>
-			{#key currentIndex}
+			{#key ix}
 				<div
 					class="c2-slide {slideClass}"
-					aria-label="Slide {currentIndex + 1} of {slides.length}"
+					aria-label="Slide {ix + 1} of {slides.length}"
 					aria-roledescription="slide"
 					in:slideIn={{ dir: direction }}
 					out:slideOut={{ dir: -direction }}
 				>
 					{@render slideSnippet({
-						slide: slides[currentIndex],
-						index: currentIndex,
+						slide: slides[ix],
+						index: ix,
 					})}
 				</div>
 			{/key}

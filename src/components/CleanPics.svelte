@@ -55,7 +55,7 @@
 		<span>Missing={isChecked ? missingCount : "??"}</span>
 		<span>Orphans={isChecked ? orphanCount : "??"}</span> --
 		<button onclick={cleanPics} disabled={isListEditMode}>Clean List</button>
-		<button onclick={resequencePics}>Resequence</button>
+		<button onclick={resequencePics} disabled={isListEditMode}>Resequence</button>
 	</div>
 	{#if orphanCount > 0}
 		{#each auditList.orphans as pic}
