@@ -52,7 +52,7 @@
 		}
 	};
 
-	const setKeyword = (kw: string) => {
+	const setKeyword = (kw: string, picId: number) => {
 		// keywordsAll is all lowercase, so match case-insensitively.
 		keyword = kw.trim().toLowerCase();
 		updateQueryStringParam("keyword", keyword || undefined);
@@ -60,10 +60,11 @@
 			picList = picListMaster.filter((pic) =>
 				pic.keywordsAll?.includes(keyword),
 			);
+			carousel?.goTo(0);
 		} else {
 			picList = picListMaster;
+			carousel?.goTo(picList.findIndex((pic) => pic.id === picId));
 		}
-		carousel?.goTo(0);
 	};
 
 	$effect(() => {

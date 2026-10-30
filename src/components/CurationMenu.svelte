@@ -33,7 +33,7 @@
 		slideCount: number;
 		currentPic: PictureItem | null;
 		keyword: string;
-		setKeyword: (kw: string) => void;
+		setKeyword: (kw: string, picId: number) => void;
 		keywordsList?: string[];
 		picList: PictureItem[];
 		updatePicItem: (pi: PictureItem) => void;
@@ -66,7 +66,7 @@
 		keywordInput = kw;
 		showSuggestions = false;
 		ixSuggestion = -1;
-		if (kw.trim()) setKeyword(kw.trim());
+		if (kw.trim()) setKeyword(kw.trim(), 0);
 		showKeywordSearch = false;
 	};
 
@@ -132,7 +132,7 @@
 			onclick={(e) => {
 				e.preventDefault();
 				keywordInput = "";
-				setKeyword("");
+				setKeyword("", currentPic?.id || 0);
 			}}>Clear</a
 		>
 	</div>
