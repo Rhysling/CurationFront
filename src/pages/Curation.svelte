@@ -176,11 +176,15 @@
 			bind:this={carousel}
 			slides={picList}
 			containerClass={"carousel-container"}
+			slideClass={"curation-slide"}
 		>
 			{#snippet slide({ slide })}
 				<img
 					class="carousel-img"
-					style:max-height={slide.description || slide.link ? "62vh" : "67vh"}
+					style:max-height={(slide.description && slide.description !== slide.title) ||
+					slide.link
+						? "62vh"
+						: "67vh"}
 					src={"./pics/" + slide.fileName}
 					alt={slide.description}
 					loading="lazy"
@@ -195,7 +199,7 @@
 							>{slide.title || "Link"}</a
 						>
 					</div>
-				{:else}
+				{:else if slide.title}
 					<div class="slide-title">{slide.title}</div>
 				{/if}
 				{#if slide.description && slide.title != slide.description}
@@ -298,6 +302,11 @@
 		height: 100%;
 		min-height: 0;
 		padding: 0.3rem 0.3rem 0;
+	}
+
+	:global(.curation-slide) {
+		gap: 0.5rem;
+		padding-bottom: 0.5rem;
 	}
 
 	.page-content {
@@ -419,8 +428,8 @@
 
 	.slide-title {
 		text-align: center;
-		margin: 0.5rem auto 0;
-		font-size: 1.2rem;
+		margin: 0 auto;
+		font-size: 1.1rem;
 		text-wrap: balance;
 		color: c.$body-text;
 		flex: none;
@@ -428,7 +437,7 @@
 
 	.slide-description {
 		text-align: center;
-		margin: 0.5rem auto 1rem;
+		margin: 0 auto;
 		font-size: 1rem;
 		font-style: italic;
 		text-wrap: balance;
