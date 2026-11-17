@@ -138,28 +138,30 @@
 	</div>
 {/if}
 
-{#if showEditPicBar && user.value.isAdmin}
+{#if showEditPicBar}
 	<div class="edit-pic-bar">
 		{#if currentPic}
 			{currentSlug}: {currentPic.keywords.join(",") || "(no keywords)"}
 		{:else}
 			(no picture)
 		{/if}
-		-
-		<a
-			href="/"
-			onclick={(e) => {
-				e.preventDefault();
-				if (currentPic) isOpenEditPic = true;
-			}}>Edit</a
-		>
+		{#if user.value.isAdmin}
+			-
+			<a
+				href="/"
+				onclick={(e) => {
+					e.preventDefault();
+					if (currentPic) isOpenEditPic = true;
+				}}>Edit</a
+			>
+		{/if}
 		-
 		<a
 			href="/"
 			onclick={(e) => {
 				e.preventDefault();
 				showEditPicBar = false;
-			}}>Close</a
+			}}>Hide</a
 		>
 	</div>
 {/if}
