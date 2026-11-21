@@ -1,6 +1,7 @@
 <svelte:options runes={true} />
 
 <script lang="ts">
+	import { navTo } from "../stores/route-store.svelte";
 	import { getName } from "../stores/user-store.svelte";
 	import { getBaseURL } from "../js/utils";
 	import SignIn from "./SignIn.svelte";
@@ -15,11 +16,18 @@
 		isOpenModal = true;
 	};
 
-	let yr = new Date().getFullYear() - 2000;
+	let yr = new Date().getFullYear();
 </script>
 
 <footer>
-	&copy;2001-{yr} Polson Company |
+	&copy;1885-{yr}
+	<a
+		href="/"
+		onclick={(e) => {
+			navTo(e, "/");
+		}}>Polson Company</a
+	>
+	|
 	<a href={rssUrl} target="_blank" rel="noopener noreferrer">RSS</a>
 	| <a href="/" onclick={login}>{displayName}</a>
 </footer>
