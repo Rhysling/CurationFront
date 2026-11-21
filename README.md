@@ -52,8 +52,7 @@ Routes:
 | `/curation2` | Curation2 | Admin |
 | `/picture` | Picture | Public (hidden from nav) |
 | `/admin-pics` | AdminPics | Admin |
-| `/admin-users` | AdminUsers | Admin |
-| `/admin-dbs` | AdminDbs | Admin |
+| `/admin` | Admin (tabs: Users, Databases, Keywords; `?tab=users\|dbs\|keywords`) | Admin |
 | `/testing` | Testing | Admin |
 
 Admin routes are stripped from the nav for non-admin users.
@@ -84,9 +83,8 @@ Endpoints are relative (`/api/...`) combined with the `baseURL` global injected 
 | `Curation2.svelte` | Alternate gallery view (admin) |
 | `Picture.svelte` | Single picture detail view |
 | `AdminPics.svelte` | Picture CRUD — file upload via drag-and-drop, edit metadata |
-| `AdminUsers.svelte` | User management |
-| `AdminDbs.svelte` | Database admin utilities |
-| `Testing.svelte` | Dev test sandbox |
+| `Admin.svelte` | Tabbed admin page: user management, database backup/restore, keyword list |
+| `Testing.svelte` | Dev test sandbox (admin and secured value checks) |
 
 ### Key Components
 
@@ -96,6 +94,7 @@ Endpoints are relative (`/api/...`) combined with the `baseURL` global injected 
 - **`PicDrop.svelte`** — file drop zone (wraps `svelte-file-dropzone`)
 - **`CleanPics.svelte`** — audit and clean orphaned/missing picture files
 - **`EditUser.svelte`** / **`EditPw.svelte`** — user and password editors
+- **`AdminUsersTab.svelte`** / **`AdminDbsTab.svelte`** / **`AdminKeywordsTab.svelte`** — the Admin page's tabs
 - **`Menu.svelte`** / **`CurationMenu.svelte`** — navigation menus
 
 ### State Pattern

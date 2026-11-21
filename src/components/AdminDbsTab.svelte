@@ -8,7 +8,6 @@
 		postRestore,
 		postDelete,
 	} from "../js/db-admin-ops";
-	import Menu from "../components/Menu.svelte";
 
 	let dbList: string[] = $state([]);
 
@@ -76,74 +75,54 @@
 	loadDbList();
 </script>
 
-<div class="admin-dbs-page">
-	<div class="title">Admin Databases</div>
-
-	<div class="list">
-		<div class="list-title">Database Backup List</div>
-		<div>&nbsp;</div>
-		<div>&nbsp;</div>
-		<div>&nbsp;</div>
-		{#each dbList as item (item)}
-			<div>{item}</div>
-			<div>
+<div class="list">
+	<div class="list-title">Database Backup List</div>
+	<div>&nbsp;</div>
+	<div>&nbsp;</div>
+	<div>&nbsp;</div>
+	{#each dbList as item (item)}
+		<div>{item}</div>
+		<div>
+			<a
+				href="/"
+				onclick={async (e: Event) => {
+					e.preventDefault();
+					downloadAndSave(item);
+				}}>Download</a
+			>
+		</div>
+		<div>
+			{#if item.indexOf("_") > 0}
 				<a
 					href="/"
 					onclick={async (e: Event) => {
 						e.preventDefault();
-						downloadAndSave(item);
-					}}>Download</a
+						if (confirm(`Restore ${item}?`)) await restoreDb(item);
+					}}>Restore</a
 				>
-			</div>
-			<div>
-				{#if item.indexOf("_") > 0}
-					<a
-						href="/"
-						onclick={async (e: Event) => {
-							e.preventDefault();
-							if (confirm(`Restore ${item}?`)) await restoreDb(item);
-						}}>Restore</a
-					>
-				{/if}
-			</div>
-			<div>
-				{#if item.indexOf("_") > 0}<a
-						href="/"
-						onclick={async (e: Event) => {
-							e.preventDefault();
-							if (confirm(`Delete ${item}?`)) await deleteDb(item);
-						}}>Delete</a
-					>
-				{/if}
-			</div>
-		{/each}
-		<div>
-			<button onclick={backupDb}>Backup Db</button>
+			{/if}
 		</div>
-		<div>&nbsp;</div>
-		<div>&nbsp;</div>
-		<div>&nbsp;</div>
+		<div>
+			{#if item.indexOf("_") > 0}<a
+					href="/"
+					onclick={async (e: Event) => {
+						e.preventDefault();
+						if (confirm(`Delete ${item}?`)) await deleteDb(item);
+					}}>Delete</a
+				>
+			{/if}
+		</div>
+	{/each}
+	<div>
+		<button onclick={backupDb}>Backup Db</button>
 	</div>
-
 	<div>&nbsp;</div>
-	<Menu />
+	<div>&nbsp;</div>
+	<div>&nbsp;</div>
 </div>
 
 <style lang="scss">
 	@use "../styles/custom-variables" as c;
-
-	// App's .page clips to the viewport; this page scrolls within it instead
-	.admin-dbs-page {
-		height: 100%;
-		overflow-y: auto;
-	}
-
-	.title {
-		font-size: 2rem;
-		font-weight: bold;
-		text-align: center;
-		margin: 1rem auto;
-	}
 
 	.list {
 		display: grid;
@@ -165,8 +144,5 @@
 		button {
 			margin: 1rem 0;
 		}
-	}
-
-	@media only screen and (width <= c.$bp-small) {
 	}
 </style>

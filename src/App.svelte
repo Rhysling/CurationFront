@@ -10,8 +10,7 @@
 	import Curation from "./pages/Curation.svelte";
 	import Curation2 from "./pages/Curation2.svelte";
 	import AdminPics from "./pages/AdminPics.svelte";
-	import AdminUsers from "./pages/AdminUsers.svelte";
-	import AdminDbs from "./pages/AdminDbs.svelte";
+	import Admin from "./pages/Admin.svelte";
 	import Picture from "./pages/Picture.svelte";
 	import Testing from "./pages/Testing.svelte";
 
@@ -23,8 +22,7 @@
 		Curation,
 		Curation2,
 		AdminPics,
-		AdminUsers,
-		AdminDbs,
+		Admin,
 		Picture,
 		Testing,
 	};

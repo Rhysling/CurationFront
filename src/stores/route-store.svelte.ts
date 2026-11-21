@@ -25,16 +25,9 @@ const baseRoutes: Route = {
 			children: []
 		},
 		{
-			title: "Admin Users",
-			page: "AdminUsers",
-			path: "/admin-users",
-			isAdmin: true,
-			children: []
-		},
-		{
-			title: "Admin Dbs",
-			page: "AdminDbs",
-			path: "/admin-dbs",
+			title: "Admin",
+			page: "Admin",
+			path: "/admin",
 			isAdmin: true,
 			children: []
 		},
