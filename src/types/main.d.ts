@@ -28,4 +28,4 @@ type UserSettings = {
 	isNewestFirst: boolean;
 };
 
-type Db = "PicturesDb" | "UsersDb";
+type Db = "PicturesDb" | "UsersDb" | "TrafficDb";

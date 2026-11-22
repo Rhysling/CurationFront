@@ -11,6 +11,7 @@
 	import Curation2 from "./pages/Curation2.svelte";
 	import AdminPics from "./pages/AdminPics.svelte";
 	import Admin from "./pages/Admin.svelte";
+	import Traffic from "./pages/Traffic.svelte";
 	import Picture from "./pages/Picture.svelte";
 	import Testing from "./pages/Testing.svelte";
 
@@ -23,6 +24,7 @@
 		Curation2,
 		AdminPics,
 		Admin,
+		Traffic,
 		Picture,
 		Testing,
 	};

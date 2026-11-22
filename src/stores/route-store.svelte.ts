@@ -1,4 +1,5 @@
 import { user } from "./user-store.svelte";
+import { trackPageview } from "../js/tracker";
 
 const baseRoutes: Route = {
 	title: "Home",
@@ -28,6 +29,13 @@ const baseRoutes: Route = {
 			title: "Admin",
 			page: "Admin",
 			path: "/admin",
+			isAdmin: true,
+			children: []
+		},
+		{
+			title: "Traffic",
+			page: "Traffic",
+			path: "/traffic",
 			isAdmin: true,
 			children: []
 		},
@@ -133,6 +141,7 @@ export const navFromUrl = function () {
 	pageState.paramObj = p;
 	pageState.isNavFromUrl = true;
 	document.title = `Polson-${routes.currentRoute.title}`;
+	trackPageview(pageState.path, routes.currentRoute.page, pageState.paramObj);
 };
 
 export const navTo = function (e: MouseEvent | null, path: string, params?: Record<string, string>) {
@@ -148,6 +157,7 @@ export const navTo = function (e: MouseEvent | null, path: string, params?: Reco
 	pageState.paramObj = params || {};
 	pageState.isNavFromUrl = false;
 	document.title = `Polson-${routes.currentRoute.title}`;
+	trackPageview(pageState.path, routes.currentRoute.page, pageState.paramObj);
 
 	window.scroll({
 		top: 0,

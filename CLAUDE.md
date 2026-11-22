@@ -23,7 +23,7 @@ Run a single unit test file: `npx vitest --run src/js/utils.test.ts`
 
 **Routing:** Client-side only (no SvelteKit). [src/stores/route-store.svelte.ts](src/stores/route-store.svelte.ts) owns the route tree, syncs with `window.history`, and handles the back button. For non-admins the admin routes are filtered out of the tree, so an admin path falls back to Home. [src/App.svelte](src/App.svelte) maps the current route's `page` to a component.
 
-**Query-string state:** Use `updateQueryStringParam(key, value)` to keep the URL in sync — it uses `replaceState` (no history entry) and updates `pageState.paramObj`; pass `undefined` to remove a param. Params in use: `p` (picture slug), `keyword`, `newest`, `pid` (admin scroll target), `tab` (Admin page tab). `pageState.isNavFromUrl` marks navigation that came from the URL/back button so effects don't echo it back.
+**Query-string state:** Use `updateQueryStringParam(key, value)` to keep the URL in sync — it uses `replaceState` (no history entry) and updates `pageState.paramObj`; pass `undefined` to remove a param. Params in use: `p` (picture slug), `keyword`, `newest`, `pid` (admin scroll target), `tab` (Admin/Traffic page tab), `range` (Traffic date range; absent = `30d`). `pageState.isNavFromUrl` marks navigation that came from the URL/back button so effects don't echo it back.
 
 **Slugs:** A picture's slug is its file name minus extension — always use `getSlug()` from [src/js/utils.ts](src/js/utils.ts) and match exactly (a prefix match makes `cuisine` resolve to `cuisine-popularity.png`).
 
@@ -37,6 +37,8 @@ Run a single unit test file: `npx vitest --run src/js/utils.test.ts`
 - Exceptions: `postSaveUser`/`postDestroyUser` return the server's 400 text as a validation message; `postDestroyPic` returns the raw `Response`.
 - Endpoints are `/api/...` prefixed with the `baseURL` global from `index.html` (dev `https://localhost:7212`, production `https://polson.com`).
 
+**Traffic tracking:** [src/js/tracker.ts](src/js/tracker.ts) sends cookieless pageview/leave beacons, called from `navTo`/`navFromUrl` in route-store. It uses bare `sendBeacon`/`fetch` (never `getFetchClient`) as a `text/plain` body, so there's no token, no CORS preflight and no 401 logout. It sends nothing for admins or when `navigator.webdriver` is set (Puppeteer). It must import only `user-store`, never `route-store` (import cycle). Reports are in [src/js/db-traffic-ops.ts](src/js/db-traffic-ops.ts). The backend contract is [docs/traffic-backend.md](docs/traffic-backend.md); keep it in sync with [src/types/traffic.d.ts](src/types/traffic.d.ts).
+
 **Keywords:** `mapKeywordsAll` builds `keywordsAll` from a picture's keywords, file name and title — all lowercased with empties removed. `getKeywordsList` gives the sorted unique list used for autocomplete in `CurationMenu`. Keyword matching is exact against lowercase, so lowercase user input before filtering.
 
 **Pages** ([src/pages/](src/pages/)):
@@ -45,6 +47,7 @@ Run a single unit test file: `npx vitest --run src/js/utils.test.ts`
 - `Curation2` — admin grid view linking to edit.
 - `AdminPics` (CRUD + upload via svelte-file-dropzone) — admin-only.
 - `Admin` (`/admin`) — admin-only, tabbed: Users / Databases / Keywords (`AdminUsersTab`, `AdminDbsTab`, `AdminKeywordsTab` in components). Only the active tab is mounted; the tab comes from the `tab` query param.
+- `Traffic` (`/traffic`) — admin-only analytics, tabbed: Overview / Content / Sources / Audience (`components/traffic/`). Shares `components/Tabs.svelte` with `Admin`; charts are hand-rolled SVG (no chart library).
 - `Testing` — admin-only sandbox (admin/secured value checks); intentionally kept.
 
 **Components:** `carousel/Carousel.svelte` is a custom snippet-based carousel (its window ←/→ handler skips form fields). `Modal.svelte` closes on Escape via a window listener unless `disableHideModal`. `EditPic`/`EditUser` keep a local copy of the row and re-sync it from props via `$effect` except while editing.
