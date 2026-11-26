@@ -104,7 +104,7 @@ export const trackPageview = (path: string, page: string, params: Record<string,
 			path,
 			page,
 			pic: nonEmpty(params["p"]),
-			keyword: nonEmpty(params["keyword"]?.trim().toLowerCase()),
+			keyword: nonEmpty(params["kw"]?.trim().toLowerCase()),
 			sw: window.innerWidth,
 			lang: navigator.language,
 		};

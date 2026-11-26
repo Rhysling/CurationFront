@@ -23,7 +23,7 @@ Run a single unit test file: `npx vitest --run src/js/utils.test.ts`
 
 **Routing:** Client-side only (no SvelteKit). [src/stores/route-store.svelte.ts](src/stores/route-store.svelte.ts) owns the route tree, syncs with `window.history`, and handles the back button. For non-admins the admin routes are filtered out of the tree, so an admin path falls back to Home. [src/App.svelte](src/App.svelte) maps the current route's `page` to a component.
 
-**Query-string state:** Use `updateQueryStringParam(key, value)` to keep the URL in sync — it uses `replaceState` (no history entry) and updates `pageState.paramObj`; pass `undefined` to remove a param. Params in use: `p` (picture slug), `keyword`, `newest`, `pid` (admin scroll target), `tab` (Admin/Traffic page tab), `range` (Traffic date range; absent = `30d`). `pageState.isNavFromUrl` marks navigation that came from the URL/back button so effects don't echo it back.
+**Query-string state:** Use `updateQueryStringParam(key, value)` to keep the URL in sync — it uses `replaceState` (no history entry) and updates `pageState.paramObj`; pass `undefined` to remove a param. Params in use: `p` (picture slug), `kw` (keyword filter), `newest`, `pid` (admin scroll target), `tab` (Admin/Traffic page tab), `range` (Traffic date range; absent = `30d`). `pageState.isNavFromUrl` marks navigation that came from the URL/back button so effects don't echo it back.
 
 **Slugs:** A picture's slug is its file name minus extension — always use `getSlug()` from [src/js/utils.ts](src/js/utils.ts) and match exactly (a prefix match makes `cuisine` resolve to `cuisine-popularity.png`).
 

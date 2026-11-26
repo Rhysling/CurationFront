@@ -40,7 +40,7 @@ describe('tracker', () => {
 	});
 
 	it('sends a pageview to the collect endpoint with the expected shape', () => {
-		trackPageview('/curation', 'Curation', { p: 'sunset', keyword: ' Food ' });
+		trackPageview('/curation', 'Curation', { p: 'sunset', kw: ' Food ' });
 
 		expect(beacon).toHaveBeenCalledTimes(1);
 		expect(beacon.mock.calls[0][0]).toBe('https://api.test/api/Traffic/Collect');

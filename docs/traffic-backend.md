@@ -99,7 +99,7 @@ If the solution uses EF Core, model these as entities with the same column names
 { "type": "pageview", "v": 1, "pvId": "uuid",
   "path": "/curation", "page": "Curation",
   "pic": "sunset",            // optional: the `p` query param (picture slug)
-  "keyword": "food",          // optional: lowercased `keyword` query param
+  "keyword": "food",          // optional: lowercased `kw` query param
   "ref": "https://www.google.com/search?q=x",   // optional: first pageview of a page load only
   "utmSource": "news", "utmMedium": "email", "utmCampaign": "fall", // optional: first pageview only
   "sw": 1280,                 // window.innerWidth

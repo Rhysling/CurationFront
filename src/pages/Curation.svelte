@@ -33,8 +33,8 @@
 			picListMaster = (await getPicPublicList()) || [];
 			picListMaster = picListMaster.map(mapKeywordsAll);
 
-			if (pageState.paramObj["keyword"])
-				keyword = pageState.paramObj["keyword"].trim().toLowerCase();
+			if (pageState.paramObj["kw"])
+				keyword = pageState.paramObj["kw"].trim().toLowerCase();
 
 			if (keyword) {
 				picList = picListMaster.filter((pic) =>
@@ -55,7 +55,7 @@
 	const setKeyword = (kw: string, picId: number) => {
 		// keywordsAll is all lowercase, so match case-insensitively.
 		keyword = kw.trim().toLowerCase();
-		updateQueryStringParam("keyword", keyword || undefined);
+		updateQueryStringParam("kw", keyword || undefined);
 		if (keyword) {
 			picList = picListMaster.filter((pic) =>
 				pic.keywordsAll?.includes(keyword),
@@ -181,7 +181,8 @@
 			{#snippet slide({ slide })}
 				<img
 					class="carousel-img"
-					style:max-height={(slide.description && slide.description !== slide.title) ||
+					style:max-height={(slide.description &&
+						slide.description !== slide.title) ||
 					slide.link
 						? "62vh"
 						: "67vh"}
