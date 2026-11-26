@@ -41,11 +41,10 @@
 </div>
 
 <style lang="scss">
-	@use "../../styles/custom-variables" as c;
 
 	.tile {
-		background: c.$light-background;
-		border: 1px solid c.$main-color;
+		background: var(--light-background);
+		border: 1px solid var(--main-color);
 		border-radius: 0.5rem;
 		padding: 0.5rem 0.75rem;
 		min-width: 0;
@@ -59,7 +58,7 @@
 	.value {
 		font-size: 1.4rem;
 		font-weight: bold;
-		color: c.$body-text;
+		color: var(--body-text);
 		font-variant-numeric: tabular-nums;
 	}
 
@@ -68,11 +67,11 @@
 		color: #666;
 
 		&.good {
-			color: color-mix(in srgb, c.$color-success 75%, black);
+			color: color-mix(in srgb, var(--color-success) 75%, black);
 		}
 
 		&.bad {
-			color: c.$color-error;
+			color: var(--color-error);
 		}
 
 		.vs {

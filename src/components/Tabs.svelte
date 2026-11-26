@@ -27,7 +27,6 @@
 </div>
 
 <style lang="scss">
-	@use "sass:color";
 	@use "../styles/custom-variables" as c;
 
 	// Folder tabs: inactive tabs are outlined, the active tab is filled and
@@ -40,22 +39,22 @@
 		max-width: 600px;
 		width: 100%;
 		margin: 0 auto;
-		border-bottom: 3px solid c.$main-color;
+		border-bottom: 3px solid var(--main-color);
 		flex: none;
 
 		button {
 			margin: 0;
 			padding: 0.4rem 1rem;
-			color: c.$main-color;
-			background-color: c.$light-background;
-			border: 1px solid c.$main-color;
+			color: var(--main-color);
+			background-color: var(--light-background);
+			border: 1px solid var(--main-color);
 			border-bottom: none;
 			border-radius: 6px 6px 0 0;
 			font-weight: normal;
 
 			&:hover {
-				color: c.$main-darker;
-				background-color: color.adjust(c.$main-lightest, $lightness: 15%);
+				color: var(--main-darker);
+				background-color: hsl(from var(--main-lightest) h s calc(l + 15));
 			}
 
 			// Show the focus ring for keyboard use only, not after a click
@@ -66,7 +65,7 @@
 			&.active,
 			&.active:hover {
 				color: #fff;
-				background-color: c.$main-color;
+				background-color: var(--main-color);
 				background-image: none;
 				font-weight: bold;
 				padding-top: 0.6rem;

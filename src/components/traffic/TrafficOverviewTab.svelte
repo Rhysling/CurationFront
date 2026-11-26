@@ -104,7 +104,6 @@
 </div>
 
 <style lang="scss">
-	@use "../../styles/custom-variables" as c;
 
 	.overview {
 		max-width: 1000px;
@@ -123,22 +122,22 @@
 		justify-content: center;
 		gap: 0.4rem;
 		font-size: 0.9rem;
-		border: 1px dashed c.$main-color;
+		border: 1px dashed var(--main-color);
 		border-radius: 0.5rem;
-		background: c.$light-background;
+		background: var(--light-background);
 
 		.dot {
 			width: 8px;
 			height: 8px;
 			border-radius: 50%;
-			background: c.$color-success;
+			background: var(--color-success);
 		}
 	}
 
 	.chart-box {
 		margin-top: 0.75rem;
-		background: c.$light-background;
-		border: 1px solid c.$main-color;
+		background: var(--light-background);
+		border: 1px solid var(--main-color);
 		border-radius: 0.5rem;
 		padding: 0.75rem;
 	}

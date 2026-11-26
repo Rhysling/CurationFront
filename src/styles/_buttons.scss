@@ -1,5 +1,3 @@
-@use "custom-variables" as c;
-@use "sass:color";
 
 a.button,
 button {
@@ -7,9 +5,9 @@ button {
 	place-items: center;
 	margin: 0 1rem;
 	padding: 0.5rem 1rem;
-	background-color: c.$main-color;
+	background-color: var(--main-color);
 	color: #fff;
-	border: 1px solid c.$dark-background;
+	border: 1px solid var(--dark-background);
 	border-radius: 4px;
 	font-weight: bold;
 	text-decoration: none;
@@ -17,7 +15,7 @@ button {
 
 	&:hover {
 		color: #fff;
-		background-color: c.$link-hover-color;
+		background-color: var(--link-hover-color);
 		text-decoration: none;
 	}
 
@@ -31,16 +29,16 @@ button {
 	}
 
 	&:not(:disabled):focus {
-		outline: 2px solid c.$dark-text;
+		outline: 2px solid var(--dark-text);
 	}
 
 	&:disabled,
 	&.success:disabled,
 	&.secondary:disabled,
 	&.narrow:disabled {
-		color: color.adjust(c.$body-text, $lightness: 50%);
-		background-color: c.$gray-lighter;
-		outline: 1px solid color.adjust(c.$body-text, $lightness: 30%);
+		color: hsl(from var(--body-text) h s calc(l + 50));
+		background-color: var(--gray-lighter);
+		outline: 1px solid hsl(from var(--body-text) h s calc(l + 30));
 		cursor: default;
 	}
 
@@ -49,18 +47,18 @@ button {
 	}
 
 	&.secondary {
-		color: c.$body-background;
-		background-color: c.$main-lighter;
-		border: 1px solid color.adjust(c.$dark-background, $lightness: 25%);
+		color: var(--body-background);
+		background-color: var(--main-lighter);
+		border: 1px solid hsl(from var(--dark-background) h s calc(l + 25));
 	}
 
 	&.success {
-		color: c.$color-success;
-		background-color: c.$color-success-bg;
-		border: 1px solid color.adjust(c.$color-success, $lightness: 25%);
+		color: var(--color-success);
+		background-color: var(--color-success-bg);
+		border: 1px solid hsl(from var(--color-success) h s calc(l + 25));
 
 		&:hover {
-			background-color: color.adjust(c.$color-success-bg, $lightness: -10%);
+			background-color: hsl(from var(--color-success-bg) h s calc(l - 10));
 		}
 	}
 

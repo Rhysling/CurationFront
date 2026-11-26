@@ -50,12 +50,10 @@
 </section>
 
 <style lang="scss">
-	@use "sass:color";
-	@use "../../styles/custom-variables" as c;
 
 	.bar-list {
-		background: c.$light-background;
-		border: 1px solid c.$main-color;
+		background: var(--light-background);
+		border: 1px solid var(--main-color);
 		border-radius: 0.5rem;
 		padding: 0.5rem 0.75rem;
 		font-size: 0.8rem;
@@ -85,7 +83,7 @@
 		.title {
 			font-weight: bold;
 			font-size: 0.85rem;
-			color: c.$body-text;
+			color: var(--body-text);
 		}
 	}
 
@@ -101,7 +99,7 @@
 		.bar {
 			position: absolute;
 			inset: 0 auto 0 0;
-			background: color.adjust(c.$main-lightest, $lightness: 18%);
+			background: hsl(from var(--main-lightest) h s calc(l + 18));
 			border-radius: 0 4px 4px 0;
 		}
 

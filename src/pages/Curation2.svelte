@@ -161,7 +161,7 @@
 	}
 
 	.carousel-frame {
-		border: 3px solid c.$main-color;
+		border: 3px solid var(--main-color);
 		border-radius: 1rem;
 		width: 100%;
 		max-width: min(800px, 90vw);
@@ -209,7 +209,7 @@
 			flex: 0;
 
 			&.deleted {
-				color: c.$color-warning;
+				color: var(--color-warning);
 			}
 		}
 	}

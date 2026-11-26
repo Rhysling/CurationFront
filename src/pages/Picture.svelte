@@ -222,7 +222,7 @@
 		flex-flow: column nowrap;
 		justify-content: center;
 		align-items: center;
-		border: 3px solid c.$main-color;
+		border: 3px solid var(--main-color);
 		border-radius: 1rem;
 		background-color: white;
 		max-width: min(800px, 92vw);

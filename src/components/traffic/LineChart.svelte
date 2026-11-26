@@ -149,7 +149,6 @@
 </div>
 
 <style lang="scss">
-	@use "../../styles/custom-variables" as c;
 
 	.chart {
 		width: 100%;
@@ -159,7 +158,7 @@
 		display: flex;
 		gap: 1rem;
 		font-size: 0.8rem;
-		color: c.$body-text;
+		color: var(--body-text);
 		margin-bottom: 0.25rem;
 
 		.item {
@@ -198,7 +197,7 @@
 
 	.end-label {
 		font-size: 11px;
-		fill: c.$body-text;
+		fill: var(--body-text);
 	}
 
 	.crosshair {
@@ -217,14 +216,14 @@
 		top: 0;
 		transform: translateX(12px);
 		pointer-events: none;
-		background: c.$light-background;
+		background: var(--light-background);
 		border: 1px solid #ccc;
 		border-radius: 4px;
 		box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
 		padding: 0.35rem 0.5rem;
 		font-size: 0.75rem;
 		white-space: nowrap;
-		color: c.$body-text;
+		color: var(--body-text);
 
 		&.flip {
 			transform: translateX(calc(-100% - 12px));

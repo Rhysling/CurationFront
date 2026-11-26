@@ -69,14 +69,13 @@
 </div>
 
 <style lang="scss">
-	@use "../styles/_custom-variables" as c;
 
 	.dz-frame {
 		display: flex;
 		box-sizing: border-box;
 		max-width: 150px;
 		height: auto;
-		border: 2px solid c.$main-color;
+		border: 2px solid var(--main-color);
 		margin: 0;
 	}
 
@@ -86,13 +85,13 @@
 		padding: 1.3rem 0.65rem !important;
 		font-size: 0.9rem;
 		font-weight: bold;
-		color: c.$main-darker !important;
+		color: var(--main-darker) !important;
 		background-color: rgba(255, 255, 255, 0.8) !important;
 		border: none !important;
 		border-radius: 0 !important;
 
 		&:hover {
-			box-shadow: 0 0 6px 6px c.$main-color inset;
+			box-shadow: 0 0 6px 6px var(--main-color) inset;
 		}
 	}
 </style>

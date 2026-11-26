@@ -377,8 +377,8 @@
 		padding: 0;
 		list-style: none;
 		text-align: left;
-		background: c.$light-background;
-		border: 1px solid c.$main-color;
+		background: var(--light-background);
+		border: 1px solid var(--main-color);
 		border-radius: 0.25rem;
 		box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
 		z-index: 20;
@@ -386,10 +386,10 @@
 		li {
 			padding: 0.25rem 0.5rem;
 			cursor: pointer;
-			color: c.$body-text;
+			color: var(--body-text);
 
 			&.active {
-				background: c.$main-color;
+				background: var(--main-color);
 				color: white;
 			}
 		}

@@ -297,7 +297,7 @@
 	@use "../styles/custom-variables" as c;
 
 	:global(.carousel-container) {
-		border: 3px solid c.$main-color;
+		border: 3px solid var(--main-color);
 		border-radius: 0.5rem;
 		width: 100%;
 		height: 100%;
@@ -424,7 +424,7 @@
 		font-size: 1.2rem;
 		font-style: italic;
 		text-align: center;
-		color: c.$body-text;
+		color: var(--body-text);
 	}
 
 	.slide-title {
@@ -432,7 +432,7 @@
 		margin: 0 auto;
 		font-size: 1.1rem;
 		text-wrap: balance;
-		color: c.$body-text;
+		color: var(--body-text);
 		flex: none;
 	}
 
@@ -442,7 +442,7 @@
 		font-size: 1rem;
 		font-style: italic;
 		text-wrap: balance;
-		color: c.$body-text;
+		color: var(--body-text);
 		flex: none;
 	}
 

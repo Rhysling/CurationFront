@@ -383,7 +383,7 @@
 		position: relative;
 		padding: 0.5rem;
 		line-height: 1.8rem;
-		background-color: c.$light-background;
+		background-color: var(--light-background);
 		min-width: 0;
 		overflow-wrap: anywhere;
 
@@ -397,8 +397,8 @@
 		}
 
 		input {
-			// outline: 1px solid c.$color-info;
-			// background-color: c.$color-info-bg;
+			// outline: 1px solid var(--color-info);
+			// background-color: var(--color-info-bg);
 			font-size: 0.9rem;
 			width: min(300px, 70%);
 			padding: 0.2rem 0.4rem;
@@ -448,14 +448,14 @@
 		&.error {
 			font-style: italic;
 			font-weight: bold;
-			color: c.$color-error;
+			color: var(--color-error);
 			margin: 0 1rem 0 0;
 		}
 
 		&.warning {
 			font-style: italic;
 			font-weight: bold;
-			color: c.$color-warning;
+			color: var(--color-warning);
 			margin: 0 1rem 0 0;
 		}
 	}

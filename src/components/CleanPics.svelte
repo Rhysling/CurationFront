@@ -68,7 +68,7 @@
 	@use "../styles/custom-variables" as c;
 
 	.clean-bar {
-		border: 2px solid c.$main-color;
+		border: 2px solid var(--main-color);
 		border-radius: 0.5rem;
 		max-width: 800px;
 		margin: 0.5rem auto;
@@ -87,7 +87,7 @@
 			width: 150px;
 			height: 150px;
 			object-fit: cover;
-			border: 1px solid c.$main-color;
+			border: 1px solid var(--main-color);
 			border-radius: 0.25rem;
 			margin: 0.25rem;
 		}

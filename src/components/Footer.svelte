@@ -36,32 +36,31 @@
 
 <style lang="scss">
 	@use "../styles/_custom-variables" as c;
-	@use "sass:color";
 
 	footer {
 		line-height: 1.2em;
 		padding: 0.5rem 0;
 		font-size: 0.9rem;
-		color: c.$light-text;
-		background-color: c.$dark-background;
+		color: var(--light-text);
+		background-color: var(--dark-background);
 		text-align: center;
 		vertical-align: middle;
 	}
 
 	a {
-		color: c.$link-lightest;
+		color: var(--link-lightest);
 		text-decoration: none;
 		font-size: 0.9rem;
 
 		&:visited {
-			color: c.$link-lightest;
+			color: var(--link-lightest);
 		}
 
 		&:hover,
 		&:focus {
 			background: none;
 			border: none;
-			color: color.adjust(c.$link-lightest, $lightness: 15%);
+			color: hsl(from var(--link-lightest) h s calc(l + 15));
 			text-decoration: none;
 		}
 	}

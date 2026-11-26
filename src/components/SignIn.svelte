@@ -116,7 +116,6 @@
 
 <style lang="scss">
 	@use "../styles/_custom-variables" as c;
-	@use "sass:color";
 
 	.title {
 		font-size: 1.75rem;
@@ -131,8 +130,8 @@
 		flex-wrap: nowrap;
 		align-items: center;
 		padding: 1.2rem;
-		background-color: c.$body-background;
-		border: 2px solid c.$main-darker;
+		background-color: var(--body-background);
+		border: 2px solid var(--main-darker);
 		border-radius: 0.5rem;
 		box-shadow: 2px 2px 2px 1px rgb(0 0 0 / 20%);
 		width: min(400px, 80vw);
@@ -149,7 +148,7 @@
 
 	.error {
 		margin: 0.25rem 0 0;
-		color: c.$color-error;
+		color: var(--color-error);
 		font-size: 0.85rem;
 	}
 

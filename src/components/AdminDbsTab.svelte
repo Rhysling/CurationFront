@@ -122,7 +122,6 @@
 </div>
 
 <style lang="scss">
-	@use "../styles/custom-variables" as c;
 
 	.list {
 		display: grid;
@@ -130,7 +129,7 @@
 		gap: 0;
 		max-width: 600px;
 		margin: 1rem auto;
-		border: 1px solid c.$main-color;
+		border: 1px solid var(--main-color);
 		border-radius: 0.5rem;
 		font-size: 0.8rem;
 

@@ -92,12 +92,11 @@
 </div>
 
 <style lang="scss">
-	@use "../styles/custom-variables" as c;
 
 	.keyword-list {
 		max-width: 600px;
 		margin: 1rem auto;
-		border: 3px solid c.$main-color;
+		border: 3px solid var(--main-color);
 		border-radius: 0.5rem;
 		padding: 0.5rem;
 

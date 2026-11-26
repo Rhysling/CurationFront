@@ -41,7 +41,6 @@
 </div>
 
 <style lang="scss">
-	@use "../styles/_custom-variables" as c;
 
 	.modal {
 		position: fixed;

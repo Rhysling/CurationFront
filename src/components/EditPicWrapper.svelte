@@ -88,12 +88,12 @@
 		gap: 1rem;
 		padding: 2rem;
 		border-radius: 0.5rem;
-		//background-color: rgb(from c.$main-color r g b / 0.5);
-		//background-color: hsla(from c.$main-color calc(h + 240) s l / 0.5);
+		//background-color: rgb(from var(--main-color) r g b / 0.5);
+		//background-color: hsla(from var(--main-color) calc(h + 240) s l / 0.5);
 		background-color: rgb(from #fff r g b / 0.8);
 
 		> :global(.pic-info) {
-			border: 2px solid c.$main-color;
+			border: 2px solid var(--main-color);
 			border-radius: 0.5rem;
 		}
 	}
