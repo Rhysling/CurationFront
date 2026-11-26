@@ -10,5 +10,8 @@ export default defineConfig({
 	test: {
 		environment: 'jsdom',
 		globals: true,
+		// The default pool fails every suite here ("Vitest failed to find the current
+		// suite") with vitest 5.1.1 on Node 24; the vm pool works.
+		pool: 'vmThreads',
 	}
 });
