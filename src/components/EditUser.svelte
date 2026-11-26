@@ -279,7 +279,7 @@
 		&.warning {
 			font-style: italic;
 			font-weight: bold;
-			color: var(--color-warning);
+			color: var(--color-warning-text);
 			margin: 0 1rem 0 0;
 		}
 	}

@@ -129,7 +129,7 @@
 
 	.error {
 		margin: 0.25rem 0 0;
-		color: var(--color-error);
+		color: var(--color-error-text);
 		font-size: 0.85rem;
 	}
 

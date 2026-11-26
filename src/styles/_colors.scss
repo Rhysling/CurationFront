@@ -1,42 +1,34 @@
 // Color palette as CSS custom properties. Emitted once, from global.scss.
 // Derived shades use relative color syntax so they follow their base color.
+// *-text variants are darkened for readable text (>= 4.5:1); use the base
+// colors for borders and fills.
 :root {
-	--brand-100: #75dcff;
-	--brand-200: #00a5e2;
-	--brand-300: #006ba6;
-	--brand-400: #00355a;
-
-	--main-lightest: var(--brand-100);
-	--main-lighter: var(--brand-200);
-	--main-color: var(--brand-300);
-	--main-darker: var(--brand-400);
+	--main-lightest: #75dcff;
+	--main-lighter: #00a5e2;
+	--main-color: #006ba6;
+	--main-darker: #00355a;
 
 	--body-text: #222222;
 	--body-background: #e6e6e6;
-	--dark-text: #2d3e50;
 	--light-text: #aaaaaa;
 	--light-background: #ffffff;
-	--dark-background: #2d3e50;
+	--dark-color: #2d3e50;
 	--disabled-text: #999999;
 
 	--color-success: rgb(28, 184, 65);
 	--color-success-bg: hsl(from var(--color-success) h s calc(l + 50));
+	--color-success-text: color-mix(in srgb, var(--color-success) 60%, black);
 
 	--color-error: rgb(202, 60, 60);
-	--color-error-bg: rgb(255, 212, 209);
+	--color-error-bg: hsl(from var(--color-error) h s calc(l + 40));
+	--color-error-text: hsl(from var(--color-error) h s calc(l - 8));
 
 	--color-warning: hsl(29, 91%, 49%);
 	--color-warning-bg: hsl(from var(--color-warning) h s calc(l + 40));
+	--color-warning-text: hsl(from var(--color-warning) h s calc(l - 19));
 
 	--color-info: var(--main-lighter);
 	--color-info-bg: hsl(from var(--color-info) h s calc(l + 50));
 
-	--gray-light: var(--body-text);
-	--gray-lighter: hsl(from var(--dark-text) h s calc(l + 70));
-
-	--link-color: var(--main-color);
-	--link-visited-color: var(--main-color);
-	--link-hover-color: var(--main-lighter);
-	--link-lighter: var(--main-lighter);
-	--link-lightest: var(--main-lightest);
+	--gray-lighter: hsl(from var(--dark-color) h s calc(l + 70));
 }

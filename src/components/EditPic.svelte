@@ -448,14 +448,14 @@
 		&.error {
 			font-style: italic;
 			font-weight: bold;
-			color: var(--color-error);
+			color: var(--color-error-text);
 			margin: 0 1rem 0 0;
 		}
 
 		&.warning {
 			font-style: italic;
 			font-weight: bold;
-			color: var(--color-warning);
+			color: var(--color-warning-text);
 			margin: 0 1rem 0 0;
 		}
 	}

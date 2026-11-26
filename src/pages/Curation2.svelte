@@ -209,7 +209,7 @@
 			flex: 0;
 
 			&.deleted {
-				color: var(--color-warning);
+				color: var(--color-warning-text);
 			}
 		}
 	}

@@ -67,11 +67,11 @@
 		color: #666;
 
 		&.good {
-			color: color-mix(in srgb, var(--color-success) 75%, black);
+			color: var(--color-success-text);
 		}
 
 		&.bad {
-			color: var(--color-error);
+			color: var(--color-error-text);
 		}
 
 		.vs {

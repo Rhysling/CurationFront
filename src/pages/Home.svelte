@@ -37,7 +37,7 @@
 			margin: 1rem 0 0;
 			font-size: 1.25rem;
 			font-weight: bold;
-			color: var(--dark-text);
+			color: var(--dark-color);
 		}
 	}
 

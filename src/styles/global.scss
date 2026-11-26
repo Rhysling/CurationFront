@@ -68,7 +68,7 @@ h5,
 h6,
 label {
 	display: block;
-	color: var(--dark-text);
+	color: var(--dark-color);
 	font-weight: normal;
 }
 
@@ -79,15 +79,15 @@ img {
 }
 
 a {
-	color: var(--link-color);
+	color: var(--main-color);
 	text-decoration: none;
 
 	&:visited {
-		color: var(--link-visited-color);
+		color: var(--main-color);
 	}
 
 	&:hover {
-		color: var(--link-hover-color);
+		color: var(--main-darker);
 		text-decoration: underline;
 	}
 }

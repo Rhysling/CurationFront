@@ -42,25 +42,25 @@
 		padding: 0.5rem 0;
 		font-size: 0.9rem;
 		color: var(--light-text);
-		background-color: var(--dark-background);
+		background-color: var(--dark-color);
 		text-align: center;
 		vertical-align: middle;
 	}
 
 	a {
-		color: var(--link-lightest);
+		color: var(--main-lightest);
 		text-decoration: none;
 		font-size: 0.9rem;
 
 		&:visited {
-			color: var(--link-lightest);
+			color: var(--main-lightest);
 		}
 
 		&:hover,
 		&:focus {
 			background: none;
 			border: none;
-			color: hsl(from var(--link-lightest) h s calc(l + 15));
+			color: hsl(from var(--main-lightest) h s calc(l + 15));
 			text-decoration: none;
 		}
 	}

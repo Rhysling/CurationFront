@@ -7,7 +7,7 @@ button {
 	padding: 0.5rem 1rem;
 	background-color: var(--main-color);
 	color: #fff;
-	border: 1px solid var(--dark-background);
+	border: 1px solid var(--dark-color);
 	border-radius: 4px;
 	font-weight: bold;
 	text-decoration: none;
@@ -15,7 +15,7 @@ button {
 
 	&:hover {
 		color: #fff;
-		background-color: var(--link-hover-color);
+		background-color: var(--main-darker);
 		text-decoration: none;
 	}
 
@@ -29,7 +29,7 @@ button {
 	}
 
 	&:not(:disabled):focus {
-		outline: 2px solid var(--dark-text);
+		outline: 2px solid var(--dark-color);
 	}
 
 	&:disabled,
@@ -47,13 +47,17 @@ button {
 	}
 
 	&.secondary {
-		color: var(--body-background);
-		background-color: var(--main-lighter);
-		border: 1px solid hsl(from var(--dark-background) h s calc(l + 25));
+		color: #fff;
+		background-color: var(--main-darker);
+		border: 1px solid hsl(from var(--dark-color) h s calc(l + 25));
+
+		&:hover {
+			background-color: var(--main-color);
+		}
 	}
 
 	&.success {
-		color: var(--color-success);
+		color: var(--color-success-text);
 		background-color: var(--color-success-bg);
 		border: 1px solid hsl(from var(--color-success) h s calc(l + 25));
 
